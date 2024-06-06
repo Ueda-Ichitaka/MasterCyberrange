@@ -1,0 +1,7 @@
+apache_package_name: apache2
+apache_service: apache2
+php_package_name: libapache2-mod-php
+
+# Splunk
+attack_range_password: "" #"Pl3ase-k1Ll-me:p"
+attack_range_openstack_user: "splunk"

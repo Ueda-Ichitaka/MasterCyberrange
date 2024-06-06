@@ -1,0 +1,85 @@
+---
+
+- name: Install Socks Proxy
+  apt:
+    name: dante-server
+    state: present
+
+- name: Configure Socks Proxy
+  template:
+    src: danted.conf.j2
+    dest: /etc/danted.conf
+    owner: root
+    group: root
+    mode: 0644
+  register: _socks_proxy_configured
+
+- name: Restart Socks Proxy
+  service:
+    name: danted
+    state: restarted
+  when: >
+    _socks_proxy_configured['restart_needed'] is defined and 
+    _socks_proxy_configured['restart_needed']
+
+- name: Install SMB Server
+  apt:
+    name: samba
+    state: present
+
+- name: Configure SMB Server
+  template:
+    src: smb.conf
+    dest: /etc/samba/smb.conf
+    owner: root
+    group: root
+    mode: 0644
+  register: _smb_configured
+
+- name: Restart SMB Server
+  service:
+    name: smb
+    state: restarted
+  when: >
+    _smb_configured['restart_needed'] is defined and 
+    _smb_configured['restart_needed']
+
+- name: Create SMB users
+  ansible.builtin.shell: >
+    set -e -o pipefail
+    && (pdbedit --user={{ item.username }} 2>&1 > /dev/null)
+    || (echo '{{ item.password }}'; echo '{{ item.password }}')
+    | smbpasswd -s -a {{ item.username }}
+  args:
+    executable: /bin/bash
+  register: samba_create_users
+  changed_when: "'Added user' in samba_create_users.stdout"
+  loop: "{{ samba_users }}"
+  no_log: false
+
+- name: Set SMB passwords correctly
+  ansible.builtin.shell: >
+    set -e -o pipefail
+    && (smbclient -U {{ item.username }}%{{ item.password }} -L 127.0.0.1 2>&1 > /dev/null)
+    || (echo '{{ item.password }}'; echo '{{ item.password }}')
+    | smbpasswd {{ item.username }}
+  args:
+    executable: /bin/bash
+  register: samba_verify_users
+  changed_when: "'New SMB password' in samba_verify_users.stdout"
+  loop: "{{ samba_users }}"
+  no_log: false
+
+- name: Restart SMB Server again
+  service:
+    name: smb
+    state: restarted
+  when: >
+    (samba_create_users['restart_needed'] is defined and samba_create_users['restart_needed']) or
+    (samba_verify_users['restart_needed'] is defined and samba_verify_users['restart_needed'])
+
+- name: Download Windows Image
+  ansible.builtin.get_url:
+    url: "https://software-static.download.prss.microsoft.com/sg/download/888969d5-f34g-4e03-ac9d-1f9786c66749/SERVER_EVAL_x64FRE_en-us.iso"
+    dest: "/srv/WINDOWS_2022_SERVER_EVAL_x64FRE_en-us.iso"
+    mode: '0444'

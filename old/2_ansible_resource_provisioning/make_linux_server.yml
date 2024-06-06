@@ -1,0 +1,58 @@
+- hosts: linux_test
+  gather_facts: False
+  become: true
+  vars:  
+    hostname: linux_test
+    use_prebuilt_images_with_packer: "0"
+    install_contentctl: "0"
+    s3_bucket_url: "https://attack-range-appbinaries.s3-us-west-2.amazonaws.com"
+    splunk_uf_url: "https://download.splunk.com/products/universalforwarder/releases/9.0.5/linux/splunkforwarder-9.0.5-e9494146ae5c-linux-2.6-amd64.deb"
+    uf_at_boot: "1"
+    #cloudtrail: "0"
+    #azure_logging: "0"
+    #kali_server: "0"
+    #crowdstrike_falcon: "0"
+    #tomcat_user_exists: "1"
+    #link_guacamole_needed: "0"
+    cloud_provider: "openstack"
+    hostname: "ubuntu"
+    attack_range_password: "" #"Pl3ase-k1Ll-me:p"
+    key_name: "attack-range-key-pair"
+    attack_range_name: "ar"
+    private_key_path: "~/.ssh/id_ed25519"
+    prelude: "1"
+    prelude_operator_url: "https://download.prelude.org/latest?arch=x64&platform=linux&variant=zip&edition=headless"
+    #prelude_account_email: "test@test.com"
+    #install_es: "0"
+    #ingest_bots3_data: "1"
+    #nstall_dltk: "1"
+    #s3_bucket_url: "https://attack-range-appbinaries.s3-us-west-2.amazonaws.com"
+    #nstall_dltk: "0"
+    #phantom_byo: "1"
+    #phantom_byo_api_token: ""
+    #phantom_byo_ip: ""
+    #carbon_black_cloud: "1"
+    #carbon_black_cloud_s3_bucket: ""
+  roles:
+    - role: linux_common
+      when: use_prebuilt_images_with_packer == "0"
+    - role: linux_universal_forwarder
+      when: (use_prebuilt_images_with_packer == "0") and (install_contentctl == "0")
+    - role: linux_osquery
+      when: (use_prebuilt_images_with_packer == "0") and (install_contentctl == "0")
+    - role: linux_sysmon
+      when: (use_prebuilt_images_with_packer == "0") and (install_contentctl == "0")
+    - role: linux_install_art
+      when: (use_prebuilt_images_with_packer == "0") and (install_contentctl == "0")
+      # Linux Post
+    - role: set_hostname_linux
+    - role: linux_server_post
+      when: install_contentctl == "0"
+    - role: update_sysmon_config_linux
+      when: install_contentctl == "0"
+    - role: linux_agent_prelude
+      when: install_contentctl == "0"
+    - role: splunk_byo_linux
+      when: install_contentctl == "0"
+    - role: contentctl
+      when: install_contentctl == "1"

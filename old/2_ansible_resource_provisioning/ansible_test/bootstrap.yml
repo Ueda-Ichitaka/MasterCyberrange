@@ -1,0 +1,63 @@
+---
+ 
+- hosts: all
+  become: true
+  pre_tasks:
+ 
+  - name: install updates (CentOS)
+    tags: always
+    dnf:
+      update_only: yes
+      update_cache: yes
+    when: false
+ 
+  - name: install updates (Ubuntu)
+    tags: always
+    apt:
+      upgrade: dist
+      update_cache: yes
+    when: false
+
+- hosts: all
+  become: true
+  tasks:
+
+  - name: create ansible user
+    user:
+      name: ansible
+      groups: root
+
+  - name: add ssh key for ansible
+    authorized_key:
+      user: ansible
+      key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPwleQl1hvURUPNYz7L6r/bCB2UiwnYS5xKwiRIx7kYk iai@vm-cyberrange-host"
+   
+  - name: add sudoers file for ansible
+    copy:
+      src: sudoer_ansible
+      dest: /etc/sudoers.d/ansible
+      owner: root
+      group: root
+      mode: 0440
+
+- hosts: all
+  become: true
+  tasks:
+
+  - name: create splunk user
+    user:
+      name: splunk
+      groups: root
+
+  - name: add ssh key for splunk
+    authorized_key:
+      user: splunk
+      key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPwleQl1hvURUPNYz7L6r/bCB2UiwnYS5xKwiRIx7kYk iai@vm-cyberrange-host"
+   
+  - name: add sudoers file for splunk
+    copy:
+      src: sudoer_splunk
+      dest: /etc/sudoers.d/splunk
+      owner: root
+      group: root
+      mode: 0440

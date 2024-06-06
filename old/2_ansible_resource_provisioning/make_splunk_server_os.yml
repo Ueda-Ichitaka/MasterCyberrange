@@ -1,0 +1,45 @@
+- hosts: os_splunk
+  gather_facts: False
+  become: true
+  vars_files:
+    - ./configs/attack_range_default.yml
+  vars:  
+    hostname: splunk-server
+    cloudtrail: "0"
+    azure_logging: "0"
+    kali_server: "0"
+    crowdstrike_falcon: "0"
+    tomcat_user_exists: "1"
+    link_guacamole_needed: "0"
+    cloud_provider: "openstack"
+    attack_range_password: "" #"Pl3ase-k1Ll-me:p"
+    key_name: "attack-range-key-pair"
+    attack_range_name: "ar"
+    private_key_path: "~/.ssh/id_ed25519"
+    prelude: "1"
+    prelude_operator_url: "https://download.prelude.org/latest?arch=x64&platform=linux&variant=zip&edition=headless"
+    prelude_account_email: "test@test.com"
+    install_es: "0"
+    ingest_bots3_data: "1"
+    nstall_dltk: "1"
+    s3_bucket_url: "https://attack-range-appbinaries.s3-us-west-2.amazonaws.com"
+    nstall_dltk: "0"
+    phantom_byo: "1"
+    phantom_byo_api_token: ""
+    phantom_byo_ip: ""
+    carbon_black_cloud: "1"
+    carbon_black_cloud_s3_bucket: ""
+    owner: "debian"
+    group: "debian"
+  roles:
+    - set_hostname_linux
+    - prelude_packer
+    - prelude_terraform
+    - splunk_server_post
+    - phantom_byo_splunk
+    - cloudtrail_logs
+    - azure_logging # No Azure
+    - carbon_black_cloud_logs
+    - crowdstrike_falcon_logging
+    - guacamole_packer
+    - guacamole_terraform

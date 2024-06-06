@@ -1,0 +1,134 @@
+The research aims to emulate cyber-physical system attacks, emphasizing requirements for cyber range technology such as scenario replication and depiction of complex attack chains. Key research questions address reproducible setup of IT infrastructure, automation of cyber-attacks, and evaluation of cyber range features. The planned approach involves literature review, definition of evaluation criteria, selection of real cyber-attack for evaluation, extension of cyber ranges, and assessment of attack detection possibilities. This research contributes to enhancing cybersecurity in critical infrastructure by facilitating reproducible testing of defense strategies against complex cyber-attacks.
+
+As threats and attacks evolve rapidly, driven by increased automation, there is a critical demand for modern training and learning environments tailored to the unique challenges faced by digitalized energy infrastructures and societies.
+
+
+-------------------------------------------- Test-Server ------------------------------------
+
+
+resource "openstack_compute_instance_v2" "test-server" {
+  name            = "win-tf-test-2"
+  image_id        = "107bf72a-df6c-433c-91dd-14258ce851b1" # Deactive Administrator account
+  #image_id        = "68c57ccf-0a6b-4c06-8be4-3fdde77e2067" # Active Administrator account
+  flavor_name     = "m1.medium"
+  #admin_pass      = "abc" # is not activated in openstack
+  security_groups = ["default", openstack_networking_secgroup_v2.secgroup_1.name]
+  user_data = <<EOF
+#cloud-config
+users:
+  - name: Admin
+    inactive: True
+  - name: TestAcc
+    passwd: secreT123%
+    primary_group: Administrators
+    inactive: False
+runcmd:
+  - 'winrm quickconfig -q'
+  - |
+    winrm set winrm/config/winrs '@{MaxMemoryPerShellMB="1024"}'
+  - |
+    winrm set winrm/config '@{MaxTimeoutms="1800000"}'
+  - |
+    winrm set winrm/config/service '@{AllowUnencrypted="true"}'
+  - |
+    winrm set winrm/config/service/auth '@{Basic="true"}'
+  - 'netsh advfirewall firewall add rule name="WinRM 5985" protocol=TCP dir=in localport=5985 action=allow'
+  - 'netsh advfirewall firewall add rule name="WinRM 5986" protocol=TCP dir=in localport=5986 action=allow'
+  - 'net stop winrm'
+  - 'sc.exe config winrm start=auto'
+  - 'net start winrm'
+  - 'powershell -Command "Enable-PSRemoting -SkipNetworkProfileCheck -Force"'
+EOF
+
+  #metadata = {
+  #  admin_pass = "abc"
+  #}
+
+
+
+
+  provisioner "remote-exec" {
+    inline = ["echo booted"]
+
+    connection {
+      type     = "winrm"
+      user     = "TestAcc"
+      password = "secreT123%"
+      host     = openstack_compute_instance_v2.test-server.network[0].fixed_ip_v4
+      port     = 5986
+      insecure = true
+      https    = true
+    }
+  }
+
+  provisioner "local-exec" {
+    working_dir = "../../packer/ansible"
+    command = "ansible-playbook -i '${openstack_compute_instance_v2.test-server.network[0].fixed_ip_v4},' windows.yml --extra-vars 'ansible_user=TestAcc ansible_password=secreT123% ansible_winrm_operation_timeout_sec=120 ansible_winrm_read_timeout_sec=150 ansible_port=5986 attack_range_password=secreT123% use_prebuilt_images_with_packer=0 cloud_provider=local splunk_uf_win_url=https://download.splunk.com/products/universalforwarder/releases/9.0.5/windows/splunkforwarder-9.0.5-e9494146ae5c-x64-release.msi'"
+  }
+
+  ## packer would execute until this point
+
+  #provisioner "local-exec" {
+  #  working_dir = "../ansible"
+  #  command = "ansible-playbook -i '${openstack_compute_instance_v2.test-server.network[0].fixed_ip_v4},' windows_post.yml --extra-vars 'ansible_user=TestAcc ansible_password=secreT123% ansible_winrm_operation_timeout_sec=120 ansible_winrm_read_timeout_sec=150 attack_range_password=secreT123% ansible_port=5986'"
+  #}
+
+  network {
+    access_network = true
+    name = "public1"
+  }
+
+  network {
+    access_network = false
+    name = "demo-net"
+  }
+}
+
+resource "openstack_networking_secgroup_v2" "secgroup_1" {
+  name        = "win-tf-test-sg1"
+  description = "Security group for Windows Terraform test"
+}
+
+resource "openstack_networking_secgroup_rule_v2" "rdp" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = 3389
+  port_range_max    = 3389
+  remote_ip_prefix  = "0.0.0.0/0"
+  security_group_id = openstack_networking_secgroup_v2.secgroup_1.id
+}
+
+resource "openstack_networking_secgroup_rule_v2" "winrm" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = 5985
+  port_range_max    = 5986
+  remote_ip_prefix  = "0.0.0.0/0"
+  security_group_id = openstack_networking_secgroup_v2.secgroup_1.id
+}
+
+#resource "openstack_networking_floatingip_v2" "floatip_1" {
+#  pool = "public1"
+#}
+#
+#resource "openstack_compute_floatingip_associate_v2" "fip_1" {
+#  floating_ip = openstack_networking_floatingip_v2.floatip_1.address
+#  instance_id = openstack_compute_instance_v2.test-server.id
+#}
+
+
+
+
+
+
+-----------
+resource "openstack_networking_port_v2" "public_ip_port" {
+  name           = "public_ip_port"
+  network_id     = openstack_networking_network_v2.attack_range-network.id
+  admin_state_up = "true"
+  fixed_ip {
+    subnet_id = openstack_networking_subnet_v2.attack_range-subnet.id
+  }
+}

@@ -1,0 +1,8 @@
+- hosts: ansible_controller
+  gather_facts: False
+  become: true
+  vars:  
+    hostname: splunk-server
+    check_if_ansible_files_are_present: true
+  roles:
+    - role: ansible_controller

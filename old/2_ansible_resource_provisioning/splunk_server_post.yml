@@ -1,0 +1,34 @@
+- hosts: splunk_server
+  gather_facts: False
+  become: true
+  vars_files:
+    - ../../configs/attack_range_default.yml
+  vars:  
+    hostname: splunk_server
+    cloudtrail: "0"
+    azure_logging: "0"
+    kali_server: "0"
+    attack_range_password: ""
+    attack_range_openstack_user: "ubuntu"
+    prelude: "1"
+    pantom_server: "0"
+    phantom_byo: "0"
+    carbon_black_cloud: "0"
+    crowdstrike_falcon: "0"
+    prelude_operator_url: "https://download.prelude.org/latest?arch=x64&platform=linux&variant=zip&edition=headless"
+    prelude_account_email: "test@test.com"
+    install_es: "0"
+    ingest_bots3_data: "1"
+    nstall_dltk: "0" # Requires functioning s3_bucket_url
+    s3_bucket_url: "https://attack-range-appbinaries.s3-us-west-2.amazonaws.com"
+
+  roles:
+    - set_hostname_linux
+    - prelude
+    - splunk_server_post
+    - phantom_byo_splunk
+    - cloudtrail_logs
+    - azure_logging
+    - carbon_black_cloud_logs
+    - crowdstrike_falcon_logging
+    # - guacamole # Not necessary for base splunk server

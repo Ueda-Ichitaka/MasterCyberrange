@@ -1,0 +1,115 @@
+proxy:
+  # set dynamically
+  vars:
+    samba_users:
+      - username: debian
+        password: secret
+ansible_contoller:
+  # set dynamically
+
+windows:
+  hosts:
+    windows_dc_2022:
+      ansible_host: '10.0.1.14'
+      ansible_user: 'TestAdmin'
+      ansible_password: 'secreT123%'
+      attack_range_password: 'secreT123%' # password for local 'Administrator' and Domain Admin
+      hostname: 'ar-win'
+      create_domain: '1'
+      join_domain: '0'
+      install_red_team_tools: '1'
+      win_sysmon_config: 'SwiftOnSecurity.xml'
+      prelude: '0'
+      crowdstrike_falcon: '0'
+      carbon_black_cloud: '0'
+      bad_blood: '1'
+      byo_splunk: '0'
+      byo_splunk_ip: '10.0.1.123'
+      aurora_agent: '0'
+    windows_10:
+      ansible_host: '10.0.1.15'
+      ansible_user: 'TestAdmin'
+      ansible_password: 'secreT123%'
+      attack_range_password: 'secreT123%' # password for local 'Administrator' and Domain Admin
+      hostname: 'ar-win10'
+      create_domain: '0'
+      join_domain: '1'
+      install_red_team_tools: '1'
+      win_sysmon_config: 'SwiftOnSecurity.xml'
+      prelude: '0'
+      crowdstrike_falcon: '0'
+      carbon_black_cloud: '0'
+      bad_blood: '0'
+      byo_splunk: '0'
+      byo_splunk_ip: '10.0.1.123'
+      aurora_agent: '0'
+  vars:
+    cloud_provider: openstack
+    splunk_uf_win_url: 'https://download.splunk.com/products/universalforwarder/releases/9.0.5/windows/splunkforwarder-9.0.5-e9494146ae5c-x64-release.msi'
+    atomic_red_team_repo: redcanaryco
+    atomic_red_team_branch: master
+    prelude_operator_url: "https://download.prelude.org/latest?arch=x64&platform=linux&variant=zip&edition=headless"
+    use_prebuilt_images_with_packer: 0
+    #ansible_connection: psrp
+    #ansible_psrp_cert_validation: ignore
+    ##ansible_psrp_operation_timeout: 120
+    ##ansible_psrp_read_timeout: 150
+    #ansible_psrp_protocol: https
+    #ansible_port: 5986
+    #ansible_psrp_proxy: 'socks5://localhost:1080'
+    ansible_connection: winrm
+    ansible_winrm_server_cert_validation: ignore
+    ansible_winrm_scheme: https
+    ansible_winrm_operation_timeout_sec: 120
+    ansible_winrm_read_timeout_sec: 150
+    ansible_port: 5986
+
+distro_ubuntu:
+  hosts:
+    splunk_server:
+      ansible_host: '10.0.1.12'
+  vars:
+    ansible_user: 'ubuntu'
+
+distro_debian:
+  hosts:
+    kali:
+      ansible_host: '10.0.1.30'
+    test_server:
+      ansible_host: '10.0.1.123'
+  vars:
+    ansible_user: 'debian'
+
+access_via_proxy:
+  hosts:
+    windows_dc_2022:
+    splunk_server:
+    test_server:
+    kali:
+    test_linux:
+
+os_windows:
+  hosts:
+    windows_dc_2022:
+  vars:
+    ansible_connection: winrm
+    ansible_winrm_server_cert_validation: ignore
+
+os_linux:
+  hosts:
+    splunk_server:
+    test_server:
+    kali:
+
+os_splunk:
+  hosts:
+    splunk_server:
+  vars:
+    ansible_user: 'debian'
+
+linux_test:
+  hosts:
+    test_linux:
+      ansible_host: '10.0.1.6'
+  vars:
+    ansible_user: 'ubuntu'

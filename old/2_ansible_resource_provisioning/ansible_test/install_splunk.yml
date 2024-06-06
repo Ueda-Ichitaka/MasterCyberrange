@@ -1,0 +1,59 @@
+---
+- name: Install Splunk
+  hosts: splunk_server
+  become: true
+
+  tasks:
+    - name: Download Splunk
+      get_url:
+        url: "https://download.splunk.com/products/splunk/releases/9.2.0.1/linux/splunk-9.2.0.1-d8ae995bf219-Linux-x86_64.tgz"
+        dest: /tmp/splunk.tgz
+      vars:
+        splunk_version: "9.2.0.1"  # Specify the version you want to install
+        splunk_build: "d8ae995bf219"  # Specify the build number for the version
+
+    - name: Extract Splunk archive
+      ansible.builtin.unarchive:
+        src: /tmp/splunk.tgz
+        remote_src: yes
+        dest: /opt
+        creates: /opt/splunk
+
+    - name: Set ownership and permissions
+      ansible.builtin.file:
+        path: /opt/splunk
+        owner: splunk
+        group: splunk
+        mode: '0755'
+        recurse: yes
+
+    - name: Start Splunk installation
+      command: /opt/splunk/bin/splunk start --accept-license --answer-yes
+      async: 300
+      poll: 0
+      ignore_errors: yes
+
+    - name: Set admin password
+      shell: /opt/splunk/bin/splunk edit user admin -password "{{ splunk_admin_password }}" -auth admin:changeme
+      args:
+        executable: /bin/bash
+      environment:
+        SPLUNK_HOME: /opt/splunk
+      register: splunk_admin_password_result
+      ignore_errors: yes
+      vars:
+        splunk_admin_password: "password"
+
+    - name: Print admin password change result
+      debug:
+        msg: "Admin password change result: {{ splunk_admin_password_result }}"
+    
+    - name: Enable boot-start for Splunk
+      command: /opt/splunk/bin/splunk enable boot-start -user splunk
+      ignore_errors: yes
+    
+    - name: Restart Splunk
+      command: /opt/splunk/bin/splunk restart
+      async: 300
+      poll: 0
+      ignore_errors: yes
