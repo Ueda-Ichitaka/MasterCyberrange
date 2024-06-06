@@ -47,27 +47,27 @@ resource "openstack_networking_port_v2" "IT-network-port_2" {
 }
 
 
-resource "openstack_networking_port_v2" "IT-network-port_3" {
-  name               = "port_3"
-  network_id         = openstack_networking_network_v2.IT-network.id
-  admin_state_up     = "true"
+# resource "openstack_networking_port_v2" "IT-network-port_3" {
+#   name               = "port_3"
+#   network_id         = openstack_networking_network_v2.IT-network.id
+#   admin_state_up     = "true"
 
-  fixed_ip {
-    subnet_id  = openstack_networking_subnet_v2.IT-subnet.id
-  }
-}
+#   fixed_ip {
+#     subnet_id  = openstack_networking_subnet_v2.IT-subnet.id
+#   }
+# }
 
 
-resource "openstack_networking_port_v2" "IT-network-port_4" {
-  name               = "port_4"
-  network_id         = openstack_networking_network_v2.IT-network.id
-  admin_state_up     = "true"
+# resource "openstack_networking_port_v2" "IT-network-port_4" {
+#   name               = "port_4"
+#   network_id         = openstack_networking_network_v2.IT-network.id
+#   admin_state_up     = "true"
 
-  fixed_ip {
-#    ip_address = "10.0.1.17"
-    subnet_id  = openstack_networking_subnet_v2.IT-subnet.id
-  }
-}
+#   fixed_ip {
+# #    ip_address = "10.0.1.17"
+#     subnet_id  = openstack_networking_subnet_v2.IT-subnet.id
+#   }
+# }
 
 
 
@@ -88,7 +88,7 @@ resource "openstack_networking_floatingip_v2" "floatip_2" {
 #   port_id = openstack_networking_port_v2.attack_range-network-port_1.id
 # }
 
-resource "openstack_networking_router_v2" "IT_router" {IT_
+resource "openstack_networking_router_v2" "IT_router" {
   name                = "IT_router"
   admin_state_up      = true
   external_network_id = "b4def106-3c27-4de8-9848-434dacf07ba3"  ### CHANGE ME!IT_
@@ -134,7 +134,7 @@ resource "openstack_networking_port_v2" "OT-network-port_1" {
 #   pool = "public"
 # }
 
-resource "openstack_networking_floatingip_v2" "floatip_2" {
+resource "openstack_networking_floatingip_v2" "floatip_2_OT" {
   pool = "public"
 }
 
@@ -174,10 +174,6 @@ resource "openstack_compute_instance_v2" "splunk-server" {
       access_network = true
       port = openstack_networking_port_v2.OT-network-port_1.id                  
    }   
-
-
-   network {
-      access_network = true
 
   # connection {
   #   type     = "ssh"
@@ -260,7 +256,7 @@ resource "openstack_networking_floatingip_v2" "floatip_3" {
 resource "openstack_networking_port_v2" "IT-network-port_3" {
   name               = "port_3"
   network_id         = openstack_networking_network_v2.IT-network.id
-  admin_state_up     = "true"apt29_Target-Win10Workstation2
+  admin_state_up     = "true"
 
   fixed_ip {
     ip_address = "10.0.1.17"
@@ -311,7 +307,7 @@ resource "openstack_compute_instance_v2" "Windows-SQL-Server" {
   #key_pair = data.openstack_compute_keypair_v2.default_keypair.name
   security_groups = [
     "default",
-    openstack_networking_secgroup_v2s.secgroup_windows_remote.name,
+    openstack_networking_secgroup_v2.secgroup_windows_remote.name,
     openstack_networking_secgroup_v2.secgroup_attack_range_internal.name,
     openstack_networking_secgroup_v2.secgroup_splunk_universal_forwarder.name,
     ]
@@ -416,19 +412,19 @@ resource "openstack_networking_port_v2" "IT-network-port_4" {
 #------------------------------------
 # Windows Gateway Server
 #------------------------------------
-data "openstack_images_image_v2" "winserver2022" {
+data "openstack_images_image_v2" "winserver2022_2" {
     name_regex = "^Windows Server 2022 Eval x86_64$"
     most_recent = true
 }
 
 resource "openstack_compute_instance_v2" "Windows-Gateway-Server" {
   name            = "Windows-Gateway-Server"
-  image_id        = data.openstack_images_image_v2.winserver2022.id
+  image_id        = data.openstack_images_image_v2.winserver2022_2.id
   flavor_name     = "m1.medium"
   #key_pair = data.openstack_compute_keypair_v2.default_keypair.name
   security_groups = [
     "default",
-    openstack_networking_secgroup_v2s.secgroup_windows_remote.name,
+    openstack_networking_secgroup_v2.secgroup_windows_remote.name,
     openstack_networking_secgroup_v2.secgroup_attack_range_internal.name,
     openstack_networking_secgroup_v2.secgroup_splunk_universal_forwarder.name,
     ]
@@ -455,7 +451,9 @@ runcmd:
 #    }
   - |
     winrm set winrm/config/service/auth '@{Basic="true"}'
-  - 'netsh advfirewall firewall add rule name="WinRM 5985" protocol=TCP dir=in localport=5985 action=allow'
+  - 'netsh advfirewall firewall add rule name="WinRM 5985" protocol=TCP dientrale Lieferzufahrt am Campus Nord in Eggenstein-Leopoldshafen ist montags bis
+donnerstags von 8.00-12.00 Uhr u. von 13.00-15.00 Uhr; freitags nur von 8.00-13.00 Uhr
+geöffnet. Bitte Lier=in localport=5985 action=allow'
   - 'netsh advfirewall firewall add rule name="WinRM 5986" protocol=TCP dir=in localport=5986 action=allow'
   - 'net stop winrm'
   - 'sc.exe config winrm start=auto'
@@ -518,7 +516,7 @@ EOF
 
 }
 
-resource "openstack_networking_floatingip_v2" "floatip_4" {
+resource "openstack_networking_floatingip_v2" "floatip_5" {
   pool = "public"
 }
 
@@ -529,7 +527,7 @@ resource "openstack_networking_floatingip_v2" "floatip_4" {
 
 #   fixed_ip {
 #     ip_address = "10.0.1.16"
-#     subnet_id  = openstack_networking_subnet_v2.IT-subnet.id
+#     subnet_id  = openstack_networking_subnet_v2.IT-subnet.
 #   }
 # }
 
@@ -550,7 +548,7 @@ resource "openstack_networking_floatingip_v2" "floatip_4" {
 # APT29 Windows Engineering-PC
 #-----------------------
 
-data "openstack_images_image_v2" "win10" {
+data "openstack_images_image_v2" "win10_2" {
     #name_regex = "^Windows 10 Eval x86_64$"
     name = "windows-10-amd64"
     most_recent = true
@@ -559,7 +557,7 @@ data "openstack_images_image_v2" "win10" {
 resource "openstack_compute_instance_v2" "APT29-Engineering-PC" {
   name = "APT29-Engineering-PC"
   flavor_name = "m1.medium"
-  image_id = data.openstack_images_image_v2.win10.id
+  image_id = data.openstack_images_image_v2.win10_2.id
   key_pair = data.openstack_compute_keypair_v2.default_keypair.name
   security_groups = [
     "default",
@@ -619,7 +617,7 @@ EOF
 # APT29 Windows Operating-PC
 #-----------------------
 
-data "openstack_images_image_v2" "win10" {
+data "openstack_images_image_v2" "win10_3" {
     #name_regex = "^Windows 10 Eval x86_64$"
     name = "windows-10-amd64"
     most_recent = true
@@ -628,7 +626,7 @@ data "openstack_images_image_v2" "win10" {
 resource "openstack_compute_instance_v2" "APT29-Operating-PC" {
   name = "APT29-Operating-PC"
   flavor_name = "m1.medium"
-  image_id = data.openstack_images_image_v2.win10.id
+  image_id = data.openstack_images_image_v2.win10_3.id
   key_pair = data.openstack_compute_keypair_v2.default_keypair.name
   security_groups = [
     "default",
@@ -703,7 +701,7 @@ resource "openstack_compute_instance_v2" "PLC_Linux" {
   name = "PLC_Linux"
   flavor_name = "standard.small"
 
-  image_id = data.openstack_images_image_v2.ubuntu_test.id
+  image_id = "d508e903-4f41-491e-bf41-b0cbc0f1712a"    #data.openstack_images_image_v2.ubuntu_test.id
   key_pair = "iai_vm-cyberrange-host"
   security_groups = ["default",openstack_networking_secgroup_v2.secgroup_splunk_universal_forwarder.name]
 
@@ -764,7 +762,7 @@ resource "openstack_compute_instance_v2" "HMI_Linux" {
   name = "HMI_Linux"
   flavor_name = "standard.small"
 
-  image_id = data.openstack_images_image_v2.ubuntu_test.id
+  image_id = "d508e903-4f41-491e-bf41-b0cbc0f1712a"  # data.openstack_images_image_v2.ubuntu_test.id
   key_pair = "iai_vm-cyberrange-host"
   security_groups = ["default",openstack_networking_secgroup_v2.secgroup_splunk_universal_forwarder.name]
 
