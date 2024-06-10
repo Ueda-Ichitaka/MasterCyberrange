@@ -196,15 +196,15 @@ resource "openstack_compute_instance_v2" "splunk-server" {
 #-----------------------
 
 data "openstack_images_image_v2" "win10" {
-    #name_regex = "^Windows 10 Eval x86_64$"
-    name = "windows-10-amd64"
+    name_regex = "^Windows Server 2019 Eval x86_64$"
+    #name = "windows-10-amd64"
     most_recent = true
 }
 
 resource "openstack_compute_instance_v2" "APT29-Windows-Workstation" {
   name = "APT29-Windows-Workstation"
   flavor_name = "m1.medium"
-  image_id = data.openstack_images_image_v2.win10.id
+  image_id = "b34c1867-728f-4d7b-839c-06c05a108088"  #Windows Server 2019 Eval 
   key_pair = data.openstack_compute_keypair_v2.default_keypair.name
   security_groups = [
     "default",
@@ -237,6 +237,12 @@ runcmd:
   - 'net start winrm'
   - 'powershell -Command "Enable-PSRemoting -SkipNetworkProfileChapt29_Target-Win10Workstation2eck -Force"'
 EOF
+
+
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'proxy,' access_proxy.yml"
+  # }
 
    network {
       access_network = true
@@ -446,7 +452,7 @@ runcmd:
   - |
     winrm set winrm/config/service '@{AllowUnencrypted="true"}'   network {
 #       access_network = true
-#       name = openstack_networking_network_v2.IT-network.name
+#       name = openstack_networking_network_v2.IT-network     b34c1867-728f-4d7b-839c-06c05a108088 .name
 #       fixed_ip_v4 = "10.0.1.16"
 #    }
   - |
@@ -473,7 +479,7 @@ EOF
   #provisioner "remote-exec" {
   #  inline = ["echo booted"]
   #
-  #  connection {
+  #  connection {     b34c1867-728f-4d7b-839c-06c05a108088 
   #    type     = "winrm"
   #    user     = "TestAdmin"
   #    password = "secreT123%"
@@ -549,22 +555,22 @@ resource "openstack_networking_floatingip_v2" "floatip_5" {
 #-----------------------
 
 data "openstack_images_image_v2" "win10_2" {
-    #name_regex = "^Windows 10 Eval x86_64$"
-    name = "windows-10-amd64"
+    name_regex = "^Windows Server 2019 Eval x86_64$"
+    #name = "windows-10-amd64"
     most_recent = true
 }
 
 resource "openstack_compute_instance_v2" "APT29-Engineering-PC" {
   name = "APT29-Engineering-PC"
   flavor_name = "m1.medium"
-  image_id = data.openstack_images_image_v2.win10_2.id
+  image_id = "b34c1867-728f-4d7b-839c-06c05a108088" 
   key_pair = data.openstack_compute_keypair_v2.default_keypair.name
   security_groups = [
     "default",
     openstack_networking_secgroup_v2.secgroup_windows_remote.name,
     openstack_networking_secgroup_v2.secgroup_attack_range_internal.name,       ### WOher kommt internal?
     ]
-  user_data = <<EOF
+ user_data = <<EOF
 #cloud-config
 users:
   - name: Admin
@@ -618,15 +624,15 @@ EOF
 #-----------------------
 
 data "openstack_images_image_v2" "win10_3" {
-    #name_regex = "^Windows 10 Eval x86_64$"
-    name = "windows-10-amd64"
+    name_regex = "^Windows Server 2019 Eval x86_64$"
+    #name = "windows-10-amd64"
     most_recent = true
 }
 
 resource "openstack_compute_instance_v2" "APT29-Operating-PC" {
   name = "APT29-Operating-PC"
   flavor_name = "m1.medium"
-  image_id = data.openstack_images_image_v2.win10_3.id
+  image_id = "b34c1867-728f-4d7b-839c-06c05a108088" 
   key_pair = data.openstack_compute_keypair_v2.default_keypair.name
   security_groups = [
     "default",

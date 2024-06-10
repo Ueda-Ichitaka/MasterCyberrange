@@ -1,0 +1,9 @@
+---
+
+- name: Copy ansible hosts file to remote controller
+  ansible.builtin.copy:
+    src: /home/iai/attack_range_openstack/2_ansible_resource_provisioning/remote_host_files/apt29/hosts
+    dest: '/etc/{{ ansible_user }}'
+    owner: '{{ ansible_user }}'
+    group: '{{ ansible_user }}'
+    mode: '744'

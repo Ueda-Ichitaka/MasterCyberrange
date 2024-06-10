@@ -1,0 +1,91 @@
+---
+
+- hosts: splunk_server
+  become: true
+  pre_tasks:
+
+  - name: install apache and php packages for Ubuntu and Debian
+    tags: splunk,apache,php
+    package:
+      name:
+        - "{{ apache_package }}"
+        - "{{ php_package }}"
+      state: latest
+    when: ansible_distribution in ["Ubuntu", "Debian"]
+  
+  - name: install http package for CentOS
+    tags: always
+    package:
+      name: httpd
+      state: latest
+    when: ansible_distribution == "CentOS"
+
+  - name: start apache2
+    tags: apache,centos,httpd
+    service:
+      name: apache2
+      state: stopped
+
+- hosts: splunk_server
+  become: true
+  tasks:
+
+  - name: install apache and php packages for Ubuntu and Debian
+    tags: splunk,apache,php
+    copy:
+      src: copy_me.html
+      dest: /var/www/html/index.html
+      owner: root
+      group: root
+      mode: 0644
+
+  - name: install apache and php packages for Ubuntu and Debian
+    tags: splunk,apache,php
+    lineinfile:
+      path: /home/ubuntu/test.txt
+      regexp: '^ServerAdmin'
+      line: "ServerAdmin: ich@meine-e-mail.com"
+    register: httpd
+
+# Install Terraform
+- hosts: splunk_server
+  become: true
+  tasks:
+
+  - name: install unzip
+    package:
+      name: unzip
+  
+  - name: install terraform
+    unarchive:
+      src: https://releases.hashicorp.com/terraform/1.7.4/terraform_1.7.4_linux_amd64.zip
+      dest: /usr/local/bin
+      remote_src: yes
+      mode: 0755
+      owner: root
+      group: root
+
+# Add user
+- hosts: splunk_server
+  become: true
+  tasks:
+  
+  - name: create user
+    tags: always
+    user:
+      name: newUser
+      group: root
+  
+  # - name: add ssh key for newUser
+  #   authorized_key:
+  #     user: newUser
+  #     key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPwleQl1hvURUPNYz7L6r/bCB2UiwnYS5xKwiRIx7kYk iai@vm-cyberrange-host"
+
+  - name: add sudoers file for newUser
+    tags: always
+    copy:
+      src: sudoer_newUser
+      dest: /etc/sudoers.d/newUser
+      owner: root
+      group: root
+      mode: 0440

@@ -1,0 +1,17 @@
+---
+
+# - name: Copy Ansible Plays to Ansible Controller inside the attack_range network
+#   ansible.builtin.copy:
+#     src: /home/iai/attack_range_openstack/2_ansible_resource_provisioning
+#     dest: /home
+#     owner: ubuntu
+#     group: ubuntu
+#     mode: '744'
+
+- name: Copy Ansible Plays to Ansible Controller inside the attack_range network
+  ansible.builtin.copy:
+    src: /home/iai/attack_range_openstack/2_ansible_resource_provisioning
+    dest: /home
+    owner: '{{ ansible_user }}'
+    group: '{{ ansible_user }}'
+    mode: '744'

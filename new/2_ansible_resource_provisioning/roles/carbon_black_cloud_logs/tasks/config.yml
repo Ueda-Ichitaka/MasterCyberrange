@@ -1,0 +1,36 @@
+---
+
+- name: Create folder directory for AWS TA
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ owner }}"
+    group: "{{ group }}"
+    recurse: yes
+  with_items:
+    - /opt/splunk/etc/apps/Splunk_TA_aws/local/
+
+- name: Copy new inputs.conf configuration
+  template:
+    src: inputs.conf.j2
+    dest: /opt/splunk/etc/apps/Splunk_TA_aws/local/inputs.conf
+    owner: "{{ owner }}"
+    group: "{{ group }}"
+
+- name: Create a directory if it does not exist
+  ansible.builtin.file:
+    path: /opt/splunk/etc/apps/vmware_app_for_splunk/metadata
+    state: directory
+    mode: '0755'
+
+- name: copy local.meta 
+  copy:
+    src: local.meta
+    dest: /opt/splunk/etc/apps/vmware_app_for_splunk/metadata/local.meta
+    owner: "{{ owner }}"
+    group: "{{ group }}"
+
+# Todo: Make restart work
+# - name: restart splunk
+#   service: name=splunk state=restarted
+#   become: yes

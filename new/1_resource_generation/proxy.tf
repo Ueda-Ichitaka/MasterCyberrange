@@ -43,10 +43,10 @@ resource "openstack_compute_instance_v2" "access-proxy" {
     command = "ansible-playbook -l 'proxy,' access_proxy.yml"
   }
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'proxy,' make_ansible_controller.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'proxy,' make_ansible_controller.yml"
+  # }
 
   connection {
     type     = "ssh"

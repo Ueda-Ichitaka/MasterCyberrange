@@ -1,0 +1,44 @@
+---
+
+- hosts: all
+  become: true
+  pre_tasks:
+
+  - name: update repository index (CentOS)
+    tags: always
+    dnf:
+      update_cache: yes
+    changed_when: false
+    when: ansible_distribution == "CentOS"
+
+  - name: update repository index (Ubuntu)
+    tags: always
+    apt:
+      update_cache: yes
+    changed_when: false
+    when: ansible_distribution == "Ubuntu"
+
+- hosts: all
+  become: true
+  roles:
+    - base
+   
+- hosts: splunk_server
+  become: true
+  roles:
+    - workstations
+
+- hosts: splunk_server
+  become: true
+  roles:
+    - web_servers
+
+- hosts: splunk_server
+  become: true
+  roles:
+    - db_servers
+
+- hosts: splunk_server
+  become: true
+  roles:
+    - file_servers

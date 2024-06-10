@@ -1,0 +1,9 @@
+---
+
+- name: Copy ansible hosts file to remote controller
+  ansible.builtin.copy:
+    src: /home/iai/.ssh/id_ed25519
+    dest: '/home/{{ ansible_user }}/.ssh'
+    owner: '{{ ansible_user }}'
+    group: '{{ ansible_user }}'
+    mode: '0600'
