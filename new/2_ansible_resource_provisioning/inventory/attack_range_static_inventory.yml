@@ -9,7 +9,7 @@ ansible_contoller:
 
 windows:
   hosts:
-    windows_dc_2022:
+    windows_gateway_server:
       ansible_host: '10.0.1.14'
       ansible_user: 'TestAdmin'
       ansible_password: 'secreT123%'
@@ -26,7 +26,7 @@ windows:
       byo_splunk: '0'
       byo_splunk_ip: '10.0.1.123'
       aurora_agent: '0'
-    windows_10:
+    windows_workstation:
       ansible_host: '10.0.1.15'
       ansible_user: 'TestAdmin'
       ansible_password: 'secreT123%'
@@ -43,6 +43,57 @@ windows:
       byo_splunk: '0'
       byo_splunk_ip: '10.0.1.123'
       aurora_agent: '0'
+    windows_sql_server:
+      ansible_host: '10.0.1.18'
+      ansible_user: 'TestAdmin'
+      ansible_password: 'secreT123%'
+      attack_range_password: 'secreT123%' # password for local 'Administrator' and Domain Admin
+      hostname: 'ar-win10'
+      create_domain: '0'
+      join_domain: '1'
+      install_red_team_tools: '1'
+      win_sysmon_config: 'SwiftOnSecurity.xml'
+      prelude: '0'
+      crowdstrike_falcon: '0'
+      carbon_black_cloud: '0'
+      bad_blood: '0'
+      byo_splunk: '0'
+      byo_splunk_ip: '10.0.1.123'
+      aurora_agent: '0'      
+    windows_engineering:
+      ansible_host: '10.0.2.15'
+      ansible_user: 'TestAdmin'
+      ansible_password: 'secreT123%'
+      attack_range_password: 'secreT123%' # password for local 'Administrator' and Domain Admin
+      hostname: 'ar-win10'
+      create_domain: '0'
+      join_domain: '1'
+      install_red_team_tools: '1'
+      win_sysmon_config: 'SwiftOnSecurity.xml'
+      prelude: '0'
+      crowdstrike_falcon: '0'
+      carbon_black_cloud: '0'
+      bad_blood: '0'
+      byo_splunk: '0'
+      byo_splunk_ip: '10.0.1.123'
+      aurora_agent: '0'   
+    windows_operating:
+      ansible_host: '10.0.2.18'
+      ansible_user: 'TestAdmin'
+      ansible_password: 'secreT123%'
+      attack_range_password: 'secreT123%' # password for local 'Administrator' and Domain Admin
+      hostname: 'ar-win10'
+      create_domain: '0'
+      join_domain: '1'
+      install_red_team_tools: '1'
+      win_sysmon_config: 'SwiftOnSecurity.xml'
+      prelude: '0'
+      crowdstrike_falcon: '0'
+      carbon_black_cloud: '0'
+      bad_blood: '0'
+      byo_splunk: '0'
+      byo_splunk_ip: '10.0.1.123'
+      aurora_agent: '0'         
   vars:
     cloud_provider: openstack
     splunk_uf_win_url: 'https://download.splunk.com/products/universalforwarder/releases/9.0.5/windows/splunkforwarder-9.0.5-e9494146ae5c-x64-release.msi'
@@ -68,6 +119,10 @@ distro_ubuntu:
   hosts:
     splunk_server:
       ansible_host: '10.0.1.12'
+    plc_linux:
+      ansible_host: '10.0.2.17'
+    hmi_linux:
+      absible_host: '10.0.2.16'
   vars:
     ansible_user: 'ubuntu'
 
@@ -82,7 +137,11 @@ distro_debian:
 
 access_via_proxy:
   hosts:
-    windows_dc_2022:
+    windows_gateway_server:
+    windows_workstation:
+    windows_sql_server:
+    windows_engineering:
+    windows_operating:
     splunk_server:
     test_server:
     kali:
@@ -90,7 +149,11 @@ access_via_proxy:
 
 os_windows:
   hosts:
-    windows_dc_2022:
+    windows_gateway_server:
+    windows_workstation:
+    windows_sql_server:
+    windows_engineering:
+    windows_operating:
   vars:
     ansible_connection: winrm
     ansible_winrm_server_cert_validation: ignore
@@ -100,6 +163,8 @@ os_linux:
     splunk_server:
     test_server:
     kali:
+    hmi_linux:
+    plc_linux:
 
 os_splunk:
   hosts:

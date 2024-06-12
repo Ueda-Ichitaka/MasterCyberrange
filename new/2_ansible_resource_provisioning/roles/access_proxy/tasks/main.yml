@@ -1,5 +1,9 @@
 ---
 
+- name: Wait for FloatIP to settle 
+  ansible.builtin.pause:
+    seconds: 30
+
 - name: Install Socks Proxy
   apt:
     name: dante-server

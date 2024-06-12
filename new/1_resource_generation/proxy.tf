@@ -38,9 +38,20 @@ resource "openstack_compute_instance_v2" "access-proxy" {
 
   stop_before_destroy = false
 
+  # ssh key auf copy löschen
+  # ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.1.3.199"
+  # ssh -D 1080 debian@10.1.3.199
+  # vi .ssh/config 
+  # cd .ssh
+  # ssh-add -L
+
+
+
+  # neuen ssh key generieren und hochladen?
+
   provisioner "local-exec" {
     working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'proxy,' access_proxy.yml"
+    command = "ansible-playbook -l 'proxy,' access_proxy.yml"     
   }
 
   # provisioner "local-exec" {

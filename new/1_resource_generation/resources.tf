@@ -47,30 +47,6 @@ resource "openstack_networking_port_v2" "IT-network-port_2" {
 }
 
 
-# resource "openstack_networking_port_v2" "IT-network-port_3" {
-#   name               = "port_3"
-#   network_id         = openstack_networking_network_v2.IT-network.id
-#   admin_state_up     = "true"
-
-#   fixed_ip {
-#     subnet_id  = openstack_networking_subnet_v2.IT-subnet.id
-#   }
-# }
-
-
-# resource "openstack_networking_port_v2" "IT-network-port_4" {
-#   name               = "port_4"
-#   network_id         = openstack_networking_network_v2.IT-network.id
-#   admin_state_up     = "true"
-
-#   fixed_ip {
-# #    ip_address = "10.0.1.17"
-#     subnet_id  = openstack_networking_subnet_v2.IT-subnet.id
-#   }
-# }
-
-
-
 
 
 
@@ -91,7 +67,7 @@ resource "openstack_networking_floatingip_v2" "floatip_2" {
 resource "openstack_networking_router_v2" "IT_router" {
   name                = "IT_router"
   admin_state_up      = true
-  external_network_id = "b4def106-3c27-4de8-9848-434dacf07ba3"  ### CHANGE ME!IT_
+  external_network_id = "b4def106-3c27-4de8-9848-434dacf07ba3"  ### ID von public network
 }
 
 resource "openstack_networking_router_interface_v2" "router_interface_1" {
@@ -130,9 +106,9 @@ resource "openstack_networking_port_v2" "OT-network-port_1" {
 
 
 # Splunk floatingIP, not necessary with proxy use
-# resource "openstack_networking_floatingip_v2" "floatip_1" {
-#   pool = "public"
-# }
+resource "openstack_networking_floatingip_v2" "floatip_1" {
+  pool = "public"
+}
 
 resource "openstack_networking_floatingip_v2" "floatip_2_OT" {
   pool = "public"
@@ -175,16 +151,16 @@ resource "openstack_compute_instance_v2" "splunk-server" {
       port = openstack_networking_port_v2.OT-network-port_1.id                  
    }   
 
-  # connection {
-  #   type     = "ssh"
-  #   user     = "ubuntu"
-  #   private_key = file("~/.ssh/id_ed25519") # iai_vm-cyberrange-host
-  #   host     = openstack_networking_floatingip_v2.floatip_1.address
-  # }
+    connection {
+      type     = "ssh"
+      user     = "ubuntu"
+      private_key = file("~/.ssh/id_ed25519_new") # iai_vm-cyberrange-host
+      host     = openstack_networking_floatingip_v2.floatip_1.address
+    }
 
-  # provisioner "remote-exec" {
-  #   inline = ["echo Test >> test.txt"]
-  # }
+    provisioner "remote-exec" {
+      inline = ["echo Test >> test.txt"]
+    }
 }
 
 
@@ -291,7 +267,7 @@ resource "openstack_compute_instance_v2" "Attacker-Kali" {
   connection {
     type     = "ssh"
     user     = "kali"
-    private_key = file("~/.ssh/id_ed25519") # iai_vm-cyberrange-host
+    private_key = file("~/.ssh/id_ed25519_new") # iai_vm-cyberrange-host
     host     = openstack_networking_floatingip_v2.floatip_3.address
   }
 }
@@ -453,7 +429,7 @@ runcmd:
     winrm set winrm/config/service '@{AllowUnencrypted="true"}'   network {
 #       access_network = true
 #       name = openstack_networking_network_v2.IT-network     b34c1867-728f-4d7b-839c-06c05a108088 .name
-#       fixed_ip_v4 = "10.0.1.16"
+#       fixed_ip_v4 = "10.0.1.14"
 #    }
   - |
     winrm set winrm/config/service/auth '@{Basic="true"}'
@@ -516,7 +492,7 @@ EOF
    network {  
       access_network = true
       name = openstack_networking_network_v2.IT-network.name
-      fixed_ip_v4 = "10.0.1.16"
+      fixed_ip_v4 = "10.0.1.14"
    }   
 
 
@@ -737,7 +713,7 @@ resource "openstack_compute_instance_v2" "PLC_Linux" {
   connection {
     type     = "ssh"
     user     = "debian"
-    private_key = file("~/.ssh/id_ed25519") # iai_vm-cyberrange-host
+    private_key = file("~/.ssh/id_ed25519_new") # iai_vm-cyberrange-host
     host     = openstack_networking_floatingip_v2.floatip-access-proxy.address
   }
 }
@@ -796,7 +772,7 @@ resource "openstack_compute_instance_v2" "HMI_Linux" {
   connection {
     type     = "ssh"
     user     = "debian"
-    private_key = file("~/.ssh/id_ed25519") # iai_vm-cyberrange-host
+    private_key = file("~/.ssh/id_ed25519_new") # iai_vm-cyberrange-host
     host     = openstack_networking_floatingip_v2.floatip-access-proxy.address
   }
 }
