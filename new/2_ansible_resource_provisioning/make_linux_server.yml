@@ -1,8 +1,8 @@
-- hosts: linux_test
+- hosts: plcs_linux
   gather_facts: False
   become: true
   vars:  
-    hostname: linux_test
+    hostname: plc_linux
     use_prebuilt_images_with_packer: "0"
     install_contentctl: "0"
     s3_bucket_url: "https://attack-range-appbinaries.s3-us-west-2.amazonaws.com"
@@ -15,7 +15,6 @@
     #tomcat_user_exists: "1"
     #link_guacamole_needed: "0"
     cloud_provider: "openstack"
-    hostname: "ubuntu"
     attack_range_password: "" #"Pl3ase-k1Ll-me:p"
     key_name: "attack-range-key-pair"
     attack_range_name: "ar"

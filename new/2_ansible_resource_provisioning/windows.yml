@@ -23,3 +23,4 @@
     - splunk_byo_windows
     - windows_aurora_agent
     - windows_install_attack_simulation
+    - windows_universal_forwarder

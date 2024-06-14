@@ -154,13 +154,39 @@ resource "openstack_compute_instance_v2" "splunk-server" {
     connection {
       type     = "ssh"
       user     = "ubuntu"
-      private_key = file("~/.ssh/id_ed25519_new") # iai_vm-cyberrange-host
+      private_key = file("~/.ssh/id_ed25519") # iai_vm-cyberrange-host
       host     = openstack_networking_floatingip_v2.floatip_1.address
     }
 
-    provisioner "remote-exec" {
-      inline = ["echo Test >> test.txt"]
-    }
+    # provisioner "remote-exec" {
+    #   inline = ["echo Test >> test.txt"]
+    # }
+
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ssh-keygen -f "/home/iai/.ssh/known_hosts" -R 10.0.1.12"
+  # }
+
+
+  ## läuft durch bis install dltk , die localhost url findet er nicht
+  provisioner "local-exec" {
+    working_dir = "../2_ansible_resource_provisioning"
+    command = "ansible-playbook -l 'splunk_server,' make_splunk_server_os.yml"
+  }
+
+
+  ## debug
+  provisioner "local-exec" {
+    working_dir = "../2_ansible_resource_provisioning"
+    command = "ansible-playbook -l 'splunk_server,' splunk_server.yml"
+  }
+
+  ## debug
+  provisioner "local-exec" {
+    working_dir = "../2_ansible_resource_provisioning"
+    command = "ansible-playbook -l 'splunk_server,' splunk_server_post.yml"
+  }
+
 }
 
 
@@ -215,16 +241,23 @@ runcmd:
 EOF
 
 
-  # provisioner "local-exec" {
-  #   working_dir = "../2_ansible_resource_provisioning"
-  #   command = "ansible-playbook -l 'proxy,' access_proxy.yml"
-  # }
-
    network {
       access_network = true
       name = openstack_networking_network_v2.IT-network.name
       fixed_ip_v4 = "10.0.1.15"
    }
+
+  provisioner "local-exec" {
+    working_dir = "../2_ansible_resource_provisioning"
+    command = "ansible-playbook -l 'windows_workstation,' windows.yml"
+  }
+
+  provisioner "local-exec" {
+    working_dir = "../2_ansible_resource_provisioning"
+    command = "ansible-playbook -l 'windows_workstation,' windows_post.yml"
+  }
+
+
 }
 
 
@@ -267,9 +300,17 @@ resource "openstack_compute_instance_v2" "Attacker-Kali" {
   connection {
     type     = "ssh"
     user     = "kali"
-    private_key = file("~/.ssh/id_ed25519_new") # iai_vm-cyberrange-host
-    host     = openstack_networking_floatingip_v2.floatip_3.address
+    private_key = file("~/.ssh/id_ed25519") # iai_vm-cyberrange-host
+    host     = openstack_networking_floatingip_v2.floatip-access-proxy.address #openstack_networking_floatingip_v2.floatip_3.address
   }
+
+  provisioner "local-exec" {
+    working_dir = "../2_ansible_resource_provisioning"
+    command = "ansible-playbook -l 'kali,' kali.yml"
+  }
+
+
+
 }
 
 
@@ -347,17 +388,32 @@ EOF
   #  }
   #}
 
-  #provisioner "local-exec" {
+  # provisioner "local-exec" {
   #  working_dir = "../2_ansible_resource_provisioning"
   #  command = "ansible-playbook -i '${openstack_networking_floatingip_v2.floatip_4.address},' windows.yml --extra-vars 'ansible_user=TestAdmin ansible_password=secreT123% ansible_winrm_operation_timeout_sec=120 ansible_winrm_read_timeout_sec=150 ansible_port=5986 attack_range_password=secreT123% use_prebuilt_images_with_packer=0 cloud_provider=local splunk_uf_win_url=https://download.splunk.com/products/universalforwarder/releases/9.0.5/windows/splunkforwarder-9.0.5-e9494146ae5c-x64-release.msi'"
-  #}
+  # }
 
-  ## packer would execute until this point
+  # ## packer would execute until this point
 
-  #provisioner "local-exec" {I
+  # provisioner "local-exec" {
   #  working_dir = "../ansible"
   #  command = "ansible-playbook -i '${openstack_compute_instance_v2.test-server.network[0].fixed_ip_v4},' windows_post.yml --extra-vars 'ansible_user=TestAcc ansible_password=secreT123% ansible_winrm_operation_timeout_sec=120 ansible_winrm_read_timeout_sec=150 attack_range_password=secreT123% ansible_port=5986'"
-  #}
+  # }
+
+
+
+
+  provisioner "local-exec" {
+    working_dir = "../2_ansible_resource_provisioning"
+    command = "ansible-playbook -l 'windows_workstation,' windows.yml --extra-vars 'ansible_user=TestAdmin ansible_password=secreT123% ansible_winrm_operation_timeout_sec=120 ansible_winrm_read_timeout_sec=150 ansible_port=5986 attack_range_password=secreT123% use_prebuilt_images_with_packer=0 cloud_provider=local splunk_uf_win_url=https://download.splunk.com/products/universalforwarder/releases/9.0.5/windows/splunkforwarder-9.0.5-e9494146ae5c-x64-release.msi'"
+  }
+
+  provisioner "local-exec" {
+    working_dir = "../2_ansible_resource_provisioning"
+    command = "ansible-playbook -l 'windows_workstation,' windows_post.yml --extra-vars 'ansible_user=TestAcc ansible_password=secreT123% ansible_winrm_operation_timeout_sec=120 ansible_winrm_read_timeout_sec=150 attack_range_password=secreT123% ansible_port=5986'"
+  }
+
+
 
   network {
     access_network = true
@@ -495,6 +551,20 @@ EOF
       fixed_ip_v4 = "10.0.1.14"
    }   
 
+  provisioner "local-exec" {
+    working_dir = "../2_ansible_resource_provisioning"
+    command = "ansible-playbook -l 'windows_gateway_server,' windows.yml"
+  }
+
+  provisioner "local-exec" {
+    working_dir = "../2_ansible_resource_provisioning"
+    command = "ansible-playbook -l 'windows_gateway_server,' windows_post.yml"
+  }  
+
+  provisioner "local-exec" {
+    working_dir = "../2_ansible_resource_provisioning"
+    command = "ansible-playbook -l 'windows_gateway_server,' windows_dc.yml"
+  }
 
 }
 
@@ -590,6 +660,22 @@ EOF
       name = openstack_networking_network_v2.OT-network.name
       fixed_ip_v4 = "10.0.2.15"
    }
+
+
+  provisioner "local-exec" {
+    working_dir = "../2_ansible_resource_provisioning"
+    command = "ansible-playbook -l 'windows_engineering,' windows.yml"
+  }
+
+  provisioner "local-exec" {
+    working_dir = "../2_ansible_resource_provisioning"
+    command = "ansible-playbook -l 'windows_engineering,' windows_post.yml"
+  }
+
+
+
+
+
 }
 
 
@@ -654,6 +740,21 @@ EOF
       name = openstack_networking_network_v2.OT-network.name
       fixed_ip_v4 = "10.0.2.18"
    }
+
+
+  provisioner "local-exec" {
+    working_dir = "../2_ansible_resource_provisioning"
+    command = "ansible-playbook -l 'windows_operating,' windows.yml"
+  }
+
+  provisioner "local-exec" {
+    working_dir = "../2_ansible_resource_provisioning"
+    command = "ansible-playbook -l 'windows_operating,' windows_post.yml"
+  }
+
+
+
+
 }
 
 
@@ -713,7 +814,7 @@ resource "openstack_compute_instance_v2" "PLC_Linux" {
   connection {
     type     = "ssh"
     user     = "debian"
-    private_key = file("~/.ssh/id_ed25519_new") # iai_vm-cyberrange-host
+    private_key = file("~/.ssh/id_ed25519") # iai_vm-cyberrange-host
     host     = openstack_networking_floatingip_v2.floatip-access-proxy.address
   }
 }
@@ -766,13 +867,13 @@ resource "openstack_compute_instance_v2" "HMI_Linux" {
   # Automatic execution of the corresponding ansible-playbook
   # provisioner "local-exec" {
   #   working_dir = "../2_ansible_resource_provisioning"
-  #   command = "ansible-playbook -l 'ubuntu_test,' make_linux_server.yml"
+  #   command = "ansible-playbook -l 'hmi_linux,' make_linux_server.yml"
   # }
 
   connection {
     type     = "ssh"
     user     = "debian"
-    private_key = file("~/.ssh/id_ed25519_new") # iai_vm-cyberrange-host
+    private_key = file("~/.ssh/id_ed25519") # iai_vm-cyberrange-host
     host     = openstack_networking_floatingip_v2.floatip-access-proxy.address
   }
 }

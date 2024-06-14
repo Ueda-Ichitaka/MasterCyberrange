@@ -4,6 +4,14 @@
   ansible.builtin.pause:
     seconds: 30
 
+
+- name: Install rdp
+  apt:
+    name: xrdp
+    update_cache: true
+    state: present
+
+
 - name: Install Socks Proxy
   apt:
     name: dante-server

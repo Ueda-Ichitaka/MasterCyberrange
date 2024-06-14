@@ -1,0 +1,7 @@
+- hosts: kali
+  gather_facts: False
+  become: true
+  roles:
+    - linux_common
+    - red_team_tools_terraform
+    - atomic_red_team

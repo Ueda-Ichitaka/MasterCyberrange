@@ -1,5 +1,20 @@
 ---
 
+# - name: will wait till reachable
+#   gather_facts: no # important
+#   tasks:
+#     - name: Wait for system to become reachable
+#       wait_for_connection:
+
+#     - name: Gather facts for the first time
+#       setup:
+
+
+- name: Wait for FloatIP to settle 
+  ansible.builtin.pause:
+    seconds: 30
+
+
 - name: Change the hostname
   hostname:
     name: "{{ hostname }}"

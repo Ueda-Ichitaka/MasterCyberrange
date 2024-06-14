@@ -14,7 +14,7 @@ windows:
       ansible_user: 'TestAdmin'
       ansible_password: 'secreT123%'
       attack_range_password: 'secreT123%' # password for local 'Administrator' and Domain Admin
-      hostname: 'ar-win'
+      hostname: 'ar-win-gateway'
       create_domain: '1'
       join_domain: '0'
       install_red_team_tools: '1'
@@ -31,7 +31,7 @@ windows:
       ansible_user: 'TestAdmin'
       ansible_password: 'secreT123%'
       attack_range_password: 'secreT123%' # password for local 'Administrator' and Domain Admin
-      hostname: 'ar-win10'
+      hostname: 'ar-win-workstation'
       create_domain: '0'
       join_domain: '1'
       install_red_team_tools: '1'
@@ -48,7 +48,7 @@ windows:
       ansible_user: 'TestAdmin'
       ansible_password: 'secreT123%'
       attack_range_password: 'secreT123%' # password for local 'Administrator' and Domain Admin
-      hostname: 'ar-win10'
+      hostname: 'ar-win-sql'
       create_domain: '0'
       join_domain: '1'
       install_red_team_tools: '1'
@@ -65,7 +65,7 @@ windows:
       ansible_user: 'TestAdmin'
       ansible_password: 'secreT123%'
       attack_range_password: 'secreT123%' # password for local 'Administrator' and Domain Admin
-      hostname: 'ar-win10'
+      hostname: 'ar-win-engineering'
       create_domain: '0'
       join_domain: '1'
       install_red_team_tools: '1'
@@ -82,7 +82,7 @@ windows:
       ansible_user: 'TestAdmin'
       ansible_password: 'secreT123%'
       attack_range_password: 'secreT123%' # password for local 'Administrator' and Domain Admin
-      hostname: 'ar-win10'
+      hostname: 'ar-win-operating'
       create_domain: '0'
       join_domain: '1'
       install_red_team_tools: '1'
@@ -129,9 +129,9 @@ distro_ubuntu:
 distro_debian:
   hosts:
     kali:
-      ansible_host: '10.0.1.30'
-    test_server:
-      ansible_host: '10.0.1.123'
+      ansible_host: '10.0.1.17'
+    # test_server:
+    #   ansible_host: '10.0.1.123'
   vars:
     ansible_user: 'debian'
 
@@ -143,9 +143,7 @@ access_via_proxy:
     windows_engineering:
     windows_operating:
     splunk_server:
-    test_server:
     kali:
-    test_linux:
 
 os_windows:
   hosts:
@@ -161,8 +159,12 @@ os_windows:
 os_linux:
   hosts:
     splunk_server:
-    test_server:
     kali:
+    hmi_linux:
+    plc_linux:
+
+plcs_linux:
+  hosts:
     hmi_linux:
     plc_linux:
 
@@ -172,9 +174,9 @@ os_splunk:
   vars:
     ansible_user: 'debian'
 
-linux_test:
-  hosts:
-    test_linux:
-      ansible_host: '10.0.1.6'
-  vars:
-    ansible_user: 'ubuntu'
+# linux_test:
+#   hosts:
+#     test_linux:
+#       ansible_host: '10.0.1.6'
+#   vars:
+#     ansible_user: 'ubuntu'

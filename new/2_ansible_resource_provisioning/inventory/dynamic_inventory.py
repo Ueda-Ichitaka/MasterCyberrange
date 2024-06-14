@@ -22,7 +22,7 @@ if __name__ == '__main__':
 
     access_proxy_ip = terraform_output['access-proxy_ip']['value']
     access_proxy_user = terraform_output['access-proxy_username']['value']
-    #access_proxy_ip = '10.1.2.199'
+    #access_proxy_ip = '10.1.3.152'
     #access_proxy_user = 'debian'
 
     inventory["proxy"] = {
@@ -39,7 +39,7 @@ if __name__ == '__main__':
     }
     inventory["access_via_proxy"] = {
         'vars': {
-            'ansible_ssh_common_args': f'-o ProxyCommand="ssh -p 22 -W %h:%p -q -l {access_proxy_user} {access_proxy_ip}"'
+            'ansible_ssh_common_args': f'-o ProxyCommand="ssh -A -p 22 -W %h:%p -q -l {access_proxy_user} {access_proxy_ip}" -o StrictHostKeyChecking=no'
         }
     }
 
