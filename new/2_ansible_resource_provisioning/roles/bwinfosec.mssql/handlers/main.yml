@@ -1,0 +1,17 @@
+---
+# handlers file for roles/mssql
+- name: Reboot windows
+  win_reboot:
+    reboot_timeout: 3600
+    post_reboot_delay: 60
+  when: mssql_suppress_reboot
+
+- name: Restart SQL Server ({{ mssql_instance_name | upper }})
+  ansible.windows.win_service:
+    name: SQL Server ({{ mssql_instance_name | upper }})
+    start_mode: auto
+    state: restarted
+    username: "{{ mssql_sqlsvc_account }}"
+    password: "{{ mssql_sqlsvc_account_pass }}"
+    force_dependent_services: true
+  tags: install_mssql

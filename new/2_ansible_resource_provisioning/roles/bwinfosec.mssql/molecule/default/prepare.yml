@@ -1,0 +1,7 @@
+---
+- name: Run prepare
+  hosts: all
+  tasks:
+    - name: Example assertion
+      ansible.builtin.assert:
+        that: true

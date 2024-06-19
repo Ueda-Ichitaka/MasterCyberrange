@@ -485,7 +485,10 @@ EOF
   #   command = "ansible-playbook -l 'windows_sql_server,' windows_post.yml --extra-vars 'ansible_user=TestAcc ansible_password=secreT123% ansible_winrm_operation_timeout_sec=120 ansible_winrm_read_timeout_sec=150 attack_range_password=secreT123% ansible_port=5986'"
   # }
 
-
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'windows_sql_server,' windows_sql.yml"
+  # }
 
 
 
@@ -785,7 +788,7 @@ runcmd:
   - 'echo test >> C:\5.txt'
   - 'net stop winrm'
   - 'echo test >> C:\6.txt'
-  - 'sc.exe config winrm start=auto'
+  - 'powershell Set-Service -Name winrm -StartupType Automatic'
   - 'echo test >> C:\7.txt'
   - 'net start winrm'
   - 'echo test >> C:\8.txt'

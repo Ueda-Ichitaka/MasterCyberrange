@@ -1,0 +1,314 @@
+---
+- name: Assert mandatory variables have been set
+  ansible.builtin.assert: { that: "{{ item }} is defined" }
+  with_items:
+    - mssql_instance_name
+    - mssql_sqlsvc_account
+    - mssql_sqlsvc_account_pass
+    - mssql_agentsvc_account
+    - mssql_agentsvc_account_pass
+  tags: install_mssql
+
+# Load required powershell modules
+- name: Check for SQLServer DSC Powershell module
+  community.windows.win_psmodule:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ mssql_psmodules }}"
+  tags: install_mssql
+
+- name: Install Windows feature
+  ansible.windows.win_feature:
+    name: "{{ item }}"
+    state: present
+  tags: install_mssql
+  with_items:
+    - NET-Framework-Core
+    - NET-Framework-Features
+    - NET-Framework-45-Features
+    - WAS
+
+# Setup service accounts
+- name: Ensure SQL Service account is present
+  ansible.windows.win_user:
+    name: "{{ mssql_sqlsvc_account | regex_search('[^\\\\]*$') }}"
+    fullname: SQLSvc
+    password: "{{ mssql_sqlsvc_account_pass }}"
+    password_never_expires: true
+    user_cannot_change_password: true
+    description: "SQL Service account for {{ inventory_hostname }}\\{{ mssql_instance_name }}"
+    state: present
+    groups:
+      - "{{ mssql_group_users }}"
+  tags:
+    - install_mssql
+    - service_account
+
+- name: Ensure SQL Agent Service account is present
+  ansible.windows.win_user:
+    name: "{{ mssql_agentsvc_account | regex_search('[^\\\\]*$') }}"
+    fullname: AgentSvc
+    password: "{{ mssql_agentsvc_account_pass }}"
+    password_never_expires: true
+    user_cannot_change_password: true
+    description: "SQL Agent service account for {{ inventory_hostname }}\\{{ mssql_instance_name }}"
+    state: present
+    groups:
+      - "{{ mssql_group_users }}"
+  tags:
+    - install_mssql
+    - service_account
+
+# SQL install may fail if a pending reboot is detected
+# Assuming we are allowed to reboot this step will check for pending reboots
+# and execute a reboot, reboot activity can be controlled using the variable mssql_suppress_reboot
+
+- name: Ensure that a reboot is not pending
+  when: ansible_reboot_pending and not mssql_custom_installation_media
+  ansible.builtin.debug:
+    msg: 'Pending reboot detected'
+  changed_when: false
+  notify: reboot windows
+  tags: install_mssql
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers
+  tags: install_mssql
+
+- name: Create {{ mssql_temp_download_path }}
+  ansible.windows.win_file:
+    path: "{{ mssql_temp_download_path }}"
+    state: directory
+  tags: install_mssql
+
+- name: Obtain information about {{ mssql_media_installer }}.exe
+  ansible.windows.win_stat:
+    path: '{{ mssql_temp_download_path }}\{{ mssql_media_installer }}.exe'
+  when: not mssql_custom_installation_media | bool
+  register: mssql_media_installer_info
+
+- name: Fetch SQL Media Downloader
+  ansible.windows.win_get_url:
+    url: "{{ mssql_installation_source }}"
+    dest: '{{ mssql_temp_download_path }}\{{ mssql_media_installer }}.exe'
+  when: not mssql_custom_installation_media | bool and not mssql_media_installer_info.stat.exists
+  tags: install_mssql
+
+- name: Obtain information about {{ mssql_installation_path }}
+  ansible.windows.win_stat:
+    path: '{{ mssql_installation_path }}'
+  when: not mssql_custom_installation_media | bool
+  register: mssql_installation_path_info
+
+- name: Use Media Downloader to fetch SQL Installation CABs to {{ mssql_installation_path }}
+  ansible.windows.win_shell: '{{ mssql_temp_download_path }}\{{ mssql_media_installer }}.exe /Action=Download /MediaPath={{ mssql_installation_path }} /MediaType=CAB /Quiet'
+  when: not mssql_custom_installation_media | bool and not mssql_installation_path_info.stat.exists
+  tags: install_mssql
+
+- name: Obtain information about {{ mssql_installation_source_path }}
+  ansible.windows.win_stat:
+    path: "{{ mssql_installation_source_path }}"
+  when: not mssql_custom_installation_media | bool
+  register: mssql_installation_source_path_info
+
+- name: Extract installation media
+  ansible.windows.win_shell: '{{ mssql_installation_path }}\{{ mssql_installer }}.exe /X:{{ mssql_installation_source_path }} /Q'
+  when: not mssql_custom_installation_media | bool and not mssql_installation_source_path_info.stat.exists
+  tags: install_mssql
+
+# If this step fails, logs are in C:\Program Files\Microsoft SQL Server\...\Setup Bootstrap\Log
+# it will often contain the actual error.  If it shows everything passing, the issue is within the DSC logs.
+#
+# This module also typically throws this error fpr all failure conditions:
+# PowerShell DSC resource MSFT_SqlSetup  failed to execute Set-TargetResource functionality with error message:
+# System.Exception: Test-TargetResource returned false after calling Set-TargetResource.
+#
+#
+# This document can also be useful to troubleshoot issues with DSC modules
+# https://docs.microsoft.com/en-us/powershell/dsc/troubleshooting
+#
+# In particular completing these steps:
+# https://docs.microsoft.com/en-us/powershell/dsc/troubleshooting#gathering-events-from-a-single-dsc-operation
+# then re-running a failing PowershellDSC job can help you find the source of your error
+- name: Install SQL Server
+  ansible.windows.win_dsc:
+    resource_name: SQLSetup
+    Action: Install
+    UpdateEnabled: true
+    SourcePath: "{{ mssql_installation_source_path }}"
+    InstanceName: "{{ mssql_instance_name }}"
+    InstallSharedDir: "{{ mssql_installshared_path }}"
+    InstallSharedwowDir: "{{ mssql_installsharedwow_path }}"
+    InstanceDir: "{{ mssql_instance_path }}"
+    InstallSQLDataDir: "{{ mssql_sqlinstalldata_path }}"
+    SQLUserDBDir: "{{ mssql_sqluserdata_path }}"
+    SQLUserDBLogDir: "{{ mssql_sqluserlog_path }}"
+    SQLTempDBDir: "{{ mssql_sqltempdb_path }}"
+    SQLTempDBLogDir: "{{ mssql_sqltempdblog_path }}"
+    Features: "{{ mssql_features }}"
+    SQLCollation: "{{ mssql_collation }}"
+    BrowserSvcStartupType: "{{ mssql_browsersvc_mode }}"
+    SuppressReboot: "{{ mssql_suppress_reboot }}"
+    # Service Accounts
+    #
+    # If the type of the DSC resource option is a PSCredential then
+    # there needs to be 2 options set in the Ansible task definition
+    # suffixed with _username and _password. So we will be providing
+    # two options for these normally single option items.
+
+    # SQL Service Account
+    SQLSvcAccount_username: "{{ mssql_sqlsvc_account }}"
+    SQLSvcAccount_password: "{{ mssql_sqlsvc_account_pass }}"
+    # SQL Agent Service Account
+    AgtSvcAccount_username: "{{ mssql_agentsvc_account }}"
+    AgtSvcAccount_password: "{{ mssql_agentsvc_account_pass }}"
+    # SQL Analysis Services Account
+    ASSvcAccount_username: "{{ mssql_assvc_account }}"
+    ASSvcAccount_password: "{{ mssql_assvc_account_pass }}"
+
+    # System Admins
+    SQLSysAdminAccounts: "{{ mssql_sysadmin_accounts }}"
+    # Analysis Services Admins (if installed)
+    ASSysAdminAccounts: "{{ mssql_asadmin_accounts }}"
+  tags: install_mssql
+# End of win_dsc for SQL Server
+
+- name: Set service startup
+  ansible.windows.win_service:
+    name: "SQLAgent${{ mssql_instance_name | upper }}"
+    start_mode: auto
+    username: "{{ mssql_agentsvc_account }}"
+    password: "{{ mssql_agentsvc_account_pass }}"
+    state: started
+  tags: install_mssql
+
+- name: Install SQL Server Management Studio
+  chocolatey.chocolatey.win_chocolatey:
+    name: sql-server-management-studio
+    state: present
+  tags:
+    - install_mssql
+    - install_tools
+
+- name: Force all notified handlers to run at this point, not waiting for normal sync points
+  ansible.builtin.meta: flush_handlers
+  tags: install_mssql
+
+# Firewall configuration
+- name: Firewall | Allow Database Engine for instance
+  ansible.windows.win_dsc:
+    resource_name: xFirewall
+    Name: "SQL Server Database Engine instance {{ mssql_instance_name }}"
+    Program: sqlservr.exe
+    Ensure: present
+    Enabled: true
+    Profile: "Domain"
+    Direction: "Inbound"
+    Action: Allow
+    Description: "Allows the Database Engine to access the network"
+  tags:
+    - install_mssql
+    - configure_firewall
+
+- name: Firewall | Allow SQLBrowser for instance
+  ansible.windows.win_dsc:
+    resource_name: xFirewall
+    Name: "SQL Server Browser instance {{ mssql_instance_name }}"
+    service: SQLBrowser
+    Ensure: present
+    Enabled: true
+    Profile: "Domain"
+    Direction: "Inbound"
+    Action: Allow
+    Description: "Allows the SQL Server Browser to access the network"
+  tags:
+    - install_mssql
+    - configure_firewall
+
+# Begin SQL Server configuration
+- name: Enable TCP Connectivity
+  ansible.windows.win_dsc:
+    resource_name: SqlProtocol
+    InstanceName: "{{ mssql_instance_name }}"
+    ProtocolName: "TcpIp"
+    ListenOnAllIpAddresses: "true"
+    KeepAlive: "20000"
+    Enabled: true
+  tags:
+    - install_mssql
+    - configure_sql
+
+- name: Enable TCP Connectivity
+  ansible.windows.win_dsc:
+    resource_name: SqlProtocolTcpIp
+    InstanceName: "{{ mssql_instance_name }}"
+    IpAddressGroup: IPAll
+    TcpPort: "{{ mssql_port }}"
+    Enabled: true
+  tags:
+    - install_mssql
+    - configure_sql
+
+- name: Adjust Server Memory to max {{ mssql_max_server_memory }} and min {{ mssql_os_memory_reservation }}
+  when: mssql_max_server_memory and mssql_os_memory_reservation is defined
+  ansible.windows.win_dsc:
+    resource_name: SqlMemory
+    InstanceName: "{{ mssql_instance_name }}"
+    ServerName: "{{ ansible_hostname }}"
+    MinMemoryPercent: 25
+    MaxMemoryPercent: 75
+    DynamicAlloc: false
+    Ensure: "Present"
+  tags:
+    - install_mssql
+    - configure_sql
+
+- name: Adjust Max Degree of Parallelism
+  when: mssql_max_degree_of_parallelism is defined
+  ansible.windows.win_dsc:
+    resource_name: SqlMaxDop
+    ServerName: "{{ ansible_hostname }}"
+    InstanceName: "{{ mssql_instance_name }}"
+    Ensure: "Present"
+    DynamicAlloc: true
+    MaxDop: 0
+  tags:
+    - install_mssql
+    - configure_sql
+
+- name: Get Filestream of {{ ansible_hostname | upper }}\{{ mssql_instance_name }}
+  ansible.windows.win_powershell:
+    script: |
+      # Get FILESTREAM
+      $instance = "{{ mssql_instance_name }}"
+      Get-WmiObject -Namespace "ROOT\Microsoft\SqlServer\ComputerManagement15" -Class FilestreamSettings | where {$_.InstanceName -eq $instance} | Select -Property AccessLevel
+  register: filstream_state
+  failed_when: "filstream_state.error != []"
+  changed_when: false
+  tags: install_mssql
+
+- name: Enable Filestream of {{ ansible_hostname | upper }}\{{ mssql_instance_name }} with level {{ mssql_filestream_access }}
+  ansible.windows.win_powershell:
+    script: |
+      # Enable FILESTREAM
+      $instance = "{{ mssql_instance_name }}"
+      $wmi = Get-WmiObject -Namespace "ROOT\Microsoft\SqlServer\ComputerManagement15" -Class FilestreamSettings | where {$_.InstanceName -eq $instance}
+      $wmi.EnableFilestream({{ mssql_filestream_access }}, $instance)
+      Get-Service -Name "SQL Server ({{ mssql_instance_name }})" | Restart-Service -Force
+  register: restore_state
+  failed_when: "restore_state.error != []"
+  when: "mssql_filestream_access != filstream_state.output[0].AccessLevel"
+  tags: install_mssql
+
+- name: Activate filestream of {{ ansible_hostname | upper }}\{{ mssql_instance_name }} with {{ mssql_filestream_access_level }}
+  ansible.windows.win_powershell:
+    script: |
+      Invoke-Sqlcmd -Query "{{ item }}" -ServerInstance "{{ ansible_hostname | upper }}\{{ mssql_instance_name }}"
+  register: restore_state
+  failed_when: "restore_state.error != []"
+  when: "mssql_filestream_access != filstream_state.output[0].AccessLevel"
+  with_items:
+    - EXEC sp_configure filestream_access_level, {{ mssql_filestream_access_level }}
+    - RECONFIGURE
+  tags: install_mssql
+  notify: Restart SQL Server ({{ mssql_instance_name | upper }})

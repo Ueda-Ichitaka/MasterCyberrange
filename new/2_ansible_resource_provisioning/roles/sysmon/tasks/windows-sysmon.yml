@@ -26,11 +26,26 @@
       when: not sysmondl.stat.exists
 
 - block:
+    - name: check if sysmon archive is present
+      win_stat:
+        path: c:\Program Files\ansible\SwiftOnSecurity.xml
+      register: sysmonconf
+
     - name: Copy Sysmon template
       win_copy:
         src: "../../../configs/SwiftOnSecurity.xml"
         dest: C:\Program Files\ansible\SwiftOnSecurity.xml
+      when: not sysmondl.stat.exists  
+
+    - name: uninstall sysmon (bugfix)
+      win_command: '"C:\Program Files\ansible\sysmon\sysmon64.exe" -u'
 
     - name: install sysmon with defined config
       win_command: '"C:\Program Files\ansible\sysmon\sysmon64.exe" -accepteula -i "C:\Program Files\ansible\SwiftOnSecurity.xml"'
+
+    - name: update config
+      win_command: '"C:\Program Files\ansible\sysmon\sysmon64.exe" -c "C:\Program Files\ansible\SwiftOnSecurity.xml"'
+
+    - name: install manifest
+      win_command: '"C:\Program Files\ansible\sysmon\sysmon64.exe" -m'
 

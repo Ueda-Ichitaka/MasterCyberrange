@@ -1,0 +1,32 @@
+---
+driver:
+  name: vagrant
+  provider:
+    name: VBox
+dependency:
+  name: galaxy
+  enabled: true
+  options:
+    requirements-file: molecule/default/collections.yml
+provisioner:
+  name: ansible
+  inventory:
+    host_vars:
+      instance:
+        ansible_host: 192.168.56.13
+        ansible_user: vagrant
+        ansible_password: vagrant
+        ansible_connection: winrm
+        ansible_winrm_port: '5986'
+        ansible_winrm_transport: 'basic'
+        ansible_winrm_server_cert_validation: 'ignore'
+platforms:
+  - name: instance
+    box: jborean93/WindowsServer2019
+    memory: 2048
+    cpus: 2
+    interfaces:
+      - network_name: private_network
+        ip: 192.168.56.13
+    provider_options:
+      gui: false

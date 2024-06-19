@@ -1,0 +1,8 @@
+---
+# requirements.yml
+collections:
+  - name: microsoft.sql
+  - name: community.windows
+  - name: community.general
+  - name: ansible.posix
+  - name: chocolatey.chocolatey

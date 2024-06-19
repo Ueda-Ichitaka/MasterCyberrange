@@ -1,0 +1,11 @@
+---
+collections:
+  - name: community.windows
+
+  - name: community.general
+
+  - name: ansible.posix
+
+  - name: chocolatey.chocolatey
+
+  - name: ansible.posix

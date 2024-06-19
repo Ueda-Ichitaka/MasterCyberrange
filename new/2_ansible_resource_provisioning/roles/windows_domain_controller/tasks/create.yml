@@ -2,7 +2,7 @@
 
 - name: set local admin password
   win_user:
-    name: Administrator
+    name: TestAdmin
     password: "{{ win_password }}"
     state: present
 
@@ -35,7 +35,7 @@
 - name: Managing Domain Controller Membership
   win_domain_controller:
     dns_domain_name: "attackrange.local"
-    domain_admin_user: "Administrator@attackrange.local"
+    domain_admin_user: "TestAdmin@attackrange.local"
     domain_admin_password: "{{ win_password }}"
     safe_mode_password: "{{ win_password }}"
     state: "domain_controller"

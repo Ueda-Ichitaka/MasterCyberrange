@@ -1,0 +1,5 @@
+---
+mssql_group_users: Users
+mssql_user_administrator: Administrator
+
+mssql_installer: SQLServer2019-DEV-x64-ENU

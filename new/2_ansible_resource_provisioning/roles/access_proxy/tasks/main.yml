@@ -12,6 +12,20 @@
     state: present
 
 
+- name: Install sshpass
+  apt:
+    name: sshpass
+    update_cache: true
+    state: present
+
+
+- name: Install locate
+  apt:
+    name: plocate
+    update_cache: true
+    state: present
+
+
 - name: Install Socks Proxy
   apt:
     name: dante-server

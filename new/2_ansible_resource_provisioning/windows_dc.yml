@@ -1,9 +1,10 @@
-- hosts: all
+- hosts: windows_gateway_server
   gather_facts: True
   vars:
     ansible_connection: winrm
     ansible_winrm_server_cert_validation: ignore
     ansible_port: 5985
+    win_password: 'secreT123%'
   roles:
-    - create_domain_controller
-    #- windows_domain_controller
+    #- create_domain_controller
+    - windows_domain_controller

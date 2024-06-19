@@ -1,0 +1,40 @@
+- hosts: windows_sql_server
+  gather_facts: True
+  vars:
+#    ansible_connection: winrm
+    ansible_winrm_server_cert_validation: ignore
+    private_key_path: "~/.ssh/id_ed25519"
+    mssql_accept_microsoft_odbc_driver_17_for_sql_server_eula: true
+    mssql_accept_microsoft_cli_utilities_for_sql_server_eula: true
+    mssql_accept_microsoft_sql_server_standard_eula: true
+    mssql_password: 'secreT123%'
+    mssql_edition: Evaluation
+    mssql_enable_sql_agent: true
+    mssql_install_fts: true
+    mssql_install_powershell: true
+    mssql_tune_for_fua_storage: true
+    mssql_group_users: User
+    mssql_user_administrator: TestAdmin
+    mssql_installer: SQLServer2019-DEV-x64-DEU
+    mssql_sqlsvc_account:
+    mssql_sqlsvc_account_pass:
+    mssql_instance_name:
+    inventory_hostname:
+    mssql_agentsvc_account:
+    mssql_agentsvc_account_pass:
+    mssql_temp_download_path:
+    mssql_media_installer:
+    mssql_installation_source_path:
+    mssql_agentsvc_account:
+    mssql_agentsvc_account_pass:
+    mssql_sysadmin_accounts:
+    mssql_features:
+    mssql_installshared_path:
+    mssql_installsharedwow_path:
+
+
+  roles:
+ #   - microsoft.sql.server  # https://techcommunity.microsoft.com/t5/sql-server-blog/deploy-sql-server-the-ansible-way/ba-p/2593284
+    - windows_sql_server    # install requirements
+    - bwinfosec.mssql       # https://github.com/bwInfoSec/ansible-role-windows-mssql/tree/main
+    - windows_mssql_db

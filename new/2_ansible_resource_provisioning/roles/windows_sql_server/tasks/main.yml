@@ -1,0 +1,17 @@
+--- 
+
+# The latest powershell gives us more flexiablity to use Windows DSC items
+- name: Windows | Install Powershell 5.0
+  chocolatey.chocolatey.win_chocolatey:
+    name: "powershell"
+  register: check_powershell5
+  retries: 3
+  delay: 10
+
+# Powershell 5.0 requires a reboot, so lets get it done if it's needed.
+- name: Windows | Reboot to complete Powershell 5.0 install
+  win_reboot:
+    # We will give windows a full hour to reboot.
+    reboot_timeout: 3600
+    post_reboot_delay: 60
+  when: check_powershell5.changed

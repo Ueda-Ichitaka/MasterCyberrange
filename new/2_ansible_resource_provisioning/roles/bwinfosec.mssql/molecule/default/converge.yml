@@ -1,0 +1,11 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+    - name: Include ansible-guacamole
+      ansible.builtin.include_role:
+        name: bwinfosec.mssql
+      vars:
+        mssql_sysadmin_accounts:
+          - vagrant
+        system_language: en-US
