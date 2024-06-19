@@ -121,6 +121,12 @@ resource "openstack_networking_floatingip_v2" "floatip_2_OT" {
 
 
 
+resource "openstack_networking_router_interface_v2" "router_interface_2" {
+  router_id = openstack_networking_router_v2.IT_router.id
+  subnet_id = openstack_networking_subnet_v2.OT-subnet.id
+}
+
+
 #----------------------------------------------------------------------------------------------
 
 
@@ -158,34 +164,17 @@ resource "openstack_compute_instance_v2" "splunk-server" {
       host     = openstack_networking_floatingip_v2.floatip_1.address
     }
 
-    # provisioner "remote-exec" {
-    #   inline = ["echo Test >> test.txt"]
-    # }
 
-  # provisioner "local-exec" {
-  #   working_dir = "../2_ansible_resource_provisioning"
-  #   command = "ssh-keygen -f "/home/iai/.ssh/known_hosts" -R 10.0.1.12"
-  # }
-
-
-  ## läuft durch bis install dltk , die localhost url findet er nicht
   provisioner "local-exec" {
     working_dir = "../2_ansible_resource_provisioning"
     command = "ansible-playbook -l 'splunk_server,' make_splunk_server_os.yml"
   }
 
-
-  ## debug
   provisioner "local-exec" {
     working_dir = "../2_ansible_resource_provisioning"
     command = "ansible-playbook -l 'splunk_server,' splunk_server.yml"
   }
 
-  ## debug
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'splunk_server,' splunk_server_post.yml"
-  }
 
 }
 
@@ -223,22 +212,63 @@ users:
     primary_group: Administrators
     inactive: False
 runcmd:
-  - 'winrm quickconfig -q'
-  - |
-    winrm set winrm/config/winrs '@{MaxMemoryPerShellMB="1024"}'
-  - |
-    winrm set winrm/config '@{MaxTimeoutms="1800000"}'
-  - |
-    winrm set winrm/config/service '@{AllowUnencrypted="true"}'
-  - |
-    winrm set winrm/config/service/auth '@{Basic="true"}'
   - 'netsh advfirewall firewall add rule name="WinRM 5985" protocol=TCP dir=in localport=5985 action=allow'
   - 'netsh advfirewall firewall add rule name="WinRM 5986" protocol=TCP dir=in localport=5986 action=allow'
+  - 'echo test >> C:\out.txt'
+  - |
+    powershell -Command "Set-ItemProperty -Path HKLM:SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU -Name UseWUServer -Value 0"
+  - |
+    powershell -Command "Restart-Service -Name wuauserv -Force"
+  - |
+    powershell -Command "Get-WindowsCapability -Online | Where-Object Name -like 'OpenSSH.Server*' | Add-WindowsCapability -Online"
+  - 'echo test >> C:\ps.txt'
+  - |
+    powershell -Command " Echo Y | powershell Set-Item WSMan:\localhost\Client\TrustedHosts -Value '10.0.1.12,10.0.1.14,10.0.1.15,10.0.1.16,10.0.1.17,10.0.1.18,10.0.1.5,10.1.3.152'"
+  - |
+    powershell -Command " Echo Y | powershell Set-Item WSMan:\localhost\Client\TrustedHosts -Value '*'"
+  - 'echo test >> C:\hosts.txt'
+  - 'powershell Set-Service -Name sshd -StartupType Automatic'
+  - 'powershell Set-Service -Name ssh-agent -StartupType Automatic'  
+  - 'net start "ssh-agent"'
+  - 'net start "ssh"'  
+  - 'echo test >> C:\net.txt'  
+  - 'netsh advfirewall firewall add rule name "SSH" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh"'
+  - 'netsh advfirewall firewall add rule name "SSH-add" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-add"'
+  - 'netsh advfirewall firewall add rule name "SSH-agent" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-agent"'
+  - 'netsh advfirewall firewall add rule name "SSH-keygen" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-keygen"'
+  - 'netsh advfirewall firewall add rule name "SSH-keyscan" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-keyscan"'
+  - 'netsh advfirewall firewall add rule name "SSH" dir=out action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh"'
+  - 'netsh advfirewall firewall add rule name "SSH-add" dir=out action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-add"'
+  - 'netsh advfirewall firewall add rule name "SSH-agent" dir=out action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-agent"'
+  - 'netsh advfirewall firewall add rule name "SSH-keygen" dir=out action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-keygen"'
+  - 'netsh advfirewall firewall add rule name "SSH-keyscan" dir=out action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-keyscan"'  
+  - 'echo test >> C:\fw.txt'  
+  - 'winrm quickconfig -q'
+  - 'echo test >> C:\1.txt'
+  - |
+    winrm set winrm/config/winrs @{MaxMemoryPerShellMB="1024"}
+  - 'echo test >> C:\2.txt'
+  - |
+    winrm set winrm/config @{MaxTimeoutms="1800000"}
+  - 'echo test >> C:\3.txt'
+  - |
+    winrm set winrm/config/service @{AllowUnencrypted="true"}
+  - 'echo test >> C:\4.txt'
+  - |
+    winrm set winrm/config/service/auth @{Basic="true"}
+  - 'echo test >> C:\5.txt'
   - 'net stop winrm'
+  - 'echo test >> C:\6.txt'
   - 'sc.exe config winrm start=auto'
+  - 'echo test >> C:\7.txt'
   - 'net start winrm'
-  - 'powershell -Command "Enable-PSRemoting -SkipNetworkProfileChapt29_Target-Win10Workstation2eck -Force"'
+  - 'echo test >> C:\8.txt'
+  - 'powershell -Command "Enable-PSRemoting -SkipNetworkProfileCheck -Force"'
+  - 'winrm enumerate winrm/config/Listener >> C:\wrm.txt'
 EOF
+
+
+
 
 
    network {
@@ -247,15 +277,15 @@ EOF
       fixed_ip_v4 = "10.0.1.15"
    }
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'windows_workstation,' windows.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'windows_workstation,' windows.yml"
+  # }
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'windows_workstation,' windows_post.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'windows_workstation,' windows_post.yml"
+  # }
 
 
 }
@@ -315,6 +345,9 @@ resource "openstack_compute_instance_v2" "Attacker-Kali" {
 
 
 
+
+
+
 #------------------------------------
 # Windows SQL Server
 #------------------------------------
@@ -327,7 +360,7 @@ resource "openstack_compute_instance_v2" "Windows-SQL-Server" {
   name            = "Windows-SQL-Server"
   image_id        = data.openstack_images_image_v2.winserver2022.id
   flavor_name     = "m1.medium"
-  #key_pair = data.openstack_compute_keypair_v2.default_keypair.name
+  key_pair = data.openstack_compute_keypair_v2.default_keypair.name
   security_groups = [
     "default",
     openstack_networking_secgroup_v2.secgroup_windows_remote.name,
@@ -344,25 +377,59 @@ users:
     primary_group: Administrators
     inactive: False
 runcmd:
-  - 'winrm quickconfig -q'
-  - |
-    winrm set winrm/config/winrs '@{MaxMemoryPerShellMB="1024"}'I
-  - |
-    winrm set winrm/config '@{MaxTimeoutms="1800000"}'
-  - |
-    winrm set winrm/config/service '@{AllowUnencrypted="true"}'   network {
-#       access_network = true
-#       name = openstack_networking_network_v2.IT-network.name
-#       fixed_ip_v4 = "10.0.1.16"
-#    }
-  - |
-    winrm set winrm/config/service/auth '@{Basic="true"}'
   - 'netsh advfirewall firewall add rule name="WinRM 5985" protocol=TCP dir=in localport=5985 action=allow'
   - 'netsh advfirewall firewall add rule name="WinRM 5986" protocol=TCP dir=in localport=5986 action=allow'
+  - 'echo test >> C:\out.txt'
+  - |
+    powershell -Command "Set-ItemProperty -Path HKLM:SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU -Name UseWUServer -Value 0"
+  - |
+    powershell -Command "Restart-Service -Name wuauserv -Force"
+  - |
+    powershell -Command "Get-WindowsCapability -Online | Where-Object Name -like 'OpenSSH.Server*' | Add-WindowsCapability -Online"
+  - 'echo test >> C:\ps.txt'
+  - |
+    powershell -Command " Echo Y | powershell Set-Item WSMan:\localhost\Client\TrustedHosts -Value '10.0.1.12,10.0.1.14,10.0.1.15,10.0.1.16,10.0.1.17,10.0.1.18,10.0.1.5,10.1.3.152'"
+  - |
+    powershell -Command " Echo Y | powershell Set-Item WSMan:\localhost\Client\TrustedHosts -Value '*'"
+  - 'echo test >> C:\hosts.txt'
+  - 'powershell Set-Service -Name sshd -StartupType Automatic'
+  - 'powershell Set-Service -Name ssh-agent -StartupType Automatic'  
+  - 'net start "ssh-agent"'
+  - 'net start "ssh"'  
+  - 'echo test >> C:\net.txt'  
+  - 'netsh advfirewall firewall add rule name "SSH" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh"'
+  - 'netsh advfirewall firewall add rule name "SSH-add" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-add"'
+  - 'netsh advfirewall firewall add rule name "SSH-agent" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-agent"'
+  - 'netsh advfirewall firewall add rule name "SSH-keygen" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-keygen"'
+  - 'netsh advfirewall firewall add rule name "SSH-keyscan" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-keyscan"'
+  - 'netsh advfirewall firewall add rule name "SSH" dir=out action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh"'
+  - 'netsh advfirewall firewall add rule name "SSH-add" dir=out action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-add"'
+  - 'netsh advfirewall firewall add rule name "SSH-agent" dir=out action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-agent"'
+  - 'netsh advfirewall firewall add rule name "SSH-keygen" dir=out action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-keygen"'
+  - 'netsh advfirewall firewall add rule name "SSH-keyscan" dir=out action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-keyscan"'  
+  - 'echo test >> C:\fw.txt'  
+  - 'winrm quickconfig -q'
+  - 'echo test >> C:\1.txt'
+  - |
+    winrm set winrm/config/winrs @{MaxMemoryPerShellMB="1024"}
+  - 'echo test >> C:\2.txt'
+  - |
+    winrm set winrm/config @{MaxTimeoutms="1800000"}
+  - 'echo test >> C:\3.txt'
+  - |
+    winrm set winrm/config/service @{AllowUnencrypted="true"}
+  - 'echo test >> C:\4.txt'
+  - |
+    winrm set winrm/config/service/auth @{Basic="true"}
+  - 'echo test >> C:\5.txt'
   - 'net stop winrm'
+  - 'echo test >> C:\6.txt'
   - 'sc.exe config winrm start=auto'
+  - 'echo test >> C:\7.txt'
   - 'net start winrm'
+  - 'echo test >> C:\8.txt'
   - 'powershell -Command "Enable-PSRemoting -SkipNetworkProfileCheck -Force"'
+  - 'winrm enumerate winrm/config/Listener >> C:\wrm.txt'
 EOF
 
   #block_device {
@@ -400,18 +467,26 @@ EOF
   #  command = "ansible-playbook -i '${openstack_compute_instance_v2.test-server.network[0].fixed_ip_v4},' windows_post.yml --extra-vars 'ansible_user=TestAcc ansible_password=secreT123% ansible_winrm_operation_timeout_sec=120 ansible_winrm_read_timeout_sec=150 attack_range_password=secreT123% ansible_port=5986'"
   # }
 
-
-
-
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'windows_workstation,' windows.yml --extra-vars 'ansible_user=TestAdmin ansible_password=secreT123% ansible_winrm_operation_timeout_sec=120 ansible_winrm_read_timeout_sec=150 ansible_port=5986 attack_range_password=secreT123% use_prebuilt_images_with_packer=0 cloud_provider=local splunk_uf_win_url=https://download.splunk.com/products/universalforwarder/releases/9.0.5/windows/splunkforwarder-9.0.5-e9494146ae5c-x64-release.msi'"
+  connection {
+    type     = "ssh"
+    user     = "TestAdmin"
+    private_key = file("~/.ssh/id_ed25519") # iai_vm-cyberrange-host
+    host     = openstack_networking_floatingip_v2.floatip-access-proxy.address #openstack_networking_floatingip_v2.floatip_3.address
   }
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'windows_workstation,' windows_post.yml --extra-vars 'ansible_user=TestAcc ansible_password=secreT123% ansible_winrm_operation_timeout_sec=120 ansible_winrm_read_timeout_sec=150 attack_range_password=secreT123% ansible_port=5986'"
-  }
+
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'windows_sql_server,' windows.yml --extra-vars 'ansible_user=TestAdmin ansible_password=secreT123% ansible_winrm_operation_timeout_sec=120 ansible_winrm_read_timeout_sec=150 ansible_port=5986 attack_range_password=secreT123% use_prebuilt_images_with_packer=0 cloud_provider=local splunk_uf_win_url=https://download.splunk.com/products/universalforwarder/releases/9.0.5/windows/splunkforwarder-9.0.5-e9494146ae5c-x64-release.msi'"
+  # }
+
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'windows_sql_server,' windows_post.yml --extra-vars 'ansible_user=TestAcc ansible_password=secreT123% ansible_winrm_operation_timeout_sec=120 ansible_winrm_read_timeout_sec=150 attack_range_password=secreT123% ansible_port=5986'"
+  # }
+
+
+
 
 
 
@@ -457,7 +532,7 @@ data "openstack_images_image_v2" "winserver2022_2" {
 
 resource "openstack_compute_instance_v2" "Windows-Gateway-Server" {
   name            = "Windows-Gateway-Server"
-  image_id        = data.openstack_images_image_v2.winserver2022_2.id
+  image_id        = data.openstack_images_image_v2.winserver2022.id
   flavor_name     = "m1.medium"
   #key_pair = data.openstack_compute_keypair_v2.default_keypair.name
   security_groups = [
@@ -476,27 +551,59 @@ users:
     primary_group: Administrators
     inactive: False
 runcmd:
-  - 'winrm quickconfig -q'
-  - |
-    winrm set winrm/config/winrs '@{MaxMemoryPerShellMB="1024"}'
-  - |apt29_Target-Win10Workstation2
-    winrm set winrm/config '@{MaxTimeoutms="1800000"}'
-  - |
-    winrm set winrm/config/service '@{AllowUnencrypted="true"}'   network {
-#       access_network = true
-#       name = openstack_networking_network_v2.IT-network     b34c1867-728f-4d7b-839c-06c05a108088 .name
-#       fixed_ip_v4 = "10.0.1.14"
-#    }
-  - |
-    winrm set winrm/config/service/auth '@{Basic="true"}'
-  - 'netsh advfirewall firewall add rule name="WinRM 5985" protocol=TCP dientrale Lieferzufahrt am Campus Nord in Eggenstein-Leopoldshafen ist montags bis
-donnerstags von 8.00-12.00 Uhr u. von 13.00-15.00 Uhr; freitags nur von 8.00-13.00 Uhr
-geöffnet. Bitte Lier=in localport=5985 action=allow'
+  - 'netsh advfirewall firewall add rule name="WinRM 5985" protocol=TCP dir=in localport=5985 action=allow'
   - 'netsh advfirewall firewall add rule name="WinRM 5986" protocol=TCP dir=in localport=5986 action=allow'
+  - 'echo test >> C:\out.txt'
+  - |
+    powershell -Command "Set-ItemProperty -Path HKLM:SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU -Name UseWUServer -Value 0"
+  - |
+    powershell -Command "Restart-Service -Name wuauserv -Force"
+  - |
+    powershell -Command "Get-WindowsCapability -Online | Where-Object Name -like 'OpenSSH.Server*' | Add-WindowsCapability -Online"
+  - 'echo test >> C:\ps.txt'
+  - |
+    powershell -Command " Echo Y | powershell Set-Item WSMan:\localhost\Client\TrustedHosts -Value '10.0.1.12,10.0.1.14,10.0.1.15,10.0.1.16,10.0.1.17,10.0.1.18,10.0.1.5,10.1.3.152'"
+  - |
+    powershell -Command " Echo Y | powershell Set-Item WSMan:\localhost\Client\TrustedHosts -Value '*'"
+  - 'echo test >> C:\hosts.txt'
+  - 'powershell Set-Service -Name sshd -StartupType Automatic'
+  - 'powershell Set-Service -Name ssh-agent -StartupType Automatic'  
+  - 'net start "ssh-agent"'
+  - 'net start "ssh"'  
+  - 'echo test >> C:\net.txt'  
+  - 'netsh advfirewall firewall add rule name "SSH" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh"'
+  - 'netsh advfirewall firewall add rule name "SSH-add" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-add"'
+  - 'netsh advfirewall firewall add rule name "SSH-agent" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-agent"'
+  - 'netsh advfirewall firewall add rule name "SSH-keygen" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-keygen"'
+  - 'netsh advfirewall firewall add rule name "SSH-keyscan" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-keyscan"'
+  - 'netsh advfirewall firewall add rule name "SSH" dir=out action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh"'
+  - 'netsh advfirewall firewall add rule name "SSH-add" dir=out action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-add"'
+  - 'netsh advfirewall firewall add rule name "SSH-agent" dir=out action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-agent"'
+  - 'netsh advfirewall firewall add rule name "SSH-keygen" dir=out action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-keygen"'
+  - 'netsh advfirewall firewall add rule name "SSH-keyscan" dir=out action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-keyscan"'  
+  - 'echo test >> C:\fw.txt'  
+  - 'winrm quickconfig -q'
+  - 'echo test >> C:\1.txt'
+  - |
+    winrm set winrm/config/winrs @{MaxMemoryPerShellMB="1024"}
+  - 'echo test >> C:\2.txt'
+  - |
+    winrm set winrm/config @{MaxTimeoutms="1800000"}
+  - 'echo test >> C:\3.txt'
+  - |
+    winrm set winrm/config/service @{AllowUnencrypted="true"}
+  - 'echo test >> C:\4.txt'
+  - |
+    winrm set winrm/config/service/auth @{Basic="true"}
+  - 'echo test >> C:\5.txt'
   - 'net stop winrm'
+  - 'echo test >> C:\6.txt'
   - 'sc.exe config winrm start=auto'
+  - 'echo test >> C:\7.txt'
   - 'net start winrm'
+  - 'echo test >> C:\8.txt'
   - 'powershell -Command "Enable-PSRemoting -SkipNetworkProfileCheck -Force"'
+  - 'winrm enumerate winrm/config/Listener >> C:\wrm.txt'
 EOF
 
   #block_device {
@@ -551,20 +658,25 @@ EOF
       fixed_ip_v4 = "10.0.1.14"
    }   
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'windows_gateway_server,' windows.yml"
-  }
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'windows_gateway_server,' windows_post.yml"
-  }  
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'windows_gateway_server,' windows_dc.yml"
+  # }
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'windows_gateway_server,' windows_dc.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'windows_gateway_server,' windows.yml"
+  # }
+
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'windows_gateway_server,' windows_post.yml"
+  # }  
+
+
+
+
 
 }
 
@@ -623,36 +735,62 @@ users:
     inactive: True
   - name: TestAdmin
     passwd: secreT123%
-    primary_group: Administratorsresource "openstack_networking_port_v2" "IT-network-port_3" {
-  name               = "port_3"
-  network_id         = openstack_networking_network_v2.IT-network.id
-  admin_state_up     = "true"apt29_Target-Win10Workstation2
-
-  fixed_ip {
-    ip_address = "10.0.1.17"
-    subnet_id  = openstack_networking_subnet_v2.IT-subnet.id
-  }
-}
+    primary_group: Administrators
     inactive: False
 runcmd:
-  - 'winrm quickconfig -q'
-  - |
-    winrm set winrm/config/winrs '@{MaxMemoryPerShellMB="1024"}'
-  - |
-    winrm set winrm/config '@{MaxTimeoutms="1800000"}'
-  - |
-    winrm set winrm/config/service '@{AllowUnencrypted="true"}'
-  - |
-    winrm set winrm/config/service/auth '@{Basic="true"}'
   - 'netsh advfirewall firewall add rule name="WinRM 5985" protocol=TCP dir=in localport=5985 action=allow'
   - 'netsh advfirewall firewall add rule name="WinRM 5986" protocol=TCP dir=in localport=5986 action=allow'
+  - 'echo test >> C:\out.txt'
+  - |
+    powershell -Command "Set-ItemProperty -Path HKLM:SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU -Name UseWUServer -Value 0"
+  - |
+    powershell -Command "Restart-Service -Name wuauserv -Force"
+  - |
+    powershell -Command "Get-WindowsCapability -Online | Where-Object Name -like 'OpenSSH.Server*' | Add-WindowsCapability -Online"
+  - 'echo test >> C:\ps.txt'
+  - |
+    powershell -Command " Echo Y | powershell Set-Item WSMan:\localhost\Client\TrustedHosts -Value '10.0.1.12,10.0.1.14,10.0.1.15,10.0.1.16,10.0.1.17,10.0.1.18,10.0.1.5,10.1.3.152'"
+  - |
+    powershell -Command " Echo Y | powershell Set-Item WSMan:\localhost\Client\TrustedHosts -Value '*'"
+  - 'echo test >> C:\hosts.txt'
+  - 'powershell Set-Service -Name sshd -StartupType Automatic'
+  - 'powershell Set-Service -Name ssh-agent -StartupType Automatic'  
+  - 'net start "ssh-agent"'
+  - 'net start "ssh"'  
+  - 'echo test >> C:\net.txt'  
+  - 'netsh advfirewall firewall add rule name "SSH" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh"'
+  - 'netsh advfirewall firewall add rule name "SSH-add" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-add"'
+  - 'netsh advfirewall firewall add rule name "SSH-agent" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-agent"'
+  - 'netsh advfirewall firewall add rule name "SSH-keygen" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-keygen"'
+  - 'netsh advfirewall firewall add rule name "SSH-keyscan" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-keyscan"'
+  - 'netsh advfirewall firewall add rule name "SSH" dir=out action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh"'
+  - 'netsh advfirewall firewall add rule name "SSH-add" dir=out action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-add"'
+  - 'netsh advfirewall firewall add rule name "SSH-agent" dir=out action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-agent"'
+  - 'netsh advfirewall firewall add rule name "SSH-keygen" dir=out action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-keygen"'
+  - 'netsh advfirewall firewall add rule name "SSH-keyscan" dir=out action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-keyscan"'  
+  - 'echo test >> C:\fw.txt'  
+  - 'winrm quickconfig -q'
+  - 'echo test >> C:\1.txt'
+  - |
+    winrm set winrm/config/winrs @{MaxMemoryPerShellMB="1024"}
+  - 'echo test >> C:\2.txt'
+  - |
+    winrm set winrm/config @{MaxTimeoutms="1800000"}
+  - 'echo test >> C:\3.txt'
+  - |
+    winrm set winrm/config/service @{AllowUnencrypted="true"}
+  - 'echo test >> C:\4.txt'
+  - |
+    winrm set winrm/config/service/auth @{Basic="true"}
+  - 'echo test >> C:\5.txt'
   - 'net stop winrm'
+  - 'echo test >> C:\6.txt'
   - 'sc.exe config winrm start=auto'
+  - 'echo test >> C:\7.txt'
   - 'net start winrm'
-  - name = openstack_networking_network_v2.OT-network.name
-      fixed_ip_v4 = "10.0.2.15"
-   }
-} 'powershell -Command "Enable-PSRemoting -SkipNetworkProfileCheck -Force"'
+  - 'echo test >> C:\8.txt'
+  - 'powershell -Command "Enable-PSRemoting -SkipNetworkProfileCheck -Force"'
+  - 'winrm enumerate winrm/config/Listener >> C:\wrm.txt'
 EOF
 
    network {
@@ -662,15 +800,15 @@ EOF
    }
 
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'windows_engineering,' windows.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'windows_engineering,' windows.yml"
+  # }
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'windows_engineering,' windows_post.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'windows_engineering,' windows_post.yml"
+  # }
 
 
 
@@ -711,28 +849,59 @@ users:
     primary_group: Administrators
     inactive: False
 runcmd:
-  - 'winrm quickconfig -q'
-  - |
-    winrm set winrm/config/winrs '@{MaxMemoryPerShellMB="1024"}'
-  - |
-    winrm set winrm/config '@{MaxTimeoutms="1800000"}'
-  - |   network {
-      access_network = true
-      name = openstack_networking_network_v2.OT-network.name
-      fixed_ip_v4 = "10.0.2.15"
-   }
-    winrm set winrm/config/service '@{AllowUnencrypted="true"}'
-  - |
-    winrm set winrm/config/service/auth '@{Basic="true"}'
   - 'netsh advfirewall firewall add rule name="WinRM 5985" protocol=TCP dir=in localport=5985 action=allow'
   - 'netsh advfirewall firewall add rule name="WinRM 5986" protocol=TCP dir=in localport=5986 action=allow'
+  - 'echo test >> C:\out.txt'
+  - |
+    powershell -Command "Set-ItemProperty -Path HKLM:SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU -Name UseWUServer -Value 0"
+  - |
+    powershell -Command "Restart-Service -Name wuauserv -Force"
+  - |
+    powershell -Command "Get-WindowsCapability -Online | Where-Object Name -like 'OpenSSH.Server*' | Add-WindowsCapability -Online"
+  - 'echo test >> C:\ps.txt'
+  - |
+    powershell -Command " Echo Y | powershell Set-Item WSMan:\localhost\Client\TrustedHosts -Value '10.0.1.12,10.0.1.14,10.0.1.15,10.0.1.16,10.0.1.17,10.0.1.18,10.0.1.5,10.1.3.152'"
+  - |
+    powershell -Command " Echo Y | powershell Set-Item WSMan:\localhost\Client\TrustedHosts -Value '*'"
+  - 'echo test >> C:\hosts.txt'
+  - 'powershell Set-Service -Name sshd -StartupType Automatic'
+  - 'powershell Set-Service -Name ssh-agent -StartupType Automatic'  
+  - 'net start "ssh-agent"'
+  - 'net start "ssh"'  
+  - 'echo test >> C:\net.txt'  
+  - 'netsh advfirewall firewall add rule name "SSH" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh"'
+  - 'netsh advfirewall firewall add rule name "SSH-add" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-add"'
+  - 'netsh advfirewall firewall add rule name "SSH-agent" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-agent"'
+  - 'netsh advfirewall firewall add rule name "SSH-keygen" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-keygen"'
+  - 'netsh advfirewall firewall add rule name "SSH-keyscan" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-keyscan"'
+  - 'netsh advfirewall firewall add rule name "SSH" dir=out action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh"'
+  - 'netsh advfirewall firewall add rule name "SSH-add" dir=out action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-add"'
+  - 'netsh advfirewall firewall add rule name "SSH-agent" dir=out action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-agent"'
+  - 'netsh advfirewall firewall add rule name "SSH-keygen" dir=out action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-keygen"'
+  - 'netsh advfirewall firewall add rule name "SSH-keyscan" dir=out action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-keyscan"'  
+  - 'echo test >> C:\fw.txt'  
+  - 'winrm quickconfig -q'
+  - 'echo test >> C:\1.txt'
+  - |
+    winrm set winrm/config/winrs @{MaxMemoryPerShellMB="1024"}
+  - 'echo test >> C:\2.txt'
+  - |
+    winrm set winrm/config @{MaxTimeoutms="1800000"}
+  - 'echo test >> C:\3.txt'
+  - |
+    winrm set winrm/config/service @{AllowUnencrypted="true"}
+  - 'echo test >> C:\4.txt'
+  - |
+    winrm set winrm/config/service/auth @{Basic="true"}
+  - 'echo test >> C:\5.txt'
   - 'net stop winrm'
+  - 'echo test >> C:\6.txt'
   - 'sc.exe config winrm start=auto'
+  - 'echo test >> C:\7.txt'
   - 'net start winrm'
-  - name = openstack_networking_network_v2.OT-network.name
-      fixed_ip_v4 = "10.0.2.15"
-   }
-} 'powershell -Command "Enable-PSRemoting -SkipNetworkProfileCheck -Force"'
+  - 'echo test >> C:\8.txt'
+  - 'powershell -Command "Enable-PSRemoting -SkipNetworkProfileCheck -Force"'
+  - 'winrm enumerate winrm/config/Listener >> C:\wrm.txt'
 EOF
 
    network {  
@@ -742,15 +911,15 @@ EOF
    }
 
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'windows_operating,' windows.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'windows_operating,' windows.yml"
+  # }
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'windows_operating,' windows_post.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'windows_operating,' windows_post.yml"
+  # }
 
 
 

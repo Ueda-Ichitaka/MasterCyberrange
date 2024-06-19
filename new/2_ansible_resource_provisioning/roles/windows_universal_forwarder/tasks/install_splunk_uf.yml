@@ -1,9 +1,21 @@
 
 
-- name: Download Splunk UF from Splunk website
-  win_shell: |
-    [Net.ServicePointManager]::SecurityProtocol = "tls12, tls11, tls"
-    (New-Object System.Net.WebClient).DownloadFile("{{ splunk_uf_win_url }}", "C:\splunkuf.msi")
+# - name: Download Splunk UF from Splunk website
+#   win_shell: |
+#     [Net.ServicePointManager]::SecurityProtocol = "tls12, tls11, tls"
+#     (New-Object System.Net.WebClient).DownloadFile("{{ splunk_uf_win_url }}", "C:\splunkuf.msi")
+
+
+# pfad auf proxy, für von host aus muss der pfad wieder angepasst werden
+- name: copy splunk installer
+  ansible.builtin.copy:
+    src: /home/2_ansible_resource_provisioning/remote_host_files/splunk/splunkforwarder-9.2.1-78803f08aabb-x64-release.msi
+    dest: C:\splunkuf.msi
+    owner: '{{ ansible_user }}'
+    group: '{{ ansible_user }}'
+    mode: '744'
+
+
 
 - name: Install Splunk_UF MSI
   win_package:

@@ -1,6 +1,8 @@
 ---
-#- include: set-hostname.yml
+- include: set-hostname.yml
 - include: windows-disable-defender.yml
+#- include: windows-disable-firewall.yml
+#- include: activate-ssh.yml
 - include: windows-enable-ps-logging.yml
 - include: windows-enable-4688-cmd-line-audit.yml
 - include: install_choco.yml

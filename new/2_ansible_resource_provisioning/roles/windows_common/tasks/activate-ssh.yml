@@ -1,0 +1,120 @@
+---
+
+- name: Install ssh
+  ansible.windows.win_feature:
+    name: 
+      - OpenSSH.Server
+      - OpenSSH.Client
+    state: present
+
+- name: install the Win32-OpenSSH service
+  win_chocolatey:
+    name: openssh
+    package_params: /SSHServerFeature
+    state: present
+
+
+- name: Install openssh server backup
+  ansible.builtin.shell: powershell -Command "Get-WindowsCapability -Online | Where-Object Name -like 'OpenSSH.Server*' | Add-WindowsCapability -Online"
+
+
+## autostart service openssh server
+- name: activate and autostart openssh server
+  ansible.windows.win_service:
+    name: sshd
+    start_mode: auto
+    state: started
+
+
+## autostart service openssh auth agent
+- name: activate and autostart openssh auth agent
+  ansible.windows.win_service:
+    name: ssh-agent
+    start_mode: auto
+    state: started
+
+
+## allow application through Firewall
+## ssh ssh-add ssh-agent ssh-keygen ssh-keyscan C:\Windwos\System32\OpenSSH
+
+
+- name: Firewall rule to allow ssh
+  community.windows.win_firewall_rule:
+    name: ssh
+    action: allow
+    state: present
+    program: C:\Windows\System32\OpenSSH\ssh
+    enabled: yes
+
+- name: Firewall rule to allow ssh-add
+  community.windows.win_firewall_rule:
+    name: ssh-add
+    action: allow
+    state: present
+    program: C:\Windows\System32\OpenSSH\ssh-add
+    enabled: yes    
+
+- name: Firewall rule to allow ssh-agent
+  community.windows.win_firewall_rule:
+    name: ssh-agent
+    action: allow
+    state: present
+    program: C:\Windows\System32\OpenSSH\ssh-agent
+    enabled: yes
+
+- name: Firewall rule to allow ssh-keyscan
+  community.windows.win_firewall_rule:
+    name: ssh-keyscan
+    action: allow
+    state: present
+    program: C:\Windows\System32\OpenSSH\ssh-keyscan
+    enabled: yes
+
+- name: Firewall rule to allow ssh-keygen
+  community.windows.win_firewall_rule:
+    name: ssh-keygen
+    action: allow
+    state: present
+    program: C:\Windows\System32\OpenSSH\ssh-keygen
+    enabled: yes
+
+
+
+- name: Firewall rule to allow port range
+  community.windows.win_firewall_rule:
+    name: Sample port range
+    localport: 5985-5986
+    action: allow
+    direction: in
+    protocol: tcp
+    state: present
+    enabled: yes
+
+
+- name: Firewall rule to allow SMTP on TCP port 25
+  community.windows.win_firewall_rule:
+    name: SMTP
+    localport: 25
+    action: allow
+    direction: in
+    protocol: tcp
+    state: present
+    enabled: yes
+
+- name: Firewall rule to allow RDP on TCP port 3389
+  community.windows.win_firewall_rule:
+    name: Remote Desktop
+    localport: 3389
+    action: allow
+    direction: in
+    protocol: tcp
+    profiles: private
+    state: present
+    enabled: yes
+
+
+- name: set the default shell to cmd
+  win_regedit:
+    path: HKLM:\SOFTWARE\OpenSSH
+    name: DefaultShell
+    state: absent

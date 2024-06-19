@@ -11,24 +11,62 @@
   file: path=/opt mode=777
 
 - name: checking if splunk is install
-  stat: path=/opt/splunk
+  stat: path=/opt/splunk/bin
   register: splunk_path
 
 - name: is splunk installed?
   debug: msg='splunk is already installed under /opt/splunk'
   when: splunk_path.stat.exists
 
-- name: download splunk
-  get_url:
-    url: '{{ splunk_url }}'
-    dest: /opt/splunk.tgz
-  when: splunk_path.stat.exists == false
+# - name: download splunk
+#   get_url:
+#     url: '{{ splunk_url }}'
+#     dest: /opt/splunk.tgz
+#   when: splunk_path.stat.exists == false
 
-- name: install splunk binary
-  unarchive: remote_src=yes src=/opt/splunk.tgz dest=/opt/ owner=splunk group=splunk creates=yes
-  become: yes
-  become_user: splunk
-  when: splunk_path.stat.exists == false
+
+- name: copy splunk tgz installer
+  ansible.builtin.copy:
+    src: /home/iai/attack_range_openstack/2_ansible_resource_provisioning/remote_host_files/splunk/splunk-9.2.1-78803f08aabb-Linux-x86_64.tgz
+    dest: /opt/splunk.tgz
+    owner: 'splunk'
+    group: 'splunk'
+    mode: '744'
+
+- name: copy splunk deb installer
+  ansible.builtin.copy:
+    src: /home/iai/attack_range_openstack/2_ansible_resource_provisioning/remote_host_files/splunk/splunk-9.2.1-78803f08aabb-linux-2.6-amd64.deb
+    dest: /opt/splunk.deb
+    owner: 'splunk'
+    group: 'splunk'
+    mode: '744'
+
+
+- name: Install deb
+  apt:
+    deb: /opt/splunk.deb
+    dpkg_options: 'Install'
+    update_cache: true
+    state: present
+  when: splunk_path.stat.exists == false  
+
+
+# - name: install tgz manually
+#   shell: |
+#     cd /opt
+#     sudo tar -zxvf splunk.tgz
+
+
+# maybe chown /opt komplett auf splunk user, damit sudo nicht gebraucht wird
+
+
+# - name: install splunk binary
+#   unarchive: remote_src=yes src=/opt/splunk.tgz dest=/opt/ owner=splunk group=splunk creates=yes
+#   become: yes
+#   become_user: splunk
+# #  when: splunk_path.stat.exists == false
+
+
 
 - name: migrate to WiredTiger
   blockinfile:
@@ -40,14 +78,14 @@
       storageEngine=wiredTiger
 
 - name: accept license and start splunk
-  shell: /opt/splunk/bin/splunk start --accept-license --answer-yes --no-prompt --seed-passwd Pl3ase-k1Ll-me:p
+  shell: sudo /opt/splunk/bin/splunk start --accept-license --answer-yes --no-prompt --seed-passwd Pl3ase-k1Ll-me:p
   become: yes
   become_user: splunk
   when: splunk_path.stat.exists == false
 
 - name: enable boot-start
-  shell: /opt/splunk/bin/splunk enable boot-start -user splunk
-  when: splunk_path.stat.exists == false
+  shell: sudo /opt/splunk/bin/splunk enable boot-start -user splunk
+ # when: splunk_path.stat.exists == false
 
 - name: restart splunk
   service:

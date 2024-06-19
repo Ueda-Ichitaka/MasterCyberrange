@@ -5,4 +5,5 @@
     ansible_winrm_server_cert_validation: ignore
     ansible_port: 5985
   roles:
-    - windows_domain_controller
+    - create_domain_controller
+    #- windows_domain_controller

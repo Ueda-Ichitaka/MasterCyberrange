@@ -38,8 +38,53 @@ resource "openstack_networking_secgroup_rule_v2" "ssh2" {
   security_group_id = openstack_networking_secgroup_v2.secgroup_windows_remote.id
 }
 
+
+# already exists
+# resource "openstack_networking_secgroup_rule_v2" "anyv4egress" {
+#   direction         = "egress"
+#   ethertype         = "IPv4"
+#   remote_ip_prefix  = "0.0.0.0/0"
+#   security_group_id = openstack_networking_secgroup_v2.secgroup_windows_remote.id
+# }
+
+
+# resource "openstack_networking_secgroup_rule_v2" "anyv6egress" {
+#   direction         = "egress"
+#   ethertype         = "IPv6"
+#   remote_ip_prefix  = "::/0"
+#   security_group_id = openstack_networking_secgroup_v2.secgroup_windows_remote.id
+# }
+
+
+resource "openstack_networking_secgroup_rule_v2" "anyvingress" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  remote_ip_prefix  = "0.0.0.0/0"
+  security_group_id = openstack_networking_secgroup_v2.secgroup_windows_remote.id
+}
+
+
+resource "openstack_networking_secgroup_rule_v2" "anyv6ingress" {
+  direction         = "ingress"
+  ethertype         = "IPv6"
+  remote_ip_prefix  = "::/0"
+  security_group_id = openstack_networking_secgroup_v2.secgroup_windows_remote.id
+}
+
+
+
 resource "openstack_networking_secgroup_rule_v2" "winrm" {
   direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = 5985
+  port_range_max    = 5986
+  remote_ip_prefix  = "0.0.0.0/0"
+  security_group_id = openstack_networking_secgroup_v2.secgroup_windows_remote.id
+}
+
+resource "openstack_networking_secgroup_rule_v2" "winrm2" {
+  direction         = "egress"
   ethertype         = "IPv4"
   protocol          = "tcp"
   port_range_min    = 5985

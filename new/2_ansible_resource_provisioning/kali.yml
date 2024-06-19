@@ -1,7 +1,11 @@
 - hosts: kali
   gather_facts: False
   become: true
+  vars:  
+    hostname: splunk-server
   roles:
+    - set_hostname_linux
     - linux_common
     - red_team_tools_terraform
-    - atomic_red_team
+    #- atomic_red_team
+    - install_posh_c2

@@ -39,7 +39,7 @@ if __name__ == '__main__':
     }
     inventory["access_via_proxy"] = {
         'vars': {
-            'ansible_ssh_common_args': f'-o ProxyCommand="ssh -A -p 22 -W %h:%p -q -l {access_proxy_user} {access_proxy_ip}" -o StrictHostKeyChecking=no'
+            'ansible_ssh_common_args': f'-vvvv -o ProxyCommand="ssh -vvvv -A -p 22 -W %h:%p -q -l {access_proxy_user} {access_proxy_ip}" -o StrictHostKeyChecking=no'
         }
     }
 
