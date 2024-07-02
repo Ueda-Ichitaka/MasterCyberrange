@@ -21,3 +21,4 @@ new/2_ansible_resource_provisioning/remote_host_files/splunk/splunk-9.2.1-78803f
 new/2_ansible_resource_provisioning/remote_host_files/splunk/splunk-9.2.1-78803f08aabb-linux-2.6-amd64.deb
 new/2_ansible_resource_provisioning/remote_host_files/apt29/Scenario_2/m.zip
 new/2_ansible_resource_provisioning/remote_host_files/apt29/Scenario_2/m
+new/2_ansible_resource_provisioning/kali.yml
