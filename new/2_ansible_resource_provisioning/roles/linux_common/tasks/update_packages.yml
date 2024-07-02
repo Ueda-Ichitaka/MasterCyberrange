@@ -11,6 +11,28 @@
     name: acl
     state: present
 
+
+- name: Install essential packages
+  ignore_errors: true
+  apt:
+    pkg: 
+    - tmux
+    - plocate
+    - qemu-guest-agent
+    - nano
+    - vi
+    - vim
+    - nmap
+    - netcat
+    - xrdp
+    - build-essential
+    - screen
+    - traceroute
+    update_cache: true
+    state: present
+
+
+
 - name: Check if a reboot is needed for Debian and Ubuntu boxes
   register: reboot_required_file
   stat: path=/var/run/reboot-required get_md5=no

@@ -16,21 +16,21 @@
     mssql_group_users: User
     mssql_user_administrator: TestAdmin
     mssql_installer: SQLServer2019-DEV-x64-DEU
-    mssql_sqlsvc_account:
-    mssql_sqlsvc_account_pass:
-    mssql_instance_name:
-    inventory_hostname:
-    mssql_agentsvc_account:
-    mssql_agentsvc_account_pass:
-    mssql_temp_download_path:
-    mssql_media_installer:
-    mssql_installation_source_path:
-    mssql_agentsvc_account:
-    mssql_agentsvc_account_pass:
-    mssql_sysadmin_accounts:
-    mssql_features:
-    mssql_installshared_path:
-    mssql_installsharedwow_path:
+    # mssql_sqlsvc_account:
+    # mssql_sqlsvc_account_pass:
+    # mssql_instance_name:
+    # inventory_hostname:
+    # mssql_agentsvc_account:
+    # mssql_agentsvc_account_pass:
+    # mssql_temp_download_path:
+    # mssql_media_installer:
+    # mssql_installation_source_path:
+    # mssql_agentsvc_account:
+    # mssql_agentsvc_account_pass:
+    # mssql_sysadmin_accounts:
+    # mssql_features:
+    # mssql_installshared_path:
+    # mssql_installsharedwow_path:
 
 
   roles:

@@ -40,3 +40,6 @@
     safe_mode_password: "{{ win_password }}"
     state: "domain_controller"
   register: _windows_domain_controller
+
+
+

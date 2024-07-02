@@ -162,7 +162,7 @@ windows_servers_default:
   create_domain: "0"
 # Create Domain will turn this Windows Server into a Domain Controller
 
-  join_domain: "0"
+  join_domain: "1"
 # Join a domain
 
   win_sysmon_config: "SwiftOnSecurity.xml"

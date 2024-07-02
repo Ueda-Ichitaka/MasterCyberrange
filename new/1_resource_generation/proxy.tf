@@ -25,7 +25,7 @@ data "openstack_images_image_v2" "debian12" {
 
 resource "openstack_compute_instance_v2" "access-proxy" {
   name = "attack_range-access-proxy"
-  flavor_name = "standard.small"
+  flavor_name = "standard.medium"
 
   image_id = data.openstack_images_image_v2.debian12.id
   key_pair = "iai_vm-cyberrange-host"

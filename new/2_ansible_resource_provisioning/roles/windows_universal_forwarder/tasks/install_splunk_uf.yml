@@ -16,11 +16,29 @@
     mode: '744'
 
 
+- name: Uninstall Splunk befor reinstall
+  ansible.windows.win_package:
+    path: C:\splunkuf.msi
+    state: absent
+
+
+# - name: Uninstall Splunk befor reinstall
+#   ansible.windows.win_package:
+#     product_id: '{D2FBF5F7-61B4-48EB-AADB-0BB07A62EA43}'
+#     state: absent    
+
 
 - name: Install Splunk_UF MSI
   win_package:
     path: C:\splunkuf.msi
-    arguments: 'WINEVENTLOG_SEC_ENABLE=0 WINEVENTLOG_SYS_ENABLE=0 WINEVENTLOG_APP_ENABLE=0 SPLUNKPASSWORD=Pl3ase-k1Ll-me:p AGREETOLICENSE=YES /quiet'
+    arguments: 'WINEVENTLOG_FWD_ENABLE=0 WINEVENTLOG_SET_ENABLE=0 WINEVENTLOG_SEC_ENABLE=1 WINEVENTLOG_SYS_ENABLE=1 WINEVENTLOG_APP_ENABLE=1 SPLUNKUSERNAME=admin SPLUNKPASSWORD=Pl3ase-k1Ll-me:p AGREETOLICENSE=YES /quiet'
+    #arguments: 'SPLUNKPASSWORD=Pl3ase-k1Ll-me:p AGREETOLICENSE=YES /quiet'
+
+# - name: bla
+#   shell: set /p="allowRemoteLogin = always" <nul >> "C:\Program Files\SplunkUniversalForwarder\etc\system\local\server.conf" 
+#   become: yes
+#   become_user: splunk
+
 
 - name: Start Splunk
   win_service:

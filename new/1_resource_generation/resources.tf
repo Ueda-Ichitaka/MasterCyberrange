@@ -47,6 +47,17 @@ resource "openstack_networking_port_v2" "IT-network-port_2" {
 }
 
 
+resource "openstack_networking_port_v2" "IT-network-port_5" {
+  name               = "port_5"
+  network_id         = openstack_networking_network_v2.IT-network.id
+  admin_state_up     = "true"
+
+  fixed_ip {
+    ip_address = "10.0.1.13"
+    subnet_id  = openstack_networking_subnet_v2.IT-subnet.id
+  }
+}
+
 
 
 
@@ -104,11 +115,25 @@ resource "openstack_networking_port_v2" "OT-network-port_1" {
 
 
 
+resource "openstack_networking_port_v2" "OT-network-port_2" {
+  name               = "port_2"
+  network_id         = openstack_networking_network_v2.OT-network.id
+  admin_state_up     = "true"
+
+  fixed_ip {
+    ip_address = "10.0.2.13"
+    subnet_id  = openstack_networking_subnet_v2.OT-subnet.id
+  }
+}
+
+
 
 # Splunk floatingIP, not necessary with proxy use
 resource "openstack_networking_floatingip_v2" "floatip_1" {
   pool = "public"
 }
+
+
 
 resource "openstack_networking_floatingip_v2" "floatip_2_OT" {
   pool = "public"
@@ -136,11 +161,12 @@ resource "openstack_networking_router_interface_v2" "router_interface_2" {
 
 resource "openstack_compute_instance_v2" "splunk-server" {
    name = "splunk-server"
-   flavor_name = "m1.medium"
+   flavor_name = "standard.large"
    #image_id = "e4c61468-4c60-484d-bbb9-7ac42a1440bf" #debian-10-openstack-arm64-splunk-base
    #image_id = "28e7b185-4428-4c00-b82c-51aa1809e8f7" #bionic-server-cloudimg-20230607-amd64
    image_id = "63688ae7-c167-41e5-80db-164ef5714eef" #debian 12
    key_pair = data.openstack_compute_keypair_v2.default_keypair.name
+   admin_pass = "secreT123%"
    security_groups = [
     "default",
     openstack_networking_secgroup_v2.secgroup_splunk_server.name,
@@ -182,6 +208,62 @@ resource "openstack_compute_instance_v2" "splunk-server" {
 #---------------------------------------------------------------------------------------------------------------------
 
 
+
+
+
+
+#-----------------------
+# ELK Server
+#-----------------------
+
+resource "openstack_compute_instance_v2" "elk-server" {
+   name = "elk-server"
+   flavor_name = "standard.large"
+   #image_id = "e4c61468-4c60-484d-bbb9-7ac42a1440bf" #debian-10-openstack-arm64-splunk-base
+   #image_id = "28e7b185-4428-4c00-b82c-51aa1809e8f7" #bionic-server-cloudimg-20230607-amd64
+   image_id = "63688ae7-c167-41e5-80db-164ef5714eef" #debian 12
+   key_pair = data.openstack_compute_keypair_v2.default_keypair.name
+   admin_pass = "secreT123%"
+   security_groups = [
+    "default",
+    openstack_networking_secgroup_v2.secgroup_splunk_server.name,
+    openstack_networking_secgroup_v2.secgroup_attack_range_internal.name,       ### Wo wird das _internal definiert?
+    ]
+
+   network {
+      access_network = true
+      port = openstack_networking_port_v2.IT-network-port_5.id                  
+   }
+
+   network {
+      access_network = true
+      port = openstack_networking_port_v2.OT-network-port_2.id                  
+   }   
+
+    connection {
+      type     = "ssh"
+      user     = "ubuntu"
+      private_key = file("~/.ssh/id_ed25519") # iai_vm-cyberrange-host
+      host     = openstack_networking_floatingip_v2.floatip_2.address
+    }
+
+
+  provisioner "local-exec" {
+    working_dir = "../2_ansible_resource_provisioning"
+    command = "ansible-playbook -l 'elk_server,' elk_server.yml"
+  }
+
+
+}
+
+
+#---------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
 #-----------------------
 # APT29 Windows Workstation
 #-----------------------
@@ -211,9 +293,21 @@ users:
     passwd: secreT123%
     primary_group: Administrators
     inactive: False
+  - name TestUser
+    passwd: secreT123%
+    primary_group: Users
+    inactive: False  
 runcmd:
   - 'netsh advfirewall firewall add rule name="WinRM 5985" protocol=TCP dir=in localport=5985 action=allow'
   - 'netsh advfirewall firewall add rule name="WinRM 5986" protocol=TCP dir=in localport=5986 action=allow'
+  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=in localport=8000 action=allow'
+  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=out localport=8000 action=allow'  
+  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=in localport=8089 action=allow'
+  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=out localport=8089 action=allow'  
+  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=in localport=8065 action=allow'
+  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=out localport=8065 action=allow'
+  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=in localport=8191 action=allow'
+  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=out localport=8191 action=allow' 
   - 'echo test >> C:\out.txt'
   - |
     powershell -Command "Set-ItemProperty -Path HKLM:SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU -Name UseWUServer -Value 0"
@@ -232,6 +326,13 @@ runcmd:
   - 'net start "ssh-agent"'
   - 'net start "ssh"'  
   - 'echo test >> C:\net.txt'  
+  - 'powershell New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\WDigest" -Name UseLogonCredential -Value 1 -Force'
+  - 'powershell New-Item -Path "HKLM:\SOFTWARE\Microsoft\Office\Outlook\Security" -Force'
+  - 'powershell New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Office\Outlook\Security" -Name ObjectModelGuard -Value 2 -Force'
+  - 'powershell New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Office\Outlook\Security" -Name PromtOOMSend -Value 2 -Force'
+  - 'powershell New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Office\Outlook\Security" -Name AdminSecurityMode -Value 3 -Force'
+  - 'powershell New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Office\Outlook\Security" -Name promtoomaddressinformationaccess -Value 2 -Force'
+  - 'powershell New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Office\Outlook\Security" -Name promptoomaddressbookaccess -Value 2 -Force' 
   - 'netsh advfirewall firewall add rule name "SSH" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh"'
   - 'netsh advfirewall firewall add rule name "SSH-add" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-add"'
   - 'netsh advfirewall firewall add rule name "SSH-agent" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-agent"'
@@ -259,7 +360,7 @@ runcmd:
   - 'echo test >> C:\5.txt'
   - 'net stop winrm'
   - 'echo test >> C:\6.txt'
-  - 'sc.exe config winrm start=auto'
+  - 'powershell Set-Service -Name winrm -StartupType Automatic'
   - 'echo test >> C:\7.txt'
   - 'net start winrm'
   - 'echo test >> C:\8.txt'
@@ -319,6 +420,8 @@ resource "openstack_compute_instance_v2" "Attacker-Kali" {
    flavor_name = "m1.medium"
    image_id = "bf8afd2a-f61b-4e2d-a747-caf2803c8d37"
    key_pair = data.openstack_compute_keypair_v2.default_keypair.name
+   admin_pass = "1337"
+
 
    network {
       access_network = true
@@ -376,9 +479,21 @@ users:
     passwd: secreT123%
     primary_group: Administrators
     inactive: False
+  - name TestUser
+    passwd: secreT123%
+    primary_group: Users
+    inactive: False  
 runcmd:
   - 'netsh advfirewall firewall add rule name="WinRM 5985" protocol=TCP dir=in localport=5985 action=allow'
   - 'netsh advfirewall firewall add rule name="WinRM 5986" protocol=TCP dir=in localport=5986 action=allow'
+  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=in localport=8000 action=allow'
+  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=out localport=8000 action=allow'  
+  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=in localport=8089 action=allow'
+  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=out localport=8089 action=allow'  
+  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=in localport=8065 action=allow'
+  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=out localport=8065 action=allow'
+  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=in localport=8191 action=allow'
+  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=out localport=8191 action=allow' 
   - 'echo test >> C:\out.txt'
   - |
     powershell -Command "Set-ItemProperty -Path HKLM:SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU -Name UseWUServer -Value 0"
@@ -397,6 +512,7 @@ runcmd:
   - 'net start "ssh-agent"'
   - 'net start "ssh"'  
   - 'echo test >> C:\net.txt'  
+  - 'powershell New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\WDigest" -Name UseLogonCredential -Value 1 -Force'
   - 'netsh advfirewall firewall add rule name "SSH" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh"'
   - 'netsh advfirewall firewall add rule name "SSH-add" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-add"'
   - 'netsh advfirewall firewall add rule name "SSH-agent" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-agent"'
@@ -424,7 +540,7 @@ runcmd:
   - 'echo test >> C:\5.txt'
   - 'net stop winrm'
   - 'echo test >> C:\6.txt'
-  - 'sc.exe config winrm start=auto'
+  - 'powershell Set-Service -Name winrm -StartupType Automatic'
   - 'echo test >> C:\7.txt'
   - 'net start winrm'
   - 'echo test >> C:\8.txt'
@@ -537,7 +653,7 @@ resource "openstack_compute_instance_v2" "Windows-Gateway-Server" {
   name            = "Windows-Gateway-Server"
   image_id        = data.openstack_images_image_v2.winserver2022.id
   flavor_name     = "m1.medium"
-  #key_pair = data.openstack_compute_keypair_v2.default_keypair.name
+  key_pair = data.openstack_compute_keypair_v2.default_keypair.name
   security_groups = [
     "default",
     openstack_networking_secgroup_v2.secgroup_windows_remote.name,
@@ -553,9 +669,21 @@ users:
     passwd: secreT123%
     primary_group: Administrators
     inactive: False
+  - name TestUser
+    passwd: secreT123%
+    primary_group: Users
+    inactive: False  
 runcmd:
   - 'netsh advfirewall firewall add rule name="WinRM 5985" protocol=TCP dir=in localport=5985 action=allow'
   - 'netsh advfirewall firewall add rule name="WinRM 5986" protocol=TCP dir=in localport=5986 action=allow'
+  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=in localport=8000 action=allow'
+  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=out localport=8000 action=allow'  
+  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=in localport=8089 action=allow'
+  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=out localport=8089 action=allow'  
+  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=in localport=8065 action=allow'
+  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=out localport=8065 action=allow'
+  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=in localport=8191 action=allow'
+  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=out localport=8191 action=allow' 
   - 'echo test >> C:\out.txt'
   - |
     powershell -Command "Set-ItemProperty -Path HKLM:SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU -Name UseWUServer -Value 0"
@@ -574,6 +702,7 @@ runcmd:
   - 'net start "ssh-agent"'
   - 'net start "ssh"'  
   - 'echo test >> C:\net.txt'  
+  - 'powershell New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\WDigest" -Name UseLogonCredential -Value 1 -Force'
   - 'netsh advfirewall firewall add rule name "SSH" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh"'
   - 'netsh advfirewall firewall add rule name "SSH-add" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-add"'
   - 'netsh advfirewall firewall add rule name "SSH-agent" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-agent"'
@@ -601,7 +730,7 @@ runcmd:
   - 'echo test >> C:\5.txt'
   - 'net stop winrm'
   - 'echo test >> C:\6.txt'
-  - 'sc.exe config winrm start=auto'
+  - 'powershell Set-Service -Name winrm -StartupType Automatic'
   - 'echo test >> C:\7.txt'
   - 'net start winrm'
   - 'echo test >> C:\8.txt'
@@ -652,7 +781,7 @@ EOF
    network {  
       access_network = true
       name = openstack_networking_network_v2.OT-network.name
-      #fixed_ip_v4 = "10.0.2.18"
+      fixed_ip_v4 = "10.0.2.14"
    }
 
    network {  
@@ -740,9 +869,21 @@ users:
     passwd: secreT123%
     primary_group: Administrators
     inactive: False
+  - name TestUser
+    passwd: secreT123%
+    primary_group: Users
+    inactive: False  
 runcmd:
   - 'netsh advfirewall firewall add rule name="WinRM 5985" protocol=TCP dir=in localport=5985 action=allow'
   - 'netsh advfirewall firewall add rule name="WinRM 5986" protocol=TCP dir=in localport=5986 action=allow'
+  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=in localport=8000 action=allow'
+  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=out localport=8000 action=allow'  
+  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=in localport=8089 action=allow'
+  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=out localport=8089 action=allow'  
+  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=in localport=8065 action=allow'
+  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=out localport=8065 action=allow'
+  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=in localport=8191 action=allow'
+  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=out localport=8191 action=allow' 
   - 'echo test >> C:\out.txt'
   - |
     powershell -Command "Set-ItemProperty -Path HKLM:SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU -Name UseWUServer -Value 0"
@@ -761,6 +902,7 @@ runcmd:
   - 'net start "ssh-agent"'
   - 'net start "ssh"'  
   - 'echo test >> C:\net.txt'  
+  - 'powershell New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\WDigest" -Name UseLogonCredential -Value 1 -Force'
   - 'netsh advfirewall firewall add rule name "SSH" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh"'
   - 'netsh advfirewall firewall add rule name "SSH-add" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-add"'
   - 'netsh advfirewall firewall add rule name "SSH-agent" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-agent"'
@@ -851,9 +993,21 @@ users:
     passwd: secreT123%
     primary_group: Administrators
     inactive: False
+  - name TestUser
+    passwd: secreT123%
+    primary_group: Users
+    inactive: False  
 runcmd:
   - 'netsh advfirewall firewall add rule name="WinRM 5985" protocol=TCP dir=in localport=5985 action=allow'
   - 'netsh advfirewall firewall add rule name="WinRM 5986" protocol=TCP dir=in localport=5986 action=allow'
+  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=in localport=8000 action=allow'
+  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=out localport=8000 action=allow'  
+  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=in localport=8089 action=allow'
+  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=out localport=8089 action=allow'  
+  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=in localport=8065 action=allow'
+  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=out localport=8065 action=allow'
+  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=in localport=8191 action=allow'
+  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=out localport=8191 action=allow' 
   - 'echo test >> C:\out.txt'
   - |
     powershell -Command "Set-ItemProperty -Path HKLM:SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU -Name UseWUServer -Value 0"
@@ -872,6 +1026,7 @@ runcmd:
   - 'net start "ssh-agent"'
   - 'net start "ssh"'  
   - 'echo test >> C:\net.txt'  
+  - 'powershell New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\WDigest" -Name UseLogonCredential -Value 1 -Force'
   - 'netsh advfirewall firewall add rule name "SSH" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh"'
   - 'netsh advfirewall firewall add rule name "SSH-add" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-add"'
   - 'netsh advfirewall firewall add rule name "SSH-agent" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-agent"'
@@ -899,7 +1054,7 @@ runcmd:
   - 'echo test >> C:\5.txt'
   - 'net stop winrm'
   - 'echo test >> C:\6.txt'
-  - 'sc.exe config winrm start=auto'
+  - 'powershell Set-Service -Name winrm -StartupType Automatic'
   - 'echo test >> C:\7.txt'
   - 'net start winrm'
   - 'echo test >> C:\8.txt'
@@ -966,6 +1121,12 @@ resource "openstack_compute_instance_v2" "PLC_Linux" {
       fixed_ip_v4 = "10.0.2.17"
    }
 
+   network {  
+      access_network = true
+      name = openstack_networking_network_v2.IT-network.name
+      fixed_ip_v4 = "10.0.1.19"
+   }
+
 
 #   network {
 #     access_network = true
@@ -978,10 +1139,10 @@ resource "openstack_compute_instance_v2" "PLC_Linux" {
   stop_before_destroy = false
 
   # Automatic execution of the corresponding ansible-playbook
-  # provisioner "local-exec" {
-  #   working_dir = "../2_ansible_resource_provisioning"
-  #   command = "ansible-playbook -l 'ubuntu_test,' make_linux_server.yml"
-  # }
+  provisioner "local-exec" {
+    working_dir = "../2_ansible_resource_provisioning"
+    command = "ansible-playbook -l 'plc_linux,' linux.yml"
+  }
 
   connection {
     type     = "ssh"
@@ -1032,14 +1193,20 @@ resource "openstack_compute_instance_v2" "HMI_Linux" {
       fixed_ip_v4 = "10.0.2.16"
    }
 
+   network {  
+      access_network = true
+      name = openstack_networking_network_v2.IT-network.name
+      fixed_ip_v4 = "10.0.1.20"
+   }   
+
 
 
   stop_before_destroy = false
 
-  # Automatic execution of the corresponding ansible-playbook
+  # # Automatic execution of the corresponding ansible-playbook
   # provisioner "local-exec" {
   #   working_dir = "../2_ansible_resource_provisioning"
-  #   command = "ansible-playbook -l 'hmi_linux,' make_linux_server.yml"
+  #   command = "ansible-playbook -l 'hmi_linux,' linux.yml"
   # }
 
   connection {

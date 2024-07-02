@@ -1,0 +1,20 @@
+- hosts: plcs_linux
+  gather_facts: True
+  become: true
+  vars_files:
+    - ../../configs/attack_range_default.yml
+  roles:
+    - set_hostname_linux
+    - linux_common
+ #   - red_team_tools_terraform
+    #- atomic_red_team
+    #- install_posh_c2
+    - update_sysmon_config_linux
+    - linux_universal_forwarder
+    - linux_sysmon
+    - linux_install_art
+    - linux_osquery    
+    - splunk_byo_linux
+   # - contentctl
+
+

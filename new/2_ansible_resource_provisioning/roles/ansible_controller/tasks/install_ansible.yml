@@ -11,6 +11,11 @@
 
 ## install requirements.yaml
 
+- name: install requirements
+  ansible.builtin.shell: >
+    export LC_ALL="C.UTF-8";
+    ansible-galaxy install -r /home/2_ansible_resource_provisioning/requirements.yml
+
 
 - name: Check if a reboot is needed for Debian and Ubuntu boxes
   register: reboot_required_file

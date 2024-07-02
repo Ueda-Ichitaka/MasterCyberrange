@@ -13,7 +13,13 @@
   become: true
   file: path=/opt mode=777
 
-- name: checking if splunk is install
+# - name: Install locate
+#   apt:
+#     name: plocate
+#     update_cache: true
+#     state: present
+
+- name: checking if splunk is installed
   stat: path=/opt/splunkforwarder
   register: splunk_path
 
@@ -21,10 +27,19 @@
   debug: msg='splunk is already installed under /opt/splunkforwarder'
   when: splunk_path.stat.exists
 
+
+# pfad auf proxy, für von host aus muss der pfad wieder angepasst werden
+- name: copy splunk installer
+  ansible.builtin.copy:
+    src: /home/iai/attack_range_openstack/2_ansible_resource_provisioning/remote_host_files/splunk/splunkforwarder-9.2.1-78803f08aabb-linux-2.6-amd64.deb
+    dest: /tmp/splunkuf.deb
+
+
 - name: Install splunk uf
   become: yes
-  apt: deb="{{ splunk_uf_url }}"
-  when: splunk_path.stat.exists == false
+  apt: deb="/tmp/splunkuf.deb"
+#  when: splunk_path.stat.exists == false
+
 
 - name: copy outputs.conf to forward data to splunk server
   template:
@@ -34,6 +49,7 @@
     group: splunk
     force: yes
 
+
 - name: splunk license acceptance
   become: true
   command:  "/opt/splunkforwarder/bin/splunk start --accept-license --answer-yes --no-prompt --seed-passwd Pl3ase-k1Ll-me:p"
@@ -42,15 +58,15 @@
   become: true
   command: "/opt/splunkforwarder/bin/splunk stop"
 
-- name: setup to start at boot
-  become: true
-  command: "/opt/splunkforwarder/bin/splunk enable boot-start"
-  when: cloud_provider != "local" and uf_at_boot != "1"
+# - name: setup to start at boot
+#   become: true
+#   command: "/opt/splunkforwarder/bin/splunk enable boot-start"
+#   #when: cloud_provider != "local" and uf_at_boot != "1"
 
-- name: setup to start at boot
-  become: true
-  command: "/opt/splunkforwarder/bin/splunk enable boot-start"
-  when: cloud_provider == "local"
+# - name: setup to start at boot
+#   become: true
+#   command: "/opt/splunkforwarder/bin/splunk enable boot-start"
+#   #when: cloud_provider == "local"
 
 - name: Start splunk uf
   become: true

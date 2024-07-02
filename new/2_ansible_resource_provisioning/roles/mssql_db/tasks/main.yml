@@ -1,0 +1,23 @@
+---
+
+- name: Create new Database
+  community.general.mssql_db:
+    name: testdata
+    state: present
+    login_host: 10.0.1.18
+    login_password: 'secreT123%'
+    login_user: 'TestAdmin'
+
+
+# Copy database dump file to remote host and restore it to database 'my_db'
+- name: Copy database dump file to remote host
+  ansible.builtin.copy:
+    src: "/home/2_ansible_resource_provisioning/remote_host_files/sql/incadea.8_vZLfYq.dms BC_2024.03 idealer db.bak"
+    dest: C:\sql\incadea_idealer_db.bak
+
+
+- name: Restore the dump file to database
+  community.general.mssql_db:
+    name: incadea_idealer_db
+    state: import
+    target: C:\sql\incadea_idealer_db.bak
