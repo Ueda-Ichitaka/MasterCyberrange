@@ -26,20 +26,60 @@
    
 # Update Elasticsearch config file to allow access (to secure Elasticsearch, bind to 'localhost'). 
 
-- name: Updating the config file to allow outside access
-  lineinfile:
-   destfile: /etc/elasticsearch/elasticsearch.yml
-   regexp: 'network.host:'
-   line: 'network.host: 0.0.0.0'
+
+- name: Replace default elasticsearch.yml configurations
+  template:
+    src: elasticsearch.yml
+    dest: /etc/elasticsearch/elasticsearch.yml
+
+- name: Replace default jvm.options configurations
+  template:
+    src: jvm.options
+    dest: /etc/elasticsearch/jvm.options
+
+
+# - name: Updating the config file to allow outside access
+#   lineinfile:
+#    destfile: /etc/elasticsearch/elasticsearch.yml
+#    regexp: 'network.host:'
+#    line: 'network.host: 0.0.0.0'
  
 # Update Elasticsearch port in config file 
 
-- name: Updating the port in config file 
-  lineinfile:
-   destfile: /etc/elasticsearch/elasticsearch.yml
-   regexp: 'http.port:'
-   line: 'http.port: 9200'
+# - name: Updating the port in config file 
+#   lineinfile:
+#    destfile: /etc/elasticsearch/elasticsearch.yml
+#    regexp: 'http.port:'
+#    line: 'http.port: 9200'
+
+# - name: bugfix jvm options
+#   lineinfile:
+#    destfile: /etc/elasticsearch/jvm.options
+#    regexp: '-XX:+UseConcMarkSweepGC'
+#    line: '#-XX:+UseConcMarkSweepGC'   
  
+# - name: bugfix jvm options 
+#   lineinfile:
+#    destfile: /etc/elasticsearch/jvm.options
+#    regexp: '-XX:CMSInitiatingOccupancyFraction=75'
+#    line: '#-XX:CMSInitiatingOccupancyFraction=75'
+
+# - name: bugfix jvm options
+#   lineinfile:
+#    destfile: /etc/elasticsearch/jvm.options
+#    regexp: '-XX:+UseCMSInitiatingOccupancyOnly'
+#    line: '#-XX:+UseCMSInitiatingOccupancyOnly'
+
+
+- name: activate modules
+  ignore_errors: true
+  ansible.builtin.shell: >
+    export LC_ALL="C.UTF-8";
+    sudo systemctl daemon-reload
+    sudo systemctl enable elasticsearch.service
+    sudo /usr/share/elasticsearch/bin/elasticsearch-plugin install ingest-geoip
+    sudo /usr/share/elasticsearch/bin/elasticsearch-plugin install ingest-user-agent    
+
 # Start Elasticsearch
 - name: Starting Elasticsearch
   service:

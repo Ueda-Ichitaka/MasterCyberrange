@@ -1109,7 +1109,7 @@ data "openstack_images_image_v2" "PLC_Linux" {
 
 resource "openstack_compute_instance_v2" "PLC_Linux" {
   name = "PLC_Linux"
-  flavor_name = "standard.small"
+  flavor_name = "m1.small"
 
   image_id = "d508e903-4f41-491e-bf41-b0cbc0f1712a"    #data.openstack_images_image_v2.ubuntu_test.id
   key_pair = "iai_vm-cyberrange-host"
@@ -1119,12 +1119,6 @@ resource "openstack_compute_instance_v2" "PLC_Linux" {
       access_network = true
       name = openstack_networking_network_v2.OT-network.name
       fixed_ip_v4 = "10.0.2.17"
-   }
-
-   network {  
-      access_network = true
-      name = openstack_networking_network_v2.IT-network.name
-      fixed_ip_v4 = "10.0.1.19"
    }
 
 
@@ -1193,11 +1187,6 @@ resource "openstack_compute_instance_v2" "HMI_Linux" {
       fixed_ip_v4 = "10.0.2.16"
    }
 
-   network {  
-      access_network = true
-      name = openstack_networking_network_v2.IT-network.name
-      fixed_ip_v4 = "10.0.1.20"
-   }   
 
 
 

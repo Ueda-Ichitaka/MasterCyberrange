@@ -15,6 +15,7 @@
     #- windows_splunk_post
     #- create_domain_controller
     - update_sysmon_config 
+    - winlogbeat
     - red_team_tools_terraform
     #- join_domain       
     - windows_agent_prelude

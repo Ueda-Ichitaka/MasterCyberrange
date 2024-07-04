@@ -2,7 +2,8 @@
   gather_facts: True
   become: true
   vars:  
-    hostname: elk_server
+    hostname: elk-server
+    ansible_user: 'debian'
   roles:
     - linux_common
     - set_hostname_linux
@@ -10,9 +11,6 @@
     - elasticsearch_linux
     - kibana_linux
     - filebeat_linux
-    - metricbeat_linux
-    - cloudtrail_logs
-    - carbon_black_cloud_logs
-    - crowdstrike_falcon_logging
+#    - metricbeat_linux
     - guacamole_terraform
 

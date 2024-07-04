@@ -143,6 +143,10 @@ distro_debian:
   hosts:
     kali:
       ansible_host: '10.0.1.17'
+    splunk_server:
+      ansible_host: '10.0.1.12'
+    elk_server:
+      ansible_host: '10.0.1.13'        
     # test_server:
     #   ansible_host: '10.0.1.123'
   vars:

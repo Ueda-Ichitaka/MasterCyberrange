@@ -18,9 +18,9 @@
     pkg: 
     - tmux
     - plocate
+    - mlocate
     - qemu-guest-agent
     - nano
-    - vi
     - vim
     - nmap
     - netcat

@@ -24,3 +24,15 @@ new/2_ansible_resource_provisioning/remote_host_files/apt29/Scenario_2/m
 new/2_ansible_resource_provisioning/kali.yml
 new/2_ansible_resource_provisioning/remote_host_files/splunk/splunkforwarder-9.2.1-78803f08aabb-x64-release.msi
 new/2_ansible_resource_provisioning/remote_host_files/sql/incadea.dms BC_2024.03 idealer db.bak
+new/2_ansible_resource_provisioning/remote_host_files/elk/winlogbeat-5.6.16-windows-x86.zip
+.gitignore
+new/2_ansible_resource_provisioning/remote_host_files/elk/filebeat-5.6.16-amd64.deb
+new/2_ansible_resource_provisioning/remote_host_files/elk/filebeat-5.6.16-i386.deb
+new/2_ansible_resource_provisioning/remote_host_files/elk/filebeat-5.6.16-linux-x86_64.tar.gz
+new/2_ansible_resource_provisioning/remote_host_files/elk/filebeat-5.6.16-linux-x86.tar.gz
+new/2_ansible_resource_provisioning/remote_host_files/elk/filebeat-5.6.16-windows-x86_64.zip
+new/2_ansible_resource_provisioning/remote_host_files/elk/filebeat-5.6.16-windows-x86.zip
+new/2_ansible_resource_provisioning/remote_host_files/elk/winlogbeat-5.6.16-windows-x86_64.zip
+new/2_ansible_resource_provisioning/remote_host_files/elk/metricbeat-5.6.16-amd64.deb
+new/2_ansible_resource_provisioning/remote_host_files/elk/metricbeat-5.6.16-linux-x86_64.tar.gz
+new/2_ansible_resource_provisioning/remote_host_files/elk/metricbeat-5.6.16-windows-x86_64.zip

@@ -9,6 +9,8 @@
  #   - red_team_tools_terraform
     #- atomic_red_team
     #- install_posh_c2
+    - filebeat_linux
+    #- metricbeat_linux    
     - update_sysmon_config_linux
     - linux_universal_forwarder
     - linux_sysmon

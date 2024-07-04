@@ -5,19 +5,41 @@
 
 # Add the Java repo
 
-- name: Add the Java PPA repo
-  apt_repository: 
-   repo: ppa:webupd8team/java
+- name: prerequisites
+  ignore_errors: true
+  apt:
+    pkg: 
+    - gnupg
+    - gnupg2
+    - gnupg1
+    update_cache: true
+    state: present  
+
+
+# - name: Add the Java PPA repo
+#   apt_repository: 
+#    repo: ppa:linuxuprising/java
 
 # Accept Oracle license
 
-- name: Automatically accept the Oracle license 
-  shell: echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
+# - name: Automatically accept the Oracle license 
+#   shell: echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
   
 # Install Java 
 
-- name: Install Java 8
+# - name: Install Java 17
+#   apt:
+#    name: oracle-java17-installer
+#    install_recommends: true
+#    state: present
+#    update_cache: yes
+
+- name: Install Java 
   apt:
-   name: oracle-java8-installer
-   state: present
-   update_cache: yes
+    pkg: 
+    - default-jre
+    - default-jdk
+    install_recommends: true
+    state: present
+    update_cache: yes
+  ignore_errors: true

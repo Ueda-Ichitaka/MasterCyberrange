@@ -5,14 +5,82 @@
 
 # Install Metricbeat 
 
+
+- name: Add Elasticsearch apt key
+  apt_key:
+   url: "https://packages.elastic.co/GPG-KEY-elasticsearch"
+   state: present
+
+
+- name: Adding Elasticsearch repo
+  apt_repository:
+   repo: deb https://artifacts.elastic.co/packages/5.x/apt stable main
+   state: present
+
+
+- name: Install Filebeat with apt
+  apt:
+   name: apt-transport-https
+   update_cache: yes
+
+
 - name: Install Metricbeat with apt
   apt:
    name: metricbeat
    update_cache: yes
     
+
+- name: Updating the port in config file 
+  lineinfile:
+   destfile: /etc/metricbeat/metricbeat.yml
+   regexp: 'hosts: ["localhost:9200"]'
+   line: 'hosts: ["elk-server:9200", "10.0.2.13:9200", "10.0.1.13:9200", "127.0.0.1:9200"]'
+
+
+- name: Updating the port in config file 
+  lineinfile:
+   destfile: /etc/metricbeat/metricbeat.yml
+   regexp: 'host: "localhost:5601"'
+   line: 'host: "10.0.2.13:5601"'
+
+
+
+filebeat.config.prospectors:
+  path: configs/*.yml
+  reload.enabled: true
+  reload.period: 10s
+
+
+filebeat.prospectors:
+
+# Each - is a prospector. Most options can be set at the prospector level, so
+# you can use different prospectors for various configurations.
+# Below are the prospector specific configurations.
+
+- input_type: log
+
+  # Paths that should be crawled and fetched. Glob based paths.
+  paths:
+    - /var/log/*.log
+    #- c:\programdata\elasticsearch\logs\*
+  scan_frequency: 10s
+
+
+
+- name: activate modules
+  ignore_errors: true
+  ansible.builtin.shell: >
+    export LC_ALL="C.UTF-8";
+    sudo bash /usr/bin/filebeat.sh -configtest -e
+    sudo systemctl enable filebeat
+    sudo systemctl start filebeat
+    sudo filebeat modules enable netflow osquery auditd iptables oracle system 
+    filebeat setup -e
+
 # Starting Metricbeat
 
 - name: Starting Metricbeat
   service:
    name: metricbeat
    state: started
+
