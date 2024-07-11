@@ -1,4 +1,4 @@
-- hosts: all
+- hosts: plcs_linux
   gather_facts: True
   become: true
   vars_files:
@@ -12,5 +12,6 @@
     - linux_sysmon
     - linux_install_art
     - linux_osquery    
+    - splunk_byo_linux
 
 

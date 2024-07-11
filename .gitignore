@@ -12,7 +12,12 @@
 # Built Visual Studio Code Extensions
 *.vsix
 
-new/2_ansible_resource_provisioning/remote_host/files/splunk/*
+test.txt
+
+
+new/2_ansible_resource_provisioning/remote_host_files/sql/*
+new/2_ansible_resource_provisioning/remote_host_files/elk/*
+new/2_ansible_resource_provisioning/remote_host_files/splunk/*
 new/2_ansible_resource_provisioning/remote_host_files/splunk/splunkforwarder-9.2.1-78803f08aabb-Linux-x86_64.tgz
 new/2_ansible_resource_provisioning/remote_host_files/splunk/splunkforwarder-9.2.1-78803f08aabb-Linux-armv8.tgz
 new/2_ansible_resource_provisioning/remote_host_files/splunk/splunkforwarder-9.2.1-78803f08aabb-linux-2.6-amd64.deb
@@ -21,11 +26,9 @@ new/2_ansible_resource_provisioning/remote_host_files/splunk/splunk-9.2.1-78803f
 new/2_ansible_resource_provisioning/remote_host_files/splunk/splunk-9.2.1-78803f08aabb-linux-2.6-amd64.deb
 new/2_ansible_resource_provisioning/remote_host_files/apt29/Scenario_2/m.zip
 new/2_ansible_resource_provisioning/remote_host_files/apt29/Scenario_2/m
-new/2_ansible_resource_provisioning/kali.yml
 new/2_ansible_resource_provisioning/remote_host_files/splunk/splunkforwarder-9.2.1-78803f08aabb-x64-release.msi
 new/2_ansible_resource_provisioning/remote_host_files/sql/incadea.dms BC_2024.03 idealer db.bak
 new/2_ansible_resource_provisioning/remote_host_files/elk/winlogbeat-5.6.16-windows-x86.zip
-.gitignore
 new/2_ansible_resource_provisioning/remote_host_files/elk/filebeat-5.6.16-amd64.deb
 new/2_ansible_resource_provisioning/remote_host_files/elk/filebeat-5.6.16-i386.deb
 new/2_ansible_resource_provisioning/remote_host_files/elk/filebeat-5.6.16-linux-x86_64.tar.gz
@@ -36,3 +39,7 @@ new/2_ansible_resource_provisioning/remote_host_files/elk/winlogbeat-5.6.16-wind
 new/2_ansible_resource_provisioning/remote_host_files/elk/metricbeat-5.6.16-amd64.deb
 new/2_ansible_resource_provisioning/remote_host_files/elk/metricbeat-5.6.16-linux-x86_64.tar.gz
 new/2_ansible_resource_provisioning/remote_host_files/elk/metricbeat-5.6.16-windows-x86_64.zip
+new/2_ansible_resource_provisioning/remote_host_files/elk/filebeat-8.9.0-amd64.deb
+new/2_ansible_resource_provisioning/remote_host_files/elk/filebeat-8.9.0-windows-x86_64.msi
+new/2_ansible_resource_provisioning/remote_host_files/elk/filebeat-8.9.0-windows-x86_64.zip
+new/2_ansible_resource_provisioning/remote_host_files/elk/winlogbeat-8.9.0-windows-x86_64.zip

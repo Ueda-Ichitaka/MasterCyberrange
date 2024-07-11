@@ -5,6 +5,8 @@
 
 # Install Kibana 
 
+
+## todo: specific version selector
 - name: Install Kibana with apt
   apt:
    name: kibana
@@ -29,14 +31,14 @@
 #    destfile: /etc/kibana/kibana.yml
 #    regexp: 'elasticsearch.url:'
 #    line: '#elasticsearch.url: "http://localhost:9200"'
-
-
+   
+### todo config bauen
 - name: Replace default elasticsearch.yml configurations
   template:
     src: kibana.yml
     dest: /etc/kibana/kibana.yml
 
-   
+
 # Starting Kibana
 
 - name: Starting Kibana

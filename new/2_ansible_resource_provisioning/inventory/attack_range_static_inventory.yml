@@ -9,13 +9,47 @@ ansible_contoller:
 
 windows:
   hosts:
-    windows_gateway_server:
+    windows_dc_it:
       ansible_host: '10.0.1.14'
       ansible_user: 'TestAdmin'
       ansible_password: 'secreT123%'
       attack_range_password: 'secreT123%' # password for local 'Administrator' and Domain Admin
-      hostname: 'ar-win-gateway'
+      hostname: 'ar-dc-it'
       create_domain: '1'
+      join_domain: '1'
+      install_red_team_tools: '1'
+      win_sysmon_config: 'SwiftOnSecurity.xml'
+      prelude: '0'
+      crowdstrike_falcon: '0'
+      carbon_black_cloud: '0'
+      bad_blood: '1'
+      byo_splunk: '0'
+      byo_splunk_ip: '10.0.1.123'
+      aurora_agent: '0'
+    windows_dc_ot:
+      ansible_host: '10.0.2.14'
+      ansible_user: 'TestAdmin'
+      ansible_password: 'secreT123%'
+      attack_range_password: 'secreT123%' # password for local 'Administrator' and Domain Admin
+      hostname: 'ar-dc-ot'
+      create_domain: '1'
+      join_domain: '1'
+      install_red_team_tools: '1'
+      win_sysmon_config: 'SwiftOnSecurity.xml'
+      prelude: '0'
+      crowdstrike_falcon: '0'
+      carbon_black_cloud: '0'
+      bad_blood: '1'
+      byo_splunk: '0'
+      byo_splunk_ip: '10.0.1.123'
+      aurora_agent: '0'      
+    windows_share_server:
+      ansible_host: '10.0.1.20'
+      ansible_user: 'TestAdmin'
+      ansible_password: 'secreT123%'
+      attack_range_password: 'secreT123%' # password for local 'Administrator' and Domain Admin
+      hostname: 'ar-win-share'
+      create_domain: '0'
       join_domain: '1'
       install_red_team_tools: '1'
       win_sysmon_config: 'SwiftOnSecurity.xml'
@@ -125,33 +159,6 @@ windows:
 
 
 
-
-distro_ubuntu:
-  hosts:
-    splunk_server:
-      ansible_host: '10.0.1.12'
-    elk_server:
-      ansible_host: '10.0.1.13'  
-    plc_linux:
-      ansible_host: '10.0.2.17'
-    hmi_linux:
-      absible_host: '10.0.2.16'
-  vars:
-    ansible_user: 'ubuntu'
-
-distro_debian:
-  hosts:
-    kali:
-      ansible_host: '10.0.1.17'
-    splunk_server:
-      ansible_host: '10.0.1.12'
-    elk_server:
-      ansible_host: '10.0.1.13'        
-    # test_server:
-    #   ansible_host: '10.0.1.123'
-  vars:
-    ansible_user: 'debian'
-
 access_via_proxy:
   hosts:
     windows_gateway_server:
@@ -160,25 +167,69 @@ access_via_proxy:
     windows_engineering:
     windows_operating:
     splunk_server:
-    kali:
+    inside-kali:
 
-os_windows:
-  hosts:
-    windows_gateway_server:
-    windows_workstation:
-    windows_sql_server:
-    windows_engineering:
-    windows_operating:
-  vars:
-    ansible_connection: winrm
-    ansible_winrm_server_cert_validation: ignore
 
-os_linux:
+
+# distro_ubuntu:
+#   hosts:
+#     splunk_server:
+#       ansible_host: '10.0.1.12'
+#     elk_server:
+#       ansible_host: '10.0.1.13'  
+#     plc_linux:
+#       ansible_host: '10.0.2.17'
+#     hmi_linux:
+#       absible_host: '10.0.2.16'
+#   vars:
+#     ansible_user: 'ubuntu'
+
+
+distro_debian:
   hosts:
     splunk_server:
-    kali:
-    hmi_linux:
-    plc_linux:
+      ansible_host: '10.0.1.12'
+      hostname: 'splunk-server'      
+    elk_server:
+      ansible_host: '10.0.1.13'
+      hostname: 'elk-server'        
+  vars:
+    ansible_user: 'debian'
+
+
+distro_kali:
+  hosts:
+    inside_kali:
+      ansible_host: '10.0.1.17'
+      hostname: 'inside-attacker'
+    outside_kali:
+      ansible_host: '10.0.3.37' 
+      hostname: 'outside-attacker'     
+    c2:
+      ansible_host: '10.0.3.38'
+      hostname: 'c2-server'
+
+# os_windows:
+#   hosts:
+#     windows_share_server:
+#     windows_workstation:
+#     windows_sql_server:
+#     windows_engineering:
+#     windows_operating:
+#     windows_dc_it:
+#     windows_dc_ot:
+#   vars:
+#     ansible_connection: winrm
+#     ansible_winrm_server_cert_validation: ignore
+
+# os_linux:
+#   hosts:
+#     splunk_server:
+#     inside_kali:
+#     outside_kali:
+#     c2:
+#     hmi_linux:
+#     plc_linux:
 
 plcs_linux:
   hosts:
@@ -198,10 +249,3 @@ os_splunk:
     splunk_server:
   vars:
     ansible_user: 'debian'
-
-# linux_test:
-#   hosts:
-#     test_linux:
-#       ansible_host: '10.0.1.6'
-#   vars:
-#     ansible_user: 'ubuntu'

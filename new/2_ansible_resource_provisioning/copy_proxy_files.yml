@@ -1,0 +1,6 @@
+ 
+- hosts: proxy
+  gather_facts: False
+  become: true
+  roles:
+    - copy_proxy_files

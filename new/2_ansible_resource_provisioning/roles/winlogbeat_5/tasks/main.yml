@@ -10,6 +10,7 @@
   win_shell: |
     powershell -command "Expand-Archive -Force C:\Users\TestAdmin\Downloads\winlogbeat.zip C:\Program Files\Winlogbeat"
     powershell -command "Move-Item -Path C:\Program Files\Winlogbeat\winlogbeat-5.6.16-windows-x86_64\* -Destination C:\Program Files\Winlogbeat"
+    powershell -command "Set-ExecurtionPolicy Unrestricted"
 
 
 - name: copy config
@@ -21,6 +22,7 @@
 - name: install
   win_shell: |    
     .\install-service-winlogbeat.ps1
+    net start winlogbeat
     
 
 

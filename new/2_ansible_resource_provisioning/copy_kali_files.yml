@@ -1,0 +1,6 @@
+ 
+- hosts: distro_kali
+  gather_facts: False
+  become: true
+  roles:
+    - copy_kali_files

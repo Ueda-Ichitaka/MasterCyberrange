@@ -1,0 +1,60 @@
+---
+
+
+
+- name: Install Elasticsearch
+  block:
+    - name: elasticsearch-install | Import Elasticsearch GPG Key
+      ansible.builtin.shell: "curl -fsSL https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo gpg --dearmor -o /usr/share/keyrings/elasticsearch-keyring.gpg"
+
+
+- name: Add Elasticsearch apt key
+  apt_key:
+   url: "https://packages.elastic.co/GPG-KEY-elasticsearch"
+   state: present
+
+
+- name: Adding Elasticsearch repo
+  apt_repository:
+   repo: deb https://artifacts.elastic.co/packages/7.x/apt stable main
+   state: present
+
+
+## specific version selector
+
+- name: Install Elasticsearch
+  apt:
+   name: elasticsearch
+   state: present
+   update_cache: yes
+
+
+### update and check config
+
+- name: Replace default elasticsearch.yml configurations
+  template:
+    src: elasticsearch.yml
+    dest: /etc/elasticsearch/elasticsearch.yml
+
+
+- name: Replace default jvm.options configurations
+  template:
+    src: jvm.options
+    dest: /etc/elasticsearch/jvm.options
+
+
+- name: activate modules
+  ignore_errors: true
+  ansible.builtin.shell: >
+    export LC_ALL="C.UTF-8";
+    sudo systemctl daemon-reload
+    sudo systemctl enable elasticsearch.service
+    sudo /usr/share/elasticsearch/bin/elasticsearch-plugin install ingest-geoip
+    sudo /usr/share/elasticsearch/bin/elasticsearch-plugin install ingest-user-agent    
+
+# Start Elasticsearch
+- name: Starting Elasticsearch
+  service:
+   name: elasticsearch
+   state: started
+    

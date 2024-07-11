@@ -110,3 +110,9 @@
     url: "https://software-static.download.prss.microsoft.com/sg/download/888969d5-f34g-4e03-ac9d-1f9786c66749/SERVER_EVAL_x64FRE_en-us.iso"
     dest: "/srv/WINDOWS_2022_SERVER_EVAL_x64FRE_en-us.iso"
     mode: '0444'
+
+
+
+### add nginx server
+### configure ngnix server as winrm jump host
+### https://serverfault.com/questions/734833/how-do-i-configure-a-winrm-jump-host-for-use-with-ansible

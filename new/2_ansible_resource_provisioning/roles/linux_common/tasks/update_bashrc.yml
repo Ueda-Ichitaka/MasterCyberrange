@@ -1,0 +1,6 @@
+---
+
+- name: Replace default configurations
+  template:
+    src: bashrc
+    dest: /home/{{ ansible_user }}/.bashrc
