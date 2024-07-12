@@ -2,11 +2,17 @@
 
 
 
-- name: Install Elasticsearch
+- name: Import elasticsearch gpg key
   block:
     - name: elasticsearch-install | Import Elasticsearch GPG Key
       ansible.builtin.shell: "curl -fsSL https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo gpg --dearmor -o /usr/share/keyrings/elasticsearch-keyring.gpg"
 
+
+- name: Install apt-transport-https
+  apt:
+   name: apt-transport-https
+   state: present
+   update_cache: yes
 
 - name: Add Elasticsearch apt key
   apt_key:
@@ -20,7 +26,6 @@
    state: present
 
 
-## specific version selector
 
 - name: Install Elasticsearch
   apt:
@@ -32,15 +37,60 @@
 ### update and check config
 
 - name: Replace default elasticsearch.yml configurations
+  become: yes
   template:
     src: elasticsearch.yml
     dest: /etc/elasticsearch/elasticsearch.yml
+  register: system_change
+  notify: restart elasticsearch    
 
 
 - name: Replace default jvm.options configurations
   template:
     src: jvm.options
     dest: /etc/elasticsearch/jvm.options
+
+
+
+- name: Update elastic user password
+  uri:
+   url: "http://localhost:9200/_security/user/elastic/_password"
+   method: POST
+   body_format: json
+   body: "{ \"password\":\"s3cr3t\" }"
+   status_code: 200
+   user: "elastic"
+   password: "s3cr3t"
+   force_basic_auth: yes
+   validate_certs: no
+
+
+
+- name: Update Kibana user password
+  uri:
+   url: "http://localhost:9200/_security/user/kibana/_password"
+   method: POST
+   body_format: json
+   body: "{ \"password\":\"badsanta\" }"
+   status_code: 200
+   user: "elastic"
+   password: "goodwitch"
+   force_basic_auth: yes
+   validate_certs: no
+
+
+- name: Update beats_system user password
+  uri:
+   url: "http://localhost:9200/_security/user/beats_system/_password"
+   method: POST
+   body_format: json
+   body: "{ \"password\":\"avatar\" }"
+   status_code: 200
+   user: "elastic"
+   password: "goodwitch"
+   force_basic_auth: yes
+   validate_certs: no
+
 
 
 - name: activate modules

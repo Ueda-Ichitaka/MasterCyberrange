@@ -8,7 +8,8 @@
     - linux_common
     - set_hostname_linux
     - java_linux
-    - opensearch_linux_7
+    - elasticsearch_linux_7
+#    - opensearch_linux_7    
     - kibana_linux_7
     - filebeat_linux_7
 #    - metricbeat_linux
