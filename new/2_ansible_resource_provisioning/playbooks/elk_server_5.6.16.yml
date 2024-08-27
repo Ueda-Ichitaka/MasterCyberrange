@@ -1,16 +1,14 @@
-- hosts: all
+- hosts: aggregation_server
   gather_facts: True
   become: true
   vars:  
-    hostname: elk-server-5
+    hostname: aggregation-server
     ansible_user: 'debian'
   roles:
-    - linux_common
-    - set_hostname_linux
     - java_linux
     - elasticsearch_linux_5
     - kibana_linux_5
-    - filebeat_linux_5
+#    - filebeat_linux_5
 #    - metricbeat_linux
 #    - guacamole_terraform
 

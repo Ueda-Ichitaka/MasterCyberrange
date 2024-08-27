@@ -1,18 +1,12 @@
-- hosts: all
+- hosts: aggregation-server
   gather_facts: True
   become: true
   vars:  
-    hostname: elk-server-7
+    hostname: aggregation-server
     ansible_user: 'debian'
   roles:
-    - linux_common
-    - set_hostname_linux
     - java_linux
     - elasticsearch_linux_7
 #    - opensearch_linux_7    
     - kibana_linux_7
     - filebeat_linux_7
-#    - metricbeat_linux
-#    - guacamole_terraform
-
-## todo: umspezifizieren auf ofk 7

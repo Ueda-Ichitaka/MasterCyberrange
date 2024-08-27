@@ -9,125 +9,62 @@ ansible_contoller:
 
 windows:
   hosts:
-    windows_dc_it:
+    IT-Win-DC:
       ansible_host: '10.0.1.14'
       ansible_user: 'TestAdmin'
       ansible_password: 'secreT123%'
-      attack_range_password: 'secreT123%' # password for local 'Administrator' and Domain Admin
-      hostname: 'ar-dc-it'
+      hostname: 'IT-Win-DC'
       create_domain: '1'
       join_domain: '1'
       install_red_team_tools: '1'
-      win_sysmon_config: 'SwiftOnSecurity.xml'
-      prelude: '0'
-      crowdstrike_falcon: '0'
-      carbon_black_cloud: '0'
-      bad_blood: '1'
-      byo_splunk: '0'
-      byo_splunk_ip: '10.0.1.123'
-      aurora_agent: '0'
-    windows_dc_ot:
+    OT-Win-DC:
       ansible_host: '10.0.2.14'
       ansible_user: 'TestAdmin'
       ansible_password: 'secreT123%'
-      attack_range_password: 'secreT123%' # password for local 'Administrator' and Domain Admin
-      hostname: 'ar-dc-ot'
+      hostname: 'OT-Win-DC'
       create_domain: '1'
       join_domain: '1'
-      install_red_team_tools: '1'
-      win_sysmon_config: 'SwiftOnSecurity.xml'
-      prelude: '0'
-      crowdstrike_falcon: '0'
-      carbon_black_cloud: '0'
-      bad_blood: '1'
-      byo_splunk: '0'
-      byo_splunk_ip: '10.0.1.123'
-      aurora_agent: '0'      
-    windows_share_server:
+      install_red_team_tools: '1'   
+    IT-Win-Share:
       ansible_host: '10.0.1.20'
       ansible_user: 'TestAdmin'
       ansible_password: 'secreT123%'
-      attack_range_password: 'secreT123%' # password for local 'Administrator' and Domain Admin
-      hostname: 'ar-win-share'
+      hostname: 'IT-Win-Share'
       create_domain: '0'
       join_domain: '1'
       install_red_team_tools: '1'
-      win_sysmon_config: 'SwiftOnSecurity.xml'
-      prelude: '0'
-      crowdstrike_falcon: '0'
-      carbon_black_cloud: '0'
-      bad_blood: '1'
-      byo_splunk: '0'
-      byo_splunk_ip: '10.0.1.123'
-      aurora_agent: '0'
-    windows_workstation:
+    IT-Win-PC-1:
       ansible_host: '10.0.1.15'
       ansible_user: 'TestAdmin'
       ansible_password: 'secreT123%'
-      attack_range_password: 'secreT123%' # password for local 'Administrator' and Domain Admin
-      hostname: 'ar-win-workstation'
+      hostname: 'IT-Win-PC-1'
       create_domain: '0'
       join_domain: '1'
       install_red_team_tools: '1'
-      win_sysmon_config: 'SwiftOnSecurity.xml'
-      prelude: '0'
-      crowdstrike_falcon: '0'
-      carbon_black_cloud: '0'
-      bad_blood: '0'
-      byo_splunk: '0'
-      byo_splunk_ip: '10.0.1.123'
-      aurora_agent: '0'
-    windows_sql_server:
+    IT-Win-Server-1:
       ansible_host: '10.0.1.18'
       ansible_user: 'TestAdmin'
       ansible_password: 'secreT123%'   
-      attack_range_password: 'secreT123%' # password for local 'Administrator' and Domain Admin
-      hostname: 'ar-win-sql'
+      hostname: 'IT-Win-Server-1'
       create_domain: '0'
       join_domain: '1'
-      install_red_team_tools: '1'
-      win_sysmon_config: 'SwiftOnSecurity.xml'
-      prelude: '0'
-      crowdstrike_falcon: '0'
-      carbon_black_cloud: '0'
-      bad_blood: '0'
-      byo_splunk: '0'
-      byo_splunk_ip: '10.0.1.123'
-      aurora_agent: '0'      
-    windows_engineering:
+      install_red_team_tools: '1'      
+    OT-Win-PC-1:
       ansible_host: '10.0.2.15'
       ansible_user: 'TestAdmin'
       ansible_password: 'secreT123%'
-      attack_range_password: 'secreT123%' # password for local 'Administrator' and Domain Admin
-      hostname: 'ar-win-engineering'
+      hostname: 'OT-Win-PC-1'
       create_domain: '0'
       join_domain: '1'
       install_red_team_tools: '1'
-      win_sysmon_config: 'SwiftOnSecurity.xml'
-      prelude: '0'
-      crowdstrike_falcon: '0'
-      carbon_black_cloud: '0'
-      bad_blood: '0'
-      byo_splunk: '0'
-      byo_splunk_ip: '10.0.1.123'
-      aurora_agent: '0'   
-    windows_operating:
+    OT-Win-PC-2:
       ansible_host: '10.0.2.18'
       ansible_user: 'TestAdmin'
       ansible_password: 'secreT123%'
-      attack_range_password: 'secreT123%' # password for local 'Administrator' and Domain Admin
-      hostname: 'ar-win-operating'
+      hostname: 'OT-Win-PC-2'
       create_domain: '0'
       join_domain: '1'
-      install_red_team_tools: '1'
-      win_sysmon_config: 'SwiftOnSecurity.xml'
-      prelude: '0'
-      crowdstrike_falcon: '0'
-      carbon_black_cloud: '0'
-      bad_blood: '0'
-      byo_splunk: '0'
-      byo_splunk_ip: '10.0.1.123'
-      aurora_agent: '0'         
+      install_red_team_tools: '1'      
   vars:
     cloud_provider: openstack
     splunk_uf_win_url: 'https://download.splunk.com/products/universalforwarder/releases/9.0.5/windows/splunkforwarder-9.0.5-e9494146ae5c-x64-release.msi'
@@ -135,6 +72,7 @@ windows:
     atomic_red_team_branch: master
     prelude_operator_url: "https://download.prelude.org/latest?arch=x64&platform=linux&variant=zip&edition=headless"
     use_prebuilt_images_with_packer: 0
+    win_sysmon_config: 'SwiftOnSecurity.xml'
     #ansible_connection: psrp
     #ansible_psrp_cert_validation: ignore
     ##ansible_psrp_operation_timeout: 120
@@ -153,9 +91,55 @@ windows:
     ansible_user: 'TestAdmin'
     ansible_password: 'secreT123%'
     ansible_winrm_password: 'secreT123%'
+    attack_range_password: 'secreT123%'
     ansible_winrm_user: 'TestAdmin'
+    byo_splunk_ip: '10.0.1.123'
     ansible_winrm_message_encryption: never
     ansible_ssh_common_args': f'-vvvv -o ProxyCommand="ssh -vvvv -A -p 22 -W %h:%p -q -l debian 10.1.3.152" -o StrictHostKeyChecking=no
+
+
+debian:
+  hosts:
+    aggregation_server:
+      ansible_host: '10.0.1.12'
+      hostname: 'aggregation-server'     
+    OT-PLC-Linux:
+      ansible_host: '10.0.2.17'
+      hostname: 'OT-PLC'      
+    OT-HMI-Linux:       
+      ansible_host: '10.0.2.16'
+      hostname: 'OT-HMI'      
+    APT-Download-Server:       
+      ansible_host: '10.0.2.16'
+      hostname: 'APT-Download-Server'            
+  vars:
+    ansible_user: 'debian'
+
+
+
+ubuntu:
+  hosts:
+    IT-Linux-PC-1:
+      absible_host: '10.0.1.16'
+  vars:
+    ansible_user: 'ubuntu'
+
+
+
+kali:
+  hosts:
+    IT-Inside-Attacker:
+      ansible_host: '10.0.1.17'
+      hostname: 'IT-Inside-Attacker'
+    APT-Outside-Attacker:
+      ansible_host: '10.0.3.37' 
+      hostname: 'APT-Outside-Attacker'     
+    APT-C2:
+      ansible_host: '10.0.3.38'
+      hostname: 'APT-C2-server'
+  vars:
+    ansible_user: 'kali'
+
 
 
 
@@ -166,86 +150,19 @@ access_via_proxy:
     windows_sql_server:
     windows_engineering:
     windows_operating:
-    splunk_server:
-    inside-kali:
 
 
 
-# distro_ubuntu:
+# plcs_linux:
 #   hosts:
-#     splunk_server:
-#       ansible_host: '10.0.1.12'
-#     elk_server:
-#       ansible_host: '10.0.1.13'  
-#     plc_linux:
-#       ansible_host: '10.0.2.17'
 #     hmi_linux:
-#       absible_host: '10.0.2.16'
-#   vars:
-#     ansible_user: 'ubuntu'
-
-
-distro_debian:
-  hosts:
-    splunk_server:
-      ansible_host: '10.0.1.12'
-      hostname: 'splunk-server'      
-    elk_server:
-      ansible_host: '10.0.1.13'
-      hostname: 'elk-server'        
-  vars:
-    ansible_user: 'debian'
-
-
-distro_kali:
-  hosts:
-    inside_kali:
-      ansible_host: '10.0.1.17'
-      hostname: 'inside-attacker'
-    outside_kali:
-      ansible_host: '10.0.3.37' 
-      hostname: 'outside-attacker'     
-    c2:
-      ansible_host: '10.0.3.38'
-      hostname: 'c2-server'
-
-# os_windows:
-#   hosts:
-#     windows_share_server:
-#     windows_workstation:
-#     windows_sql_server:
-#     windows_engineering:
-#     windows_operating:
-#     windows_dc_it:
-#     windows_dc_ot:
-#   vars:
-#     ansible_connection: winrm
-#     ansible_winrm_server_cert_validation: ignore
-
-# os_linux:
-#   hosts:
-#     splunk_server:
-#     inside_kali:
-#     outside_kali:
-#     c2:
-#     hmi_linux:
+#       hostname: 'hmi-linux'
+#       absible_host: '10.0.2.16' # '10.0.1.20'
+#       ansible_user: 'ubuntu'
+#       ansible_ssh_common_args': f'-A -vvvv -o ProxyCommand="ssh -vvvv -A -p 22 -W %h:%p -q -l debian 10.1.3.152" -o StrictHostKeyChecking=no
 #     plc_linux:
+#       hostname: 'plc-linux'
+#       ansible_host: '10.0.2.17'  # '10.0.1.19'
+#       ansible_user: 'ubuntu'
+#       ansible_ssh_common_args': f'-A -vvvv -o ProxyCommand="ssh -vvvv -A -p 22 -W %h:%p -q -l debian 10.1.3.152" -o StrictHostKeyChecking=no
 
-plcs_linux:
-  hosts:
-    hmi_linux:
-      hostname: 'hmi-linux'
-      absible_host: '10.0.2.16' # '10.0.1.20'
-      ansible_user: 'ubuntu'
-      ansible_ssh_common_args': f'-A -vvvv -o ProxyCommand="ssh -vvvv -A -p 22 -W %h:%p -q -l debian 10.1.3.152" -o StrictHostKeyChecking=no
-    plc_linux:
-      hostname: 'plc-linux'
-      ansible_host: '10.0.2.17'  # '10.0.1.19'
-      ansible_user: 'ubuntu'
-      ansible_ssh_common_args': f'-A -vvvv -o ProxyCommand="ssh -vvvv -A -p 22 -W %h:%p -q -l debian 10.1.3.152" -o StrictHostKeyChecking=no
-
-os_splunk:
-  hosts:
-    splunk_server:
-  vars:
-    ansible_user: 'debian'

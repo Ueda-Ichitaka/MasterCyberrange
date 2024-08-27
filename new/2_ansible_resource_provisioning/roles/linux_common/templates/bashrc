@@ -98,7 +98,7 @@ fi
 
 
 if [ "$color_prompt" = yes ]; then
-    if [ "$OS" = "Kali GNU/Linux"]; then
+    if [ "$OS" = "Kali GNU/Linux" ]; then
             # override default virtualenv indicator in prompt
             VIRTUAL_ENV_DISABLE_PROMPT=1
 
@@ -122,8 +122,9 @@ if [ "$color_prompt" = yes ]; then
             unset prompt_color
             unset info_color
             unset prompt_symbol
-    else if [ "$OS" = "Debian GNU/Linux"] || [ "$OS" = "Ubuntu"] ; then
+    elif [ "$OS" = "Debian GNU/Linux" ] || [ "$OS" = "Ubuntu" ] ; then
        PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+    fi
 else
     PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
 fi

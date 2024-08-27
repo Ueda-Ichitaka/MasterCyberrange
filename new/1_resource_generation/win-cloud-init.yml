@@ -6,7 +6,7 @@ users:
     passwd: secreT123%
     primary_group: Administrators
     inactive: False
-  - name TestUser
+  - name: TestUser
     passwd: secreT123%
     primary_group: Users
     inactive: False  

@@ -1,0 +1,8 @@
+- hosts: kali
+  gather_facts: False
+  become: true
+  roles:
+    - set_hostname_linux
+    - linux_common
+    - install_posh_c2
+    - copy_kali_files

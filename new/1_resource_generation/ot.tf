@@ -26,38 +26,6 @@ resource "openstack_networking_port_v2" "OT-network-port_1" {
 }
 
 
-
-resource "openstack_networking_port_v2" "OT-network-port_2" {
-  name               = "port_2"
-  network_id         = openstack_networking_network_v2.OT-network.id
-  admin_state_up     = "true"
-
-  fixed_ip {
-    ip_address = "10.0.2.13"
-    subnet_id  = openstack_networking_subnet_v2.OT-subnet.id
-  }
-}
-
-
-
-# Splunk floatingIP, not necessary with proxy use
-resource "openstack_networking_floatingip_v2" "floatip_1" {
-  pool = "public"
-}
-
-
-
-resource "openstack_networking_floatingip_v2" "floatip_2_OT" {
-  pool = "public"
-}
-
-# resource "openstack_networking_floatingip_associate_v2" "splunk_floatingip_1" {
-#   floating_ip = openstack_networking_floatingip_v2.floatip_1.address
-#   port_id = openstack_networking_port_v2.attack_range-network-port_1.id
-# }
-
-
-
 resource "openstack_networking_router_interface_v2" "router_interface_2" {
   router_id = openstack_networking_router_v2.IT_router.id
   subnet_id = openstack_networking_subnet_v2.OT-subnet.id
@@ -71,15 +39,25 @@ resource "openstack_networking_router_interface_v2" "router_interface_2" {
 #------------------------------------
 # Windows OT Domain Controller
 #------------------------------------
+
 data "openstack_images_image_v2" "winserver2022_4" {
     name_regex = "^Windows Server 2022 Eval x86_64$"
     most_recent = true
 }
 
-resource "openstack_compute_instance_v2" "DC-OT" {
-  name            = "DC-OT"
+resource "openstack_compute_flavor_v2" "ot-dc-flavor" {
+    name = "ot-dc-flavor"
+    ram = "4"
+    vcpus = "2"
+    disk = "10"
+    swap = "4"
+}
+
+resource "openstack_compute_instance_v2" "OT-Win-DC" {
+  name            = "OT-Win-DC"
   image_id        = data.openstack_images_image_v2.winserver2022.id
-  flavor_name     = "m1.medium"
+  #flavor_name     = "m1.medium"
+  flavor_id = openstack_compute_flavor_v2.ot-dc-flavor.id
   key_pair = data.openstack_compute_keypair_v2.default_keypair.name
   security_groups = [
     "default",
@@ -91,18 +69,28 @@ resource "openstack_compute_instance_v2" "DC-OT" {
    network {  
       access_network = true
       name = openstack_networking_network_v2.IT-network.name
-      fixed_ip_v4 = "10.0.1.14"
+      fixed_ip_v4 = "10.0.2.14"
    }   
 
 
   provisioner "local-exec" {
     working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'windows_gateway_server,' windows_dc.yml"
+    command = "ansible-playbook -l 'OT-Win-DC,' windows.yml"
   }
 
   provisioner "local-exec" {
     working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'windows_gateway_server,' windows.yml"
+    command = "ansible-playbook -l 'OT-Win-DC,' beats_windows.yml"
+  }
+
+  provisioner "local-exec" {
+    working_dir = "../2_ansible_resource_provisioning"
+    command = "ansible-playbook -l 'OT-Win-DC,' splunk_forwarder_windows.yml"
+  }
+
+  provisioner "local-exec" {
+    working_dir = "../2_ansible_resource_provisioning"
+    command = "ansible-playbook -l 'OT-Win-DC,' windows_dc.yml"
   }
 
 
@@ -125,10 +113,18 @@ data "openstack_images_image_v2" "win10_2" {
     most_recent = true
 }
 
+resource "openstack_compute_flavor_v2" "ot-win-pc-1-flavor" {
+    name = "ot-win-pc-1-flavor"
+    ram = "4"
+    vcpus = "2"
+    disk = "20"
+    swap = "4"
+}
 
-resource "openstack_compute_instance_v2" "APT29-Engineering-PC" {
-  name = "APT29-Engineering-PC"
-  flavor_name = "m1.medium"
+resource "openstack_compute_instance_v2" "OT-Win-PC-1" {
+  name = "OT-Win-PC-1"
+  #flavor_name = "m1.medium"
+  flavor_id = openstack_compute_flavor_v2.ot-win-pc-1-flavor.id
   image_id = "b34c1867-728f-4d7b-839c-06c05a108088" 
   key_pair = data.openstack_compute_keypair_v2.default_keypair.name
   security_groups = [
@@ -143,16 +139,20 @@ resource "openstack_compute_instance_v2" "APT29-Engineering-PC" {
       fixed_ip_v4 = "10.0.2.15"
    }
 
+  provisioner "local-exec" {
+    working_dir = "../2_ansible_resource_provisioning"
+    command = "ansible-playbook -l 'OT-Win-PC-1,' windows.yml"
+  }
 
-  # provisioner "local-exec" {
-  #   working_dir = "../2_ansible_resource_provisioning"
-  #   command = "ansible-playbook -l 'windows_engineering,' windows.yml"
-  # }
+  provisioner "local-exec" {
+    working_dir = "../2_ansible_resource_provisioning"
+    command = "ansible-playbook -l 'OT-Win-PC-1,' beats_windows.yml"
+  }
 
-  # provisioner "local-exec" {
-  #   working_dir = "../2_ansible_resource_provisioning"
-  #   command = "ansible-playbook -l 'windows_engineering,' windows_post.yml"
-  # }
+  provisioner "local-exec" {
+    working_dir = "../2_ansible_resource_provisioning"
+    command = "ansible-playbook -l 'OT-Win-PC-1,' splunk_forwarder_windows.yml"
+  }
 
 
 
@@ -173,9 +173,18 @@ data "openstack_images_image_v2" "win10_3" {
     most_recent = true
 }
 
-resource "openstack_compute_instance_v2" "APT29-Operating-PC" {
-  name = "APT29-Operating-PC"
-  flavor_name = "m1.medium"
+resource "openstack_compute_flavor_v2" "ot-win-pc-2-flavor" {
+    name = "ot-win-pc-2-flavor"
+    ram = "4"
+    vcpus = "2"
+    disk = "20"
+    swap = "4"
+}
+
+resource "openstack_compute_instance_v2" "OT-Win-PC-2" {
+  name = "OT-Win-PC-2"
+  #flavor_name = "m1.medium"
+  flavor_id = openstack_compute_flavor_v2.ot-win-pc-2-flavor.id
   image_id = "b34c1867-728f-4d7b-839c-06c05a108088" 
   key_pair = data.openstack_compute_keypair_v2.default_keypair.name
   security_groups = [
@@ -192,15 +201,20 @@ resource "openstack_compute_instance_v2" "APT29-Operating-PC" {
    }
 
 
-  # provisioner "local-exec" {
-  #   working_dir = "../2_ansible_resource_provisioning"
-  #   command = "ansible-playbook -l 'windows_operating,' windows.yml"
-  # }
+  provisioner "local-exec" {
+    working_dir = "../2_ansible_resource_provisioning"
+    command = "ansible-playbook -l 'OT-Win-PC-2,' windows.yml"
+  }
 
-  # provisioner "local-exec" {
-  #   working_dir = "../2_ansible_resource_provisioning"
-  #   command = "ansible-playbook -l 'windows_operating,' windows_post.yml"
-  # }
+  provisioner "local-exec" {
+    working_dir = "../2_ansible_resource_provisioning"
+    command = "ansible-playbook -l 'OT-Win-PC-2,' beats_windows.yml"
+  }
+
+  provisioner "local-exec" {
+    working_dir = "../2_ansible_resource_provisioning"
+    command = "ansible-playbook -l 'OT-Win-PC-2,' splunk_forwarder_windows.yml"
+  }
 
 
 
@@ -214,75 +228,88 @@ resource "openstack_compute_instance_v2" "APT29-Operating-PC" {
 # Linux PLC
 #-----------------------
 
-data "openstack_images_image_v2" "PLC_Linux" {
-    name_regex = "^ubuntu-focal.*"
-    most_recent = true
+# data "openstack_images_image_v2" "OT-PLC" {
+#     name_regex = "^ubuntu-focal.*"
+#     most_recent = true
+# }
+
+resource "openstack_compute_flavor_v2" "ot-plc-linux-flavor" {
+    name = "ot-plc-linux-flavor"
+    ram = "2"
+    vcpus = "1"
+    disk = "10"
+    swap = "2"
 }
 
-resource "openstack_compute_instance_v2" "PLC_Linux" {
-  name = "PLC_Linux"
-  flavor_name = "m1.small"
+resource "openstack_compute_instance_v2" "OT-PLC-Linux" {
+  name = "OT-PLC-Linux"
+  #flavor_name = "m1.small"
+  flavor_id = openstack_compute_flavor_v2.ot-plc-linux-flavor.id
 
-  image_id = "d508e903-4f41-491e-bf41-b0cbc0f1712a"    #data.openstack_images_image_v2.ubuntu_test.id
+  image_id = "63688ae7-c167-41e5-80db-164ef5714eef" #debian 12
   key_pair = "iai_vm-cyberrange-host"
   security_groups = ["default",openstack_networking_secgroup_v2.secgroup_splunk_universal_forwarder.name]
 
-   network {  
+  network {  
       access_network = true
       name = openstack_networking_network_v2.OT-network.name
       fixed_ip_v4 = "10.0.2.17"
-   }
+  }
 
 
   stop_before_destroy = false
+
+
+  connection {
+    type     = "ssh"
+    user     = "debian"
+    private_key = file("~/.ssh/id_ed25519") # iai_vm-cyberrange-host
+    host     = openstack_networking_floatingip_v2.floatip-access-proxy.address
+  }
+
 
   provisioner "local-exec" {
     working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'plc_linux,' plcs_linux.yml"
+    command = "ansible-playbook -l 'OT-PLC-Linux,' linux.yml"
   }
 
-  connection {
-    type     = "ssh"
-    user     = "debian"
-    private_key = file("~/.ssh/id_ed25519") # iai_vm-cyberrange-host
-    host     = openstack_networking_floatingip_v2.floatip-access-proxy.address
-  }
 }
 
 
-
 #-----------------------
-# Linux HMI
+# Linux PLC
 #-----------------------
 
+# data "openstack_images_image_v2" "OT-PLC" {
+#     name_regex = "^ubuntu-focal.*"
+#     most_recent = true
+# }
 
-data "openstack_images_image_v2" "HMI_Linux" {
-    name_regex = "^ubuntu-focal.*"
-    most_recent = true
+resource "openstack_compute_flavor_v2" "ot-hmi-linux-flavor" {
+    name = "ot-hmi-linux-flavor"
+    ram = "2"
+    vcpus = "1"
+    disk = "10"
+    swap = "2"
 }
 
-resource "openstack_compute_instance_v2" "HMI_Linux" {
-  name = "HMI_Linux"
-  flavor_name = "standard.small"
-
-  image_id = "d508e903-4f41-491e-bf41-b0cbc0f1712a"  # data.openstack_images_image_v2.ubuntu_test.id
+resource "openstack_compute_instance_v2" "OT-HMI-Linux" {
+  name = "OT-HMI-Linux"
+  #flavor_name = "m1.small"
+  flavor_id = openstack_compute_flavor_v2.ot-hmi-linux.flavor.id
+  image_id = "63688ae7-c167-41e5-80db-164ef5714eef" #debian 12
   key_pair = "iai_vm-cyberrange-host"
   security_groups = ["default",openstack_networking_secgroup_v2.secgroup_splunk_universal_forwarder.name]
 
-   network {  
+  network {  
       access_network = true
       name = openstack_networking_network_v2.OT-network.name
       fixed_ip_v4 = "10.0.2.16"
-   }
+  }
 
 
   stop_before_destroy = false
 
-  # # Automatic execution of the corresponding ansible-playbook
-  # provisioner "local-exec" {
-  #   working_dir = "../2_ansible_resource_provisioning"
-  #   command = "ansible-playbook -l 'hmi_linux,' plcs_linux.yml"
-  # }
 
   connection {
     type     = "ssh"
@@ -290,4 +317,11 @@ resource "openstack_compute_instance_v2" "HMI_Linux" {
     private_key = file("~/.ssh/id_ed25519") # iai_vm-cyberrange-host
     host     = openstack_networking_floatingip_v2.floatip-access-proxy.address
   }
+
+
+  provisioner "local-exec" {
+    working_dir = "../2_ansible_resource_provisioning"
+    command = "ansible-playbook -l 'OT-HMI-Linux,' linux.yml"
+  }
+
 }

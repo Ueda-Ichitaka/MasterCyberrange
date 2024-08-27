@@ -1,0 +1,7 @@
+- hosts: debian, ubuntu
+  gather_facts: True
+  become: true
+  vars_files:
+    - ../../configs/attack_range_default.yml
+  roles:
+    - linux_universal_forwarder

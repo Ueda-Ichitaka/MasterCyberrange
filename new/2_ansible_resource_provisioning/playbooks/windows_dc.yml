@@ -1,4 +1,4 @@
-- hosts: windows_gateway_server
+- hosts: IT-Win-DC, OT-Win-DC
   gather_facts: True
   vars:
     ansible_connection: winrm

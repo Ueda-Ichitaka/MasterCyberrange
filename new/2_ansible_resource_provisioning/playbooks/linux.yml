@@ -1,4 +1,4 @@
-- hosts: all
+- hosts: ubuntu, debian
   gather_facts: True
   become: true
   vars_files:
@@ -6,11 +6,12 @@
   roles:
     - set_hostname_linux
     - linux_common
-    - filebeat_linux
     - update_sysmon_config_linux
-    - linux_universal_forwarder
     - linux_sysmon
     - linux_install_art
     - linux_osquery    
+
+
+
 
 

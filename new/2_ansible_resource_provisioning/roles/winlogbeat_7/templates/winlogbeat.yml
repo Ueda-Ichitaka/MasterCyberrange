@@ -20,7 +20,55 @@
 winlogbeat.event_logs:
   - name: Application
     ignore_older: 72h
+
   - name: System
+
+  # Sysmon
+  # osquery
+  # File System Logs
+  # winevent
+  # localsessionmanager
+  # windows defender
+  # task scheduler
+  # winrm
+  #
+  # Get-WinEvent -ListLog * | Format-List -Property LogName
+  # https://www.elastic.co/guide/en/beats/winlogbeat/current/configuration-winlogbeat-options.html#_event_logs_id
+
+
+# 2. File System Logs
+
+# Windows does not natively provide detailed file system activity logging. However, you can use tools like Windows Audit Policy and third-party solutions.
+
+#     Enabling File System Auditing:
+#         Open Local Security Policy (type secpol.msc in the Run dialog).
+#         Navigate to Advanced Audit Policy Configuration > Object Access.
+#         Enable Audit File System for success and failure events.
+
+#     Setting Up File Auditing:
+#         Right-click the folder or file you want to audit, select Properties.
+#         Go to the Security tab and click Advanced.
+#         Go to the Auditing tab and add the users or groups you want to audit, specifying the actions to log.
+
+# 4. Application Logs
+
+# Applications running on Windows often generate their own logs.
+
+#     Common Locations:
+#         Application-specific logs are typically found in the installation directory or under C:\ProgramData or C:\Users\[Username]\AppData.
+#         Web server logs (IIS) are usually located at C:\inetpub\logs\LogFiles.
+
+# 6. Audit Logs
+
+# Audit policies can be configured to capture detailed security-relevant events.
+
+#     Configuring Audit Policies:
+#         Open Local Security Policy (type secpol.msc in the Run dialog).
+#         Navigate to Local Policies > Audit Policy.
+#         Enable auditing for the desired events, such as logon events, account management, and object access
+
+# registry files?
+
 
   - name: Security
     processors:

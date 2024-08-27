@@ -1,0 +1,7 @@
+- hosts: windows
+  gather_facts: True
+  vars:
+    ansible_winrm_server_cert_validation: ignore
+    private_key_path: "~/.ssh/id_ed25519"
+  roles:
+    - windows_universal_forwarder
