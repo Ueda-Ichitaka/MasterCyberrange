@@ -33,6 +33,20 @@
 
 
 
+
+- name: Install wireshark
+  ignore_errors: true
+  apt:
+    pkg: 
+    - wireshark
+    - wireshark-common
+    - wireshark-dev
+    - tshark
+    update_cache: true
+    state: present
+
+
+
 - name: Check if a reboot is needed for Debian and Ubuntu boxes
   register: reboot_required_file
   stat: path=/var/run/reboot-required get_md5=no

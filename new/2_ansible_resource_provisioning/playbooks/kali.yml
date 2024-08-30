@@ -5,4 +5,5 @@
     - set_hostname_linux
     - linux_common
     - install_posh_c2
+    - kali_common
     - copy_kali_files
