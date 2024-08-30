@@ -1,4 +1,4 @@
-- hosts: windows_sql_server
+- hosts: IT-Win-Server-1
   gather_facts: True
   vars:
 #    ansible_connection: winrm

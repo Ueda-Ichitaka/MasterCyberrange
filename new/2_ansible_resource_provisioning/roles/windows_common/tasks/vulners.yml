@@ -1,0 +1,34 @@
+---
+
+
+
+# The latest powershell gives us more flexiablity to use Windows DSC items
+- name: Windows | Install Powershell 5.0
+  chocolatey.chocolatey.win_chocolatey:
+    name: "powershell"
+  register: check_powershell5
+  retries: 3
+  delay: 10
+
+# Powershell 5.0 requires a reboot, so lets get it done if it's needed.
+- name: Windows | Reboot to complete Powershell 5.0 install
+  win_reboot:
+    # We will give windows a full hour to reboot.
+    reboot_timeout: 3600
+    post_reboot_delay: 60
+  when: check_powershell5.changed
+
+
+
+# check for os version
+## if win server 2019
+### uninstall patches for juicy potato cve 2019-0836 for win server 2019 -> workstations
+### KB4571723 -> ZeroLogon (CVE-2020-1472)
+### KB4586793 -> ZeroLogon (CVE-2020-1472)
+### KB4489886 -> Juicy Potato (CVE-2019-0836) + weitere schritte
+
+
+## if win server 2022
+### uninstall patches for hivenightmate cve 2021-36934 for win server 2022 -> servers 
+
+

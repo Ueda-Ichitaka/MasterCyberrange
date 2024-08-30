@@ -50,12 +50,12 @@ resource "openstack_compute_instance_v2" "access-proxy" {
 
   provisioner "local-exec" {
     working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'proxy,' access_proxy.yml"     
+    command = "ansible-playbook -l 'proxy,' playbooks/access_proxy.yml"     
   }
 
   provisioner "local-exec" {
     working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'proxy,' make_ansible_controller.yml"
+    command = "ansible-playbook -l 'proxy,' playbooks/make_ansible_controller.yml"
   }
 
   connection {

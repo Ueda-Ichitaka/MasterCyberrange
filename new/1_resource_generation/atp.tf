@@ -78,7 +78,7 @@ resource "openstack_compute_instance_v2" "APT-Outside-Attacker" {
 
   provisioner "local-exec" {
     working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'outside_kali,' kali.yml"
+    command = "ansible-playbook -l 'outside_kali,' playbooks/kali.yml"
   }
 
 
@@ -148,7 +148,7 @@ resource "openstack_compute_instance_v2" "APT-C2-Server" {
 
   provisioner "local-exec" {
     working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'APT-C2-Server,' kali.yml"
+    command = "ansible-playbook -l 'APT-C2-Server,' playbooks/kali.yml"
   }
 
 }
@@ -195,7 +195,7 @@ resource "openstack_compute_instance_v2" "APT-Download-Server" {
 
   provisioner "local-exec" {
     working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'APT-Download-Server,' linux.yml"
+    command = "ansible-playbook -l 'APT-Download-Server,' playbooks/linux.yml"
   }
 
 }

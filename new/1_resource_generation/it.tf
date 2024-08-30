@@ -85,22 +85,22 @@ resource "openstack_compute_instance_v2" "IT-Win-DC" {
 
   provisioner "local-exec" {
     working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'IT-Win-DC,' windows.yml"
+    command = "ansible-playbook -l 'IT-Win-DC,' playbooks/windows.yml"
   }
 
   provisioner "local-exec" {
     working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'IT-Win-DC,' beats_windows.yml"
+    command = "ansible-playbook -l 'IT-Win-DC,' playbooks/beats_windows.yml"
   }
 
   provisioner "local-exec" {
     working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'IT-Win-DC,' splunk_forwarder_windows.yml"
+    command = "ansible-playbook -l 'IT-Win-DC,' playbooks/splunk_forwarder_windows.yml"
   }
 
   provisioner "local-exec" {
     working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'IT-Win-DC,' windows_dc.yml"
+    command = "ansible-playbook -l 'IT-Win-DC,' playbooks/windows_dc.yml"
   }
 
 }
@@ -154,17 +154,22 @@ resource "openstack_compute_instance_v2" "IT-Win-Share" {
 
   provisioner "local-exec" {
     working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'IT-Win-Share,' windows.yml"
+    command = "ansible-playbook -l 'IT-Win-Share,' playbooks/windows.yml"
   }
 
   provisioner "local-exec" {
     working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'IT-Win-Share,' beats_windows.yml"
+    command = "ansible-playbook -l 'IT-Win-Share,' playbooks/beats_windows.yml"
   }
 
   provisioner "local-exec" {
     working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'IT-Win-Share,' splunk_forwarder_windows.yml"
+    command = "ansible-playbook -l 'IT-Win-Share,' playbooks/splunk_forwarder_windows.yml"
+  }
+
+  provisioner "local-exec" {
+    working_dir = "../2_ansible_resource_provisioning"
+    command = "ansible-playbook -l 'IT-Win-Share,' playbooks/windows_fileshare.yml"
   }
 
 
@@ -212,17 +217,17 @@ resource "openstack_compute_instance_v2" "IT-Win-PC-1" {
 
   provisioner "local-exec" {
     working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'IT-Win-PC-1,' windows.yml"
+    command = "ansible-playbook -l 'IT-Win-PC-1,' playbooks/windows.yml"
   }
 
   provisioner "local-exec" {
     working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'IT-Win-PC-1,' beats_windows.yml"
+    command = "ansible-playbook -l 'IT-Win-PC-1,' playbooks/beats_windows.yml"
   }
 
   provisioner "local-exec" {
     working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'IT-Win-PC-1,' splunk_forwarder_windows.yml"
+    command = "ansible-playbook -l 'IT-Win-PC-1,' playbooks/splunk_forwarder_windows.yml"
   }
 
 }
@@ -273,17 +278,27 @@ resource "openstack_compute_instance_v2" "IT-Win-Server-1" {
 
   provisioner "local-exec" {
     working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'IT-Win-Server-1,' windows.yml"
+    command = "ansible-playbook -l 'IT-Win-Server-1,' playbooks/windows.yml"
   }
 
   provisioner "local-exec" {
     working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'IT-Win-Server-1,' beats_windows.yml"
+    command = "ansible-playbook -l 'IT-Win-Server-1,' playbooks/beats_windows.yml"
   }
 
   provisioner "local-exec" {
     working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'IT-Win-Server-1,' splunk_forwarder_windows.yml"
+    command = "ansible-playbook -l 'IT-Win-Server-1,' playbooks/splunk_forwarder_windows.yml"
+  }
+
+  provisioner "local-exec" {
+    working_dir = "../2_ansible_resource_provisioning"
+    command = "ansible-playbook -l 'IT-Win-Server-1,' playbooks/windows_sql.yml"
+  }
+
+  provisioner "local-exec" {
+    working_dir = "../2_ansible_resource_provisioning"
+    command = "ansible-playbook -l 'IT-Win-Server-1,' playbooks/windows_exchange.yml"
   }
 
 }
@@ -340,7 +355,7 @@ resource "openstack_compute_instance_v2" "IT-Linux-PC-1" {
 
   provisioner "local-exec" {
     working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'IT-Linux-PC-1,' linux.yml"
+    command = "ansible-playbook -l 'IT-Linux-PC-1,' playbooks/linux.yml"
   }
 
 }
@@ -388,12 +403,12 @@ resource "openstack_compute_instance_v2" "IT-Inside-Attacker" {
 
   provisioner "local-exec" {
     working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'IT-Inside-Attacker,' linux.yml"
+    command = "ansible-playbook -l 'IT-Inside-Attacker,' playbooks/linux.yml"
   }
 
   provisioner "local-exec" {
     working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'IT-Inside-Attacker,' kali.yml"
+    command = "ansible-playbook -l 'IT-Inside-Attacker,' playbooks/kali.yml"
   }
 
 

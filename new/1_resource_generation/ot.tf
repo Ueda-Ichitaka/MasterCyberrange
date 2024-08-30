@@ -75,22 +75,22 @@ resource "openstack_compute_instance_v2" "OT-Win-DC" {
 
   provisioner "local-exec" {
     working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'OT-Win-DC,' windows.yml"
+    command = "ansible-playbook -l 'OT-Win-DC,' playbooks/windows.yml"
   }
 
   provisioner "local-exec" {
     working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'OT-Win-DC,' beats_windows.yml"
+    command = "ansible-playbook -l 'OT-Win-DC,' playbooks/beats_windows.yml"
   }
 
   provisioner "local-exec" {
     working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'OT-Win-DC,' splunk_forwarder_windows.yml"
+    command = "ansible-playbook -l 'OT-Win-DC,' playbooks/splunk_forwarder_windows.yml"
   }
 
   provisioner "local-exec" {
     working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'OT-Win-DC,' windows_dc.yml"
+    command = "ansible-playbook -l 'OT-Win-DC,' playbooks/windows_dc.yml"
   }
 
 
@@ -141,17 +141,17 @@ resource "openstack_compute_instance_v2" "OT-Win-PC-1" {
 
   provisioner "local-exec" {
     working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'OT-Win-PC-1,' windows.yml"
+    command = "ansible-playbook -l 'OT-Win-PC-1,' playbooks/windows.yml"
   }
 
   provisioner "local-exec" {
     working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'OT-Win-PC-1,' beats_windows.yml"
+    command = "ansible-playbook -l 'OT-Win-PC-1,' playbooks/beats_windows.yml"
   }
 
   provisioner "local-exec" {
     working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'OT-Win-PC-1,' splunk_forwarder_windows.yml"
+    command = "ansible-playbook -l 'OT-Win-PC-1,' playbooks/splunk_forwarder_windows.yml"
   }
 
 
@@ -203,17 +203,17 @@ resource "openstack_compute_instance_v2" "OT-Win-PC-2" {
 
   provisioner "local-exec" {
     working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'OT-Win-PC-2,' windows.yml"
+    command = "ansible-playbook -l 'OT-Win-PC-2,' playbooks/windows.yml"
   }
 
   provisioner "local-exec" {
     working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'OT-Win-PC-2,' beats_windows.yml"
+    command = "ansible-playbook -l 'OT-Win-PC-2,' playbooks/beats_windows.yml"
   }
 
   provisioner "local-exec" {
     working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'OT-Win-PC-2,' splunk_forwarder_windows.yml"
+    command = "ansible-playbook -l 'OT-Win-PC-2,' playbooks/splunk_forwarder_windows.yml"
   }
 
 
@@ -270,14 +270,19 @@ resource "openstack_compute_instance_v2" "OT-PLC-Linux" {
 
   provisioner "local-exec" {
     working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'OT-PLC-Linux,' linux.yml"
+    command = "ansible-playbook -l 'OT-PLC-Linux,' playbooks/linux.yml"
+  }
+
+  provisioner "local-exec" {
+    working_dir = "../2_ansible_resource_provisioning"
+    command = "ansible-playbook -l 'OT-PLC-Linux,' playbooks/plc_debian.yml"
   }
 
 }
 
 
 #-----------------------
-# Linux PLC
+# Linux HMI
 #-----------------------
 
 # data "openstack_images_image_v2" "OT-PLC" {
@@ -321,7 +326,12 @@ resource "openstack_compute_instance_v2" "OT-HMI-Linux" {
 
   provisioner "local-exec" {
     working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'OT-HMI-Linux,' linux.yml"
+    command = "ansible-playbook -l 'OT-HMI-Linux,' playbooks/linux.yml"
+  }
+
+  provisioner "local-exec" {
+    working_dir = "../2_ansible_resource_provisioning"
+    command = "ansible-playbook -l 'OT-HMI-Linux,' playbooks/hmi_debian.yml"
   }
 
 }
