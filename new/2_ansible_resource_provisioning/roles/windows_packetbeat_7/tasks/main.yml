@@ -1,0 +1,29 @@
+---
+
+## copy installer
+- name: copy winlogbeat installer
+  ansible.windows.win_copy:
+    src: /home/2_ansible_resource_provisioning/remote_host_files/elk/packetbeat-7.17.15-windows-x86_64.zip
+    dest: C:\Users\TestAdmin\Downloads\packetbeat.zip
+
+- name: extract archive
+  win_shell: |
+    powershell -command "Expand-Archive -Force C:\Users\TestAdmin\Downloads\packetbeat.zip C:\Program Files\Packetbeat"
+    powershell -command "Move-Item -Path C:\Program Files\Winlogbeat\packetbeat-7.17.15-windows-x86_64\* -Destination C:\Program Files\Packetbeat"
+    powershell -command "Set-ExecutionPolicy Unrestricted"
+
+
+- name: copy config
+  ansible.windows.win_template:
+    src: packetbeat.yml
+    dest: C:\Program Files\Packetbeat\packetbeat.yml
+
+
+- name: install
+  win_shell: |    
+    .\install-service-packetbeat.ps1
+    net start winlogbeat
+    
+
+
+

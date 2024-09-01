@@ -1,8 +1,9 @@
 - hosts: windows
   gather_facts: True
   vars:
+    ansible_connection: winrm
     ansible_winrm_server_cert_validation: ignore
-    private_key_path: "~/.ssh/id_ed25519"
+    ansible_port: 5985
+    win_password: 'secreT123%'
   roles:
-    - winlogbeat_7
-    - windows_packetbeat_7
+    - windows_server

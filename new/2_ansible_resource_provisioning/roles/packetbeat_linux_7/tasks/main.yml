@@ -1,0 +1,41 @@
+---
+
+
+- name: Add Elasticsearch apt key
+  apt_key:
+   url: "https://packages.elastic.co/GPG-KEY-elasticsearch"
+   state: present
+
+
+- name: Adding Elasticsearch repo
+  apt_repository:
+   repo: deb https://artifacts.elastic.co/packages/7.x/apt stable main
+   state: present
+
+
+- name: Install Packetbeat with apt
+  apt:
+    pkg: 
+    - apt-transport-https
+    - packetbeat
+    update_cache: yes
+
+
+- name: Replace default packetbeat.yml configurations
+  template:
+    src: packetbeat.yml
+    dest: /etc/packetbeat/packetbeat.yml
+
+
+- name: activate modules
+  ignore_errors: true
+  ansible.builtin.shell: >
+    export LC_ALL="C.UTF-8";
+    sudo bash /usr/bin/packetbeat.sh -configtest -e
+    sudo systemctl enable packetbeat
+    sudo systemctl start packetbeat
+
+- name: Starting Packetbeat
+  service:
+   name: packetbeat
+   state: started

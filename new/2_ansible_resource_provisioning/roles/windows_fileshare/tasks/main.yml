@@ -1,7 +1,40 @@
 --- 
 
-# datei platzieren
-# smb2 aktivieren
-## lieber smb1 für eternalblue?
-# ordner einrichten
-# ordner freigabe
+
+- name: Install multiple features in one task
+  ansible.windows.win_optional_feature:
+    name:
+      - SMB1Protocol
+    state: present
+
+- name: activate smb1
+  ansible.windows.win_powershell:
+    script: |
+      Enable-WindowsOptionalFeature -Online -FeatureName SMB1Protocol
+      Set-SmbServerConfiguration -EnableSMB1Protocol $true
+      Set-SmbServerConfiguration -EnableSMB2Protocol $false
+
+
+- name: Add public company share
+  ansible.windows.win_share:
+    name: company
+    description: top secret share
+    path: C:\shares\company
+    list: true
+    full: Administrators,CEO
+    read: Global
+
+
+- name: uninstall updates against Juicy Potato (CVE-2019-0836) 
+  ansible.windows.win_powershell:
+    script: |
+      wusa /uninstall /kb:4489886
+      wusa /uninstall /kb:4493509
+      wusa /uninstall /kb:4497934
+
+
+- name: copy file
+  ansible.windows.win_template:
+    src: confidential_report.txt
+    dest: C:\shares\company\confidential_report.txt
+

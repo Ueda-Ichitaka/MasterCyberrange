@@ -17,114 +17,213 @@
 # forwarded, ignore_older, level, event_id, provider, and include_xml. Please
 # visit the documentation for the complete details of each option.
 # https://go.es.io/WinlogbeatConfig
-winlogbeat.event_logs:
-  - name: Application
-    ignore_older: 72h
 
-  - name: System
 
-  # Sysmon
-  # osquery
-  # File System Logs
-  # winevent
-  # localsessionmanager
-  # windows defender
-  # task scheduler
-  # winrm
-  #
   # Get-WinEvent -ListLog * | Format-List -Property LogName
   # https://www.elastic.co/guide/en/beats/winlogbeat/current/configuration-winlogbeat-options.html#_event_logs_id
 
 
-# 2. File System Logs
-
-# Windows does not natively provide detailed file system activity logging. However, you can use tools like Windows Audit Policy and third-party solutions.
-
-#     Enabling File System Auditing:
-#         Open Local Security Policy (type secpol.msc in the Run dialog).
-#         Navigate to Advanced Audit Policy Configuration > Object Access.
-#         Enable Audit File System for success and failure events.
-
-#     Setting Up File Auditing:
-#         Right-click the folder or file you want to audit, select Properties.
-#         Go to the Security tab and click Advanced.
-#         Go to the Auditing tab and add the users or groups you want to audit, specifying the actions to log.
-
-# 4. Application Logs
-
-# Applications running on Windows often generate their own logs.
-
-#     Common Locations:
-#         Application-specific logs are typically found in the installation directory or under C:\ProgramData or C:\Users\[Username]\AppData.
-#         Web server logs (IIS) are usually located at C:\inetpub\logs\LogFiles.
-
-# 6. Audit Logs
-
-# Audit policies can be configured to capture detailed security-relevant events.
-
-#     Configuring Audit Policies:
-#         Open Local Security Policy (type secpol.msc in the Run dialog).
-#         Navigate to Local Policies > Audit Policy.
-#         Enable auditing for the desired events, such as logon events, account management, and object access
-
-# registry files?
 
 
+winlogbeat.event_logs:
+  - name: Application
+    ignore_older: 72h
+  - name: System
   - name: Security
-    processors:
-      - script:
-          lang: javascript
-          id: security
-          file: ${path.home}/module/security/config/winlogbeat-security.js
-
   - name: Microsoft-Windows-Sysmon/Operational
-    processors:
-      - script:
-          lang: javascript
-          id: sysmon
-          file: ${path.home}/module/sysmon/config/winlogbeat-sysmon.js
-
   - name: Windows PowerShell
-    event_id: 400, 403, 600, 800
-    processors:
-      - script:
-          lang: javascript
-          id: powershell
-          file: ${path.home}/module/powershell/config/winlogbeat-powershell.js
-
   - name: Microsoft-Windows-PowerShell/Operational
-    event_id: 4103, 4104, 4105, 4106
-    processors:
-      - script:
-          lang: javascript
-          id: powershell
-          file: ${path.home}/module/powershell/config/winlogbeat-powershell.js
-
+  - name: HardwareEvents
+  - name: Internet Explorer
+  - name: Key Management Service
+  - name: Microsoft-Windows-AppHost/Admin
+  - name: Microsoft-Windows-AppID/Operational
+  - name: Microsoft-Windows-AppLocker/EXE and DLL
+  - name: Microsoft-Windows-Authentication/AuthenticationPolicyFailures-DomainController
+  - name: Microsoft-Windows-Authentication/ProtectedUser-Client
+  - name: Microsoft-Windows-Authentication/ProtectedUserFailures-DomainController
+  - name: Microsoft-Windows-Authentication/ProtectedUserSuccesses-DomainController
+  - name: Microsoft-Windows-Authentication User Interface/Operational 
+  - name: Microsoft-Windows-BackgroundTaskInfrastructure/Operational 
+  - name: Microsoft-Windows-Base-Filtering-Engine-Connections/Operational
+  - name: Microsoft-Windows-Base-Filtering-Engine-Resource-Flows/Operational
+  - name: Microsoft-Windows-Bluetooth-BthLEPrepairing/Operational 
+  - name: Microsoft-Windows-Bluetooth-Bthmini/Operational
+  - name: Microsoft-Windows-Bluetooth-MTPEnum/Operational
+  - name: Microsoft-Windows-Bluetooth-Policy/Operational 
+  - name: Microsoft-Windows-BranchCacheSMB/Operational
+  - name: Microsoft-Windows-CAPI2/Operational 
+  - name: Microsoft-Windows-CertificateServicesClient-CredentialRoaming/Operational
+  - name: Microsoft-Windows-CertificateServicesClient-Lifecycle-System/Operational 
+  - name: Microsoft-Windows-CertificateServicesClient-Lifecycle-User/Operational
+  - name: Microsoft-Windows-CertificateServices-Deployment/Operational 
+  - name: Microsoft-Windows-CertPoleEng/Operational
+  - name: Microsoft-Windows-CloudStore/Operational
+  - name: Microsoft-Windows-CodeIntegrity/Operational 
+  - name: Microsoft-Windows-CoreApplication/Operational
+  - name: Microsoft-Windows-Crypto-DPAPI/BackUpKeySvc
+  - name: Microsoft-Windows-Crypto-DPAPI/Debug 
+  - name: Microsoft-Windows-Crypto-DPAPI/Operational
+  - name: Microsoft-Windows-Crypto-NCrypt/Operational
+  - name: Microsoft-Windows-DateTimeControlPanel/Operational 
+  - name: Microsoft-Windows-DeviceGuard/Operational
+  - name: Microsoft-Windows-Devices-Background/Operational
+  - name: Microsoft-Windows-DeviceSetupManager/Admin 
+  - name: Microsoft-Windows-DeviceSetupManager/Operational
+  - name: Microsoft-Windows-DeviceUpdateAgent/Operational
+  - name: Microsoft-Windows-Dhcp-Client/Admin
+  - name: Microsoft-Windows-Dhcp-Client/Operational 
+  - name: Microsoft-Windows-Dhcpv6-Client/Admin
+  - name: Microsoft-Windows-Dhcpv6-Client/Operational
+  - name: Microsoft-Windows-DirectoryServices-Deployment/Operational
+  - name: Microsoft-Windows-DNS-Client/Operational
+  - name: Microsoft-Windows-DriverFrameworks-UserMode/Operational 
+  - name: Microsoft-Windows-DSC/Admin
+  - name: Microsoft-Windows-DSC/Operational 
+  - name: Microsoft-Windows-EapHost/Operational 
+  - name: Microsoft-Windows-EapMethods-RasChap/Operational
+  - name: Microsoft-Windows-EapMethods-RasTls/Operational 
+  - name: Microsoft-Windows-EapMethods-Sim/Operational
+  - name: Microsoft-Windows-EapMethods-Ttls/Operational
+  - name: Microsoft-Windows-EventCollector/Operational
+  - name: Microsoft-Windows-Fault-Tolerant-Heap/Operational 
+  - name: Microsoft-Windows-FeatureConfiguration/Operational 
+  - name: Microsoft-Windows-FederationServices-Deployment/Operational
+  - name: Microsoft-Windows-FileServices-ServerManager-EventProvider/Admin 
+  - name: Microsoft-Windows-FileServices-ServerManager-EventProvider/Operational
+  - name: Microsoft-Windows-FileShareShadowCopyProvider/Operational 
+  - name: Microsoft-Windows-FMS/Operational
+  - name: Microsoft-Windows-Folder Redirection/Operational 
+  - name: Microsoft-Windows-Forwarding/Operational
+  - name: Microsoft-Windows-glcnd/Admin
+  - name: Microsoft-Windows-GroupPolicy/Operational 
+  - name: Microsoft-Windows-HttpService/Log 
+  - name: Microsoft-Windows-HttpService/Trace
+  - name: Microsoft-Windows-IKE/Operational
+  - name: Microsoft-Windows-KdsSvc/Operational
+  - name: Microsoft-Windows-Kerberos-KdcProxy/Operational 
+  - name: Microsoft-Windows-Kerberos/Operational
+  - name: Microsoft-Windows-Kernel-ApphelpCache/Operational 
+  - name: Microsoft-Windows-Kernel-Boot/Operational
+  - name: Microsoft-Windows-Kernel-EventTracing/Admin 
+  - name: Microsoft-Windows-Kernel-IO/Operational
+  - name: Microsoft-Windows-Kernel-PnP/Configuration 
+  - name: Microsoft-Windows-Kernel-Power/Thermal-Operational
+  - name: Microsoft-Windows-Kernel-ShimEngine/Operational 
+  - name: Microsoft-Windows-Kernel-StoreMgr/Operational
+  - name: Microsoft-Windows-Kernel-WDI/Operational 
+  - name: Microsoft-Windows-Kernel-WHEA/Errors
+  - name: Microsoft-Windows-Kernel-WHEA/Operational
+  - name: Microsoft-Windows-NCSI/Operational
+  - name: Microsoft-Windows-NdisImPlatform/Operational 
+  - name: Microsoft-Windows-NDIS/Operational
+  - name: Microsoft-Windows-NetworkLocationWizard/Operational 
+  - name: Microsoft-Windows-NetworkProfile/Operational
+  - name: Microsoft-Windows-NetworkProvider/Operational
+  - name: Microsoft-Windows-NlaSvc/Operational
+  - name: Microsoft-Windows-Ntfs/Operational 
+  - name: Microsoft-Windows-Ntfs/WHC
+  - name: Microsoft-Windows-NTLM/Operational 
+  - name: Microsoft-Windows-OtpCredentialProvider/Operational
+  - name: Microsoft-Windows-Policy/Operational 
+  - name: Microsoft-Windows-PowerShell/Admin
+  - name: Microsoft-Windows-PowerShell-DesiredStateConfiguration-FileDownloadManager/Operational 
+  - name: Microsoft-Windows-PrintBRM/Admin 
+  - name: Microsoft-Windows-PrintService/Admin
+  - name: Microsoft-Windows-PrintService/Operational
+  - name: Microsoft-Windows-Regsvr32/Operational
+  - name: Microsoft-Windows-RemoteApp and Desktop Connections/Admin 
+  - name: Microsoft-Windows-RemoteApp and Desktop Connections/Operational 
+  - name: Microsoft-Windows-RemoteDesktopServices-RdpCoreTS/Admin
+  - name: Microsoft-Windows-RemoteDesktopServices-RdpCoreTS/Operational
+  - name: Microsoft-Windows-RemoteDesktopServices-RemoteFX-Synth3dvsc/Admin 
+  - name: Microsoft-Windows-RemoteDesktopServices-SessionServices/Operational 
+  - name: Microsoft-Windows-Remotefs-Rdbss/Operational
+  - name: Microsoft-Windows-Resource-Exhaustion-Detector/Operational 
+  - name: Microsoft-Windows-Resource-Exhaustion-Resolver/Operational
+  - name: Microsoft-Windows-RestartManager/Operational 
+  - name: Microsoft-Windows-Security-Adminless/Operational 
+  - name: Microsoft-Windows-Security-Audit-Configuration-Client/Operational 
+  - name: Microsoft-Windows-Security-EnterpriseData-FileRevocationManager/Operational
+  - name: Microsoft-Windows-Security-ExchangeActiveSyncProvisioning/Operational 
+  - name: Microsoft-Windows-Security-IdentityListener/Operational
+  - name: Microsoft-Windows-Security-LessPrivilegedAppContainer/Operational
+  - name: Microsoft-Windows-SecurityMitigationsBroker/Admin 
+  - name: Microsoft-Windows-SecurityMitigationsBroker/Operational
+  - name: Microsoft-Windows-Security-Mitigations/KernelMode 
+  - name: Microsoft-Windows-Security-Mitigations/UserMode 
+  - name: Microsoft-Windows-Security-Netlogon/Operational
+  - name: Microsoft-Windows-Security-SPP-UX-GenuineCenter-Logging/Operational 
+  - name: Microsoft-Windows-Security-SPP-UX-Notifications/ActionCenter 
+  - name: Microsoft-Windows-Security-UserConsentVerifier/Audit
+  - name: Microsoft-Windows-Shell-ConnectedAccountState/ActionCenter
+  - name: Microsoft-Windows-Shell-Core/ActionCenter
+  - name: Microsoft-Windows-Shell-Core/AppDefaults
+  - name: Microsoft-Windows-Shell-Core/LogonTasksChannel 
+  - name: Microsoft-Windows-Shell-Core/Operational
+  - name: Microsoft-Windows-SmbClient/Audit
+  - name: Microsoft-Windows-SmbClient/Connectivity
+  - name: Microsoft-Windows-SMBClient/Operational 
+  - name: Microsoft-Windows-SmbClient/Security
+  - name: Microsoft-Windows-SMBDirect/Admin 
+  - name: Microsoft-Windows-SMBServer/Audit
+  - name: Microsoft-Windows-SMBServer/Connectivity
+  - name: Microsoft-Windows-SMBServer/Operational 
+  - name: Microsoft-Windows-SMBServer/Security
+  - name: Microsoft-Windows-SMBWitnessClient/Admin 
+  - name: Microsoft-Windows-SMBWitnessClient/Informational
+  - name: Microsoft-Windows-Storage-Disk/Admin
+  - name: Microsoft-Windows-Storage-Disk/Operational 
+  - name: Microsoft-Windows-TaskScheduler/Maintenance
+  - name: Microsoft-Windows-TaskScheduler/Operational
+  - name: Microsoft-Windows-TCPIP/Operational
+  - name: Microsoft-Windows-TerminalServices-LocalSessionManager/Operational
+  - name: Microsoft-Windows-TerminalServices-PnPDevices/Admin 
+  - name: Microsoft-Windows-TerminalServices-PnPDevices/Operational
+  - name: Microsoft-Windows-TerminalServices-Printers/Admin 
+  - name: Microsoft-Windows-TerminalServices-Printers/Operational
+  - name: Microsoft-Windows-TerminalServices-RemoteConnectionManager/Admin
+  - name: Microsoft-Windows-TerminalServices-RemoteConnectionManager/Operational 
+  - name: Microsoft-Windows-Windows Defender/Operational
+  - name: Microsoft-Windows-Windows Firewall With Advanced Security/Firewall
+  - name: Microsoft-Windows-Windows Firewall With Advanced Security/FirewallVerbose 
+  - name: Microsoft-Windows-Winlogon/Operational 
+  - name: Microsoft-Windows-WinNat/Oper
+  - name: Microsoft-Windows-WinRM/Operational
+  - name: Microsoft-Windows-WinRM/Operational 
+  - name: Microsoft-Windows-WMI-Activity/Operational
+  - name: Network Isolation Operational
+  - name: OAlerts
+  - name: OpenSSH/Admin
+  - name: OpenSSH/Operational
+ 
   - name: ForwardedEvents
-    tags: [forwarded]
-    processors:
-      - script:
-          when.equals.winlog.channel: Security
-          lang: javascript
-          id: security
-          file: ${path.home}/module/security/config/winlogbeat-security.js
-      - script:
-          when.equals.winlog.channel: Microsoft-Windows-Sysmon/Operational
-          lang: javascript
-          id: sysmon
-          file: ${path.home}/module/sysmon/config/winlogbeat-sysmon.js
-      - script:
-          when.equals.winlog.channel: Windows PowerShell
-          lang: javascript
-          id: powershell
-          file: ${path.home}/module/powershell/config/winlogbeat-powershell.js
-      - script:
-          when.equals.winlog.channel: Microsoft-Windows-PowerShell/Operational
-          lang: javascript
-          id: powershell
-          file: ${path.home}/module/powershell/config/winlogbeat-powershell.js
+    # tags: [forwarded]
+    # processors:
+    #   - script:
+    #       when.equals.winlog.channel: Security
+    #       lang: javascript
+    #       id: security
+    #       file: ${path.home}/module/security/config/winlogbeat-security.js
+    #   - script:
+    #       when.equals.winlog.channel: Microsoft-Windows-Sysmon/Operational
+    #       lang: javascript
+    #       id: sysmon
+    #       file: ${path.home}/module/sysmon/config/winlogbeat-sysmon.js
+    #   - script:
+    #       when.equals.winlog.channel: Windows PowerShell
+    #       lang: javascript
+    #       id: powershell
+    #       file: ${path.home}/module/powershell/config/winlogbeat-powershell.js
+    #   - script:
+    #       when.equals.winlog.channel: Microsoft-Windows-PowerShell/Operational
+    #       lang: javascript
+    #       id: powershell
+    #       file: ${path.home}/module/powershell/config/winlogbeat-powershell.js
 
-#output.elasticsearch.pipeline: winlogbeat-%{[agent.version]}-routing 
+
+
+
 
 # ====================== Elasticsearch template settings =======================
 
@@ -181,7 +280,7 @@ setup.kibana:
   # Scheme and port can be left out and will be set to the default (http and 5601)
   # In case you specify and additional path, the scheme is required: http://localhost:5601/path
   # IPv6 addresses should always be defined as: https://[2001:db8::1]:5601
-  host: "10.0.1.13:5601", "10.0.2.13:5601"
+  host: "10.0.1.12:5601", "10.0.2.12:5601"
 
   # Kibana Space ID
   # ID of the Kibana Space into which the dashboards should be loaded. By default,
@@ -204,7 +303,7 @@ setup.kibana:
 #-------------------------- Elasticsearch output ------------------------------
 output.elasticsearch:
   # Array of hosts to connect to.
-  hosts: ["10.0.1.13:9200", "10.0.2.13:9200"]
+  hosts: ["10.0.1.12:9200", "10.0.2.12:9200"]
 
   # Protocol - either `http` (default) or `https`.
   #protocol: "https"

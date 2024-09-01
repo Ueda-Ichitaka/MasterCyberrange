@@ -1,0 +1,9 @@
+- hosts: windows
+  gather_facts: True
+  vars:
+    ansible_connection: winrm
+    ansible_winrm_server_cert_validation: ignore
+    ansible_port: 5985
+    win_password: 'secreT123%'
+  roles:
+    - windows_workstation

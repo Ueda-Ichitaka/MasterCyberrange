@@ -19,16 +19,43 @@
   when: check_powershell5.changed
 
 
+# make all windows installs vulnerable for juicypotato
 
-# check for os version
-## if win server 2019
-### uninstall patches for juicy potato cve 2019-0836 for win server 2019 -> workstations
-### KB4571723 -> ZeroLogon (CVE-2020-1472)
-### KB4586793 -> ZeroLogon (CVE-2020-1472)
-### KB4489886 -> Juicy Potato (CVE-2019-0836) + weitere schritte
+# uninstall updates
+- name: uninstall updates against Juicy Potato (CVE-2019-0836) 
+  ansible.windows.win_powershell:
+    script: |
+      wusa /uninstall /kb:4489886
+      wusa /uninstall /kb:4493509
+      wusa /uninstall /kb:4497934
+
+- name: disable defender 
+  ansible.windows.win_powershell:
+    script: |
+      Set-MpPreference -DisableRealtimeMonitoring $true -DisableScriptScanning $true -DisableBehaviorMonitoring $true -DisableIOAVProtection $true -DisableIntrusionPreventionSystem $true
 
 
-## if win server 2022
-### uninstall patches for hivenightmate cve 2021-36934 for win server 2022 -> servers 
+# Configure Services to Run Under Local Service or Network Service Accounts
+
+# grant user SeImpersonatePrivilege
+# grant user SeAssignPrimaryTokenPrivilege
+
+
+# Ensure the COM Object Can Be Hijacked
+
+
+# Configure Services to Run Under Local Service or Network Service Accounts
+
+#     Juicy Potato typically exploits services that run under specific user accounts like LOCAL SERVICE or NETWORK SERVICE. These services must be properly configured:
+#         Ensure that the COM and DCOM services are running and are configured to allow impersonation under LOCAL SERVICE or NETWORK SERVICE.
+#         Check the configuration of the service you intend to exploit to confirm it uses these accounts.
+
+# Ensure the COM Object Can Be Hijacked
+
+#     Juicy Potato works by hijacking certain COM objects that have the SeImpersonatePrivilege. Make sure that the services or applications you intend to target have this privilege:
+#         Ensure that the SeImpersonatePrivilege is granted to the user context from which the exploit will be executed.
+#         Confirm that the targeted service or application does not use additional security mechanisms that might block the exploit, such as hardened COM object configurations or restricted DCOM settings.
+
+
 
 

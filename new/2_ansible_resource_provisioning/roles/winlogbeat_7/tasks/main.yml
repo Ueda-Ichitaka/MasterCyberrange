@@ -2,19 +2,19 @@
 
 ## copy installer
 - name: copy winlogbeat installer
-  ansible.builtin.copy:
-    src: /home/2_ansible_resource_provisioning/remote_host_files/elk/winlogbeat-8.9.0-windows-x86_64.zip
+  ansible.windows.win_copy:
+    src: /home/2_ansible_resource_provisioning/remote_host_files/elk/winlogbeat-7.17.0-windows-x86_64.zip
     dest: C:\Users\TestAdmin\Downloads\winlogbeat.zip
 
 - name: extract archive
   win_shell: |
     powershell -command "Expand-Archive -Force C:\Users\TestAdmin\Downloads\winlogbeat.zip C:\Program Files\Winlogbeat"
-    powershell -command "Move-Item -Path C:\Program Files\Winlogbeat\winlogbeat-8.9.0-windows-x86_64\* -Destination C:\Program Files\Winlogbeat"
-    powershell -command "Set-ExecurtionPolicy Unrestricted"
+    powershell -command "Move-Item -Path C:\Program Files\Winlogbeat\winlogbeat-7.17.0-windows-x86_64\* -Destination C:\Program Files\Winlogbeat"
+    powershell -command "Set-ExecutionPolicy Unrestricted"
 
 
 - name: copy config
-  template:
+  ansible.windows.win_template:
     src: winlogbeat.yml
     dest: C:\Program Files\Winlogbeat\winlogbeat.yml
 

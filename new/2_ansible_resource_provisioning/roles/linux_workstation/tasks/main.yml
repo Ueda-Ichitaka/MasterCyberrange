@@ -1,0 +1,41 @@
+---
+
+
+- name: Install Packages
+  apt:
+    pkg: 
+    - vim
+    - vi 
+    - nano 
+    update_cache: yes
+
+
+- name: place text file1
+  template:
+    src: secret.txt
+    dest: ~/Documents/secret.txt
+
+
+# - name: shell stuff
+#   ignore_errors: true
+#   ansible.builtin.shell: >
+#     export LC_ALL="C.UTF-8";
+
+
+# - name: Allow 'wheel' group to have passwordless sudo
+#   lineinfile:
+#     dest: /etc/sudoers
+#     state: present
+#     regexp: '^%wheel'
+#     line: 'ubuntu NOPASSWD: /usr/bin/vim'
+#     validate: 'visudo -cf %s'
+
+
+- name: allow sudo vim -c '!sh'
+  community.general.sudoers:
+    name: vim-sudo
+    user: ubnuntu
+    commands:
+      - /usr/bin/vim
+    nopassword: true
+

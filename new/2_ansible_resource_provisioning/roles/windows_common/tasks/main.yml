@@ -19,3 +19,4 @@
     - "thunderbird"
     - "wireshark"
 - include: vulners.yml
+- include: applications.yml

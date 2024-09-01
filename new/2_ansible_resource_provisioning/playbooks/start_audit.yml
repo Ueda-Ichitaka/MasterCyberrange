@@ -1,0 +1,11 @@
+- hosts: all
+  gather_facts: True
+  become: true
+  vars_files:
+    - ../../configs/attack_range_default.yml
+#  roles:
+    # clear linux logs
+    # clear windows logs
+    # timeout ?
+    # start wireshark win
+    # start wireshark linux

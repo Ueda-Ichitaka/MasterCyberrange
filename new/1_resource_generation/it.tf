@@ -49,10 +49,6 @@ resource "openstack_networking_router_interface_v2" "router_interface_1" {
 #------------------------------------
 # Windows IT Domain Controller
 #------------------------------------
-data "openstack_images_image_v2" "winserver2022_2" {
-    name_regex = "^Windows Server 2022 Eval x86_64$"
-    most_recent = true
-}
 
 resource "openstack_compute_flavor_v2" "it-dc-flavor" {
     name = "it-dc-flavor"
@@ -64,7 +60,7 @@ resource "openstack_compute_flavor_v2" "it-dc-flavor" {
 
 resource "openstack_compute_instance_v2" "IT-Win-DC" {
   name            = "IT-Win-DC"
-  image_id        = data.openstack_images_image_v2.winserver2022.id
+  image_id = "b34c1867-728f-4d7b-839c-06c05a108088"  #Windows Server 2019 Eval   
   #flavor_name     = "m1.medium"
   flavor_id = openstack_compute_flavor_v2.it-dc-flavor.id
   key_pair = data.openstack_compute_keypair_v2.default_keypair.name
@@ -108,14 +104,10 @@ resource "openstack_compute_instance_v2" "IT-Win-DC" {
 
 
 
-# Todo: nas setup
+
 #------------------------------------
 # Windows Share and Gateway Server
 #------------------------------------
-data "openstack_images_image_v2" "winserver2022_3" {
-    name_regex = "^Windows Server 2022 Eval x86_64$"
-    most_recent = true
-}
 
 resource "openstack_compute_flavor_v2" "it-win-share-flavor" {
     name = "it-win-share-flavor"
@@ -127,7 +119,7 @@ resource "openstack_compute_flavor_v2" "it-win-share-flavor" {
 
 resource "openstack_compute_instance_v2" "IT-Win-Share" {
   name            = "IT-Win-Share"
-  image_id        = data.openstack_images_image_v2.winserver2022.id
+  image_id = "b34c1867-728f-4d7b-839c-06c05a108088"  #Windows Server 2019 Eval  
   flavor_name     = "m1.medium"
   flavor_id = openstack_compute_flavor_v2.it-win-share-flavor.id
   key_pair = data.openstack_compute_keypair_v2.default_keypair.name
@@ -172,21 +164,18 @@ resource "openstack_compute_instance_v2" "IT-Win-Share" {
     command = "ansible-playbook -l 'IT-Win-Share,' playbooks/windows_fileshare.yml"
   }
 
-
+  provisioner "local-exec" {
+    working_dir = "../2_ansible_resource_provisioning"
+    command = "ansible-playbook -l 'IT-Win-Share,' playbooks/windows_server.yml"
+  }
 
 }
 
 
-# Todo: desktop applications
+
 #-----------------------
 # APT29 Windows Workstation
 #-----------------------
-
-data "openstack_images_image_v2" "win10" {
-    name_regex = "^Windows Server 2019 Eval x86_64$"
-    #name = "windows-10-amd64"
-    most_recent = true
-}
 
 resource "openstack_compute_flavor_v2" "it-win-pc-1-flavor" {
     name = "it-win-pc-1-flavor"
@@ -230,6 +219,11 @@ resource "openstack_compute_instance_v2" "IT-Win-PC-1" {
     command = "ansible-playbook -l 'IT-Win-PC-1,' playbooks/splunk_forwarder_windows.yml"
   }
 
+  provisioner "local-exec" {
+    working_dir = "../2_ansible_resource_provisioning"
+    command = "ansible-playbook -l 'IT-Win-PC-1,' playbooks/windows_workstation.yml"
+  }  
+
 }
 
 
@@ -243,10 +237,6 @@ resource "openstack_compute_instance_v2" "IT-Win-PC-1" {
 #------------------------------------
 # Windows SQL and Exchange Server
 #------------------------------------
-data "openstack_images_image_v2" "winserver2022" {
-    name_regex = "^Windows Server 2022 Eval x86_64$"
-    most_recent = true
-}
 
 resource "openstack_compute_flavor_v2" "it-win-server-1-flavor" {
     name = "it-win-server-1-flavor"
@@ -258,7 +248,7 @@ resource "openstack_compute_flavor_v2" "it-win-server-1-flavor" {
 
 resource "openstack_compute_instance_v2" "IT-Win-Server-1" {
   name            = "IT-Win-Server-1"
-  image_id        = data.openstack_images_image_v2.winserver2022.id
+  image_id = "b34c1867-728f-4d7b-839c-06c05a108088"  #Windows Server 2019 Eval  
   #flavor_name     = "m1.medium"
   flavor_id = openstack_compute_flavor_v2.it-win-server-flavor.id
   key_pair = data.openstack_compute_keypair_v2.default_keypair.name
@@ -299,6 +289,11 @@ resource "openstack_compute_instance_v2" "IT-Win-Server-1" {
   provisioner "local-exec" {
     working_dir = "../2_ansible_resource_provisioning"
     command = "ansible-playbook -l 'IT-Win-Server-1,' playbooks/windows_exchange.yml"
+  }
+
+  provisioner "local-exec" {
+    working_dir = "../2_ansible_resource_provisioning"
+    command = "ansible-playbook -l 'IT-Win-Server-1,' playbooks/windows_server.yml"
   }
 
 }

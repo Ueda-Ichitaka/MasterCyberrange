@@ -1,0 +1,6 @@
+---  
+
+- name: Copy log exporter
+  ansible.windows.win_copy:
+    src: /home/2_ansible_resource_provisioning/remote_host_files/logs/Export-EventLogs
+    dest: C:\Export-EventLogs

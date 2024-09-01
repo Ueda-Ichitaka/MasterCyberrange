@@ -40,11 +40,6 @@ resource "openstack_networking_router_interface_v2" "router_interface_2" {
 # Windows OT Domain Controller
 #------------------------------------
 
-data "openstack_images_image_v2" "winserver2022_4" {
-    name_regex = "^Windows Server 2022 Eval x86_64$"
-    most_recent = true
-}
-
 resource "openstack_compute_flavor_v2" "ot-dc-flavor" {
     name = "ot-dc-flavor"
     ram = "4"
@@ -55,7 +50,8 @@ resource "openstack_compute_flavor_v2" "ot-dc-flavor" {
 
 resource "openstack_compute_instance_v2" "OT-Win-DC" {
   name            = "OT-Win-DC"
-  image_id        = data.openstack_images_image_v2.winserver2022.id
+  image_id = "b34c1867-728f-4d7b-839c-06c05a108088"  #Windows Server 2019 Eval  
+  #image_id        = data.openstack_images_image_v2.winserver2022_4.id
   #flavor_name     = "m1.medium"
   flavor_id = openstack_compute_flavor_v2.ot-dc-flavor.id
   key_pair = data.openstack_compute_keypair_v2.default_keypair.name
@@ -107,12 +103,6 @@ resource "openstack_compute_instance_v2" "OT-Win-DC" {
 # APT29 Windows Engineering-PC
 #-----------------------
 
-data "openstack_images_image_v2" "win10_2" {
-    name_regex = "^Windows Server 2019 Eval x86_64$"
-    #name = "windows-10-amd64"
-    most_recent = true
-}
-
 resource "openstack_compute_flavor_v2" "ot-win-pc-1-flavor" {
     name = "ot-win-pc-1-flavor"
     ram = "4"
@@ -154,6 +144,10 @@ resource "openstack_compute_instance_v2" "OT-Win-PC-1" {
     command = "ansible-playbook -l 'OT-Win-PC-1,' playbooks/splunk_forwarder_windows.yml"
   }
 
+  provisioner "local-exec" {
+    working_dir = "../2_ansible_resource_provisioning"
+    command = "ansible-playbook -l 'OT-Win-PC-1,' playbooks/windows_workstation.yml"
+  }
 
 
 
@@ -166,12 +160,6 @@ resource "openstack_compute_instance_v2" "OT-Win-PC-1" {
 #-----------------------
 # APT29 Windows Operating-PC
 #-----------------------
-
-data "openstack_images_image_v2" "win10_3" {
-    name_regex = "^Windows Server 2019 Eval x86_64$"
-    #name = "windows-10-amd64"
-    most_recent = true
-}
 
 resource "openstack_compute_flavor_v2" "ot-win-pc-2-flavor" {
     name = "ot-win-pc-2-flavor"
@@ -216,7 +204,10 @@ resource "openstack_compute_instance_v2" "OT-Win-PC-2" {
     command = "ansible-playbook -l 'OT-Win-PC-2,' playbooks/splunk_forwarder_windows.yml"
   }
 
-
+  provisioner "local-exec" {
+    working_dir = "../2_ansible_resource_provisioning"
+    command = "ansible-playbook -l 'OT-Win-PC-2,' playbooks/windows_workstation.yml"
+  }
 
 
 }
@@ -227,11 +218,6 @@ resource "openstack_compute_instance_v2" "OT-Win-PC-2" {
 #-----------------------
 # Linux PLC
 #-----------------------
-
-# data "openstack_images_image_v2" "OT-PLC" {
-#     name_regex = "^ubuntu-focal.*"
-#     most_recent = true
-# }
 
 resource "openstack_compute_flavor_v2" "ot-plc-linux-flavor" {
     name = "ot-plc-linux-flavor"
@@ -284,11 +270,6 @@ resource "openstack_compute_instance_v2" "OT-PLC-Linux" {
 #-----------------------
 # Linux HMI
 #-----------------------
-
-# data "openstack_images_image_v2" "OT-PLC" {
-#     name_regex = "^ubuntu-focal.*"
-#     most_recent = true
-# }
 
 resource "openstack_compute_flavor_v2" "ot-hmi-linux-flavor" {
     name = "ot-hmi-linux-flavor"

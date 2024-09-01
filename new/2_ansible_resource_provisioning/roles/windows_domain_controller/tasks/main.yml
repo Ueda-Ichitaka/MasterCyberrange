@@ -42,8 +42,11 @@
   register: _windows_domain_controller
 
 
-# uninstall patches for zerologon cve 2020-1472 for win server 2022 domain controllers 
+- name: uninstall updates against ZeroLogon (CVE-2020-1472) 
+  win_shell: |
+    powershell -command "wusa /uninstall /kb:4571723"
+    powershell -command "wusa /uninstall /kb:4586793"
+    powershell -command "wusa /uninstall /kb:4571729"
+    powershell -command "wusa /uninstall /kb:4570334"
+    powershell -command "wusa /uninstall /kb:4577668"
 
-### KB4571723 -> ZeroLogon (CVE-2020-1472)
-### KB4586793 -> ZeroLogon (CVE-2020-1472) 
-## ---> move dc to win server 2019?

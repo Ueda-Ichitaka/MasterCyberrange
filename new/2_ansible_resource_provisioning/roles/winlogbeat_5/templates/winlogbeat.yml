@@ -51,7 +51,7 @@ dashboards.index: "winlogbeat-*"
 #-------------------------- Elasticsearch output ------------------------------
 output.elasticsearch:
   # Array of hosts to connect to.
-  hosts: ["10.0.1.13:9200", "10.0.2.13:9200"]
+  hosts: ["10.0.1.12:9200", "10.0.2.12:9200"]
 
   # Optional protocol and basic auth credentials.
   #protocol: "https"

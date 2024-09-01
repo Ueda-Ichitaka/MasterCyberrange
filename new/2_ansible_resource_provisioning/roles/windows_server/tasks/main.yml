@@ -1,0 +1,39 @@
+--- 
+
+- name: uninstall updates against HiveNightmare (CVE-2021-36934) 
+  ansible.windows.win_powershell:
+    script: |
+      wusa /uninstall /kb:5004296
+      wusa /uninstall /kb:5005030
+      wusa /uninstall /kb:5005568
+
+
+- name: Misconfigure Registry Permissions
+  win_shell: |
+    icacls C:\Windows\System32\config\SAM /grant Users:F
+    icacls C:\Windows\System32\config\SYSTEM /grant Users:F
+    icacls C:\Windows\System32\config\SECURITY /grant Users:F
+
+
+# if this does not work, use this:
+# Invoke-CimMethod -MethodName Create -ClassName Win32_ShadowCopy -Arguments @{ Volume= "C:\\" }
+- name: Enable Volume Shadow Copies (VSS)
+  ansible.windows.win_powershell:
+    script: |
+      (Get-WmiObject -Class Win32_Service -Filter "Name='VSS'").ChangeStartMode('Automatic')
+      Start-Service -Name VSS
+      (Get-WmiObject -List Win32_ShadowCopy).Create($driveLetter, "ClientAccessible")
+
+      $action = New-ScheduledTaskAction -Execute 'Powershell.exe' -Argument "-command ""(Get-WmiObject -List Win32_ShadowCopy).Create(`"$driveLetter`", `"ClientAccessible`")"""
+
+      $trigger1 = New-ScheduledTaskTrigger -Daily -At 7AM
+      $trigger2 = New-ScheduledTaskTrigger -Daily -At 12PM
+
+      Register-ScheduledTask -Action $action -Trigger $trigger1, $trigger2 -TaskName "ShadowCopyCreation" -Description "Task for creating Shadow Copies"
+    parameters:
+      driveLetter: C:\
+      Force: true
+
+# grant non admin users access to shadow copies
+#Permissions on Shadow Copies: Make sure that non-administrative users can access the shadow copies where the registry hives are stored.
+#Adjust File and Folder Permissions: If necessary, modify the permissions on the shadow copy directory so that it is accessible by non-admin users.

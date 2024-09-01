@@ -1,9 +1,12 @@
-- hosts: debian, ubuntu
+- hosts: ubuntu
   gather_facts: True
   become: true
   vars_files:
     - ../../configs/attack_range_default.yml
   roles:
-    - filebeat_linux_7
-    - packetbeat_linux_7
+    - linux_workstation  
+
+
+
+
 

@@ -1,0 +1,11 @@
+- hosts: all
+  gather_facts: True
+  become: true
+  vars_files:
+    - ../../configs/attack_range_default.yml
+  #roles:
+    # stop wireshark and write to file
+    # copy everything in /var/log to aggregation server
+    # copy pcap
+    # export windows logs to evtx
+    
