@@ -1,0 +1,26 @@
+--- 
+
+- name: create subfolder for host
+  become: true
+  shell: |
+    declare -a hosts=("OT-PLC-Linux"
+                      "OT-HMI-Linux"
+                      "IT-Inside-Attacker"
+                      "IT-Linux-PC-1"
+                      "IT-Win-DC"
+                      "OT-Win-DC"
+                      "IT-Win-Share"
+                      "IT-Win-PC-1"
+                      "IT-Win-Server-1"
+                      "OT-Win-PC-1"
+                      "OT-Win-PC-2"
+                      )
+    
+    mkdir ~/dataset/
+
+    for i in "${hosts[@]}"
+    do
+        mkdir "~/dataset/$i/"
+        mkdir "~/dataset/$i/logs/"
+        mkdir "~/dataset/$i/network/"
+    done

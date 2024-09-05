@@ -25,5 +25,5 @@
     net start winlogbeat
     
 
-
+## todo: copy selected channels file to windows right next to log exporter
 

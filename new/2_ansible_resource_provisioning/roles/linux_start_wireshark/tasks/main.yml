@@ -1,0 +1,7 @@
+--- 
+
+- name: start wireshark in background
+  become: true
+  shell: |
+    hostname = $(hostname)
+    tshark -i any -w $hostname.pcap -q &

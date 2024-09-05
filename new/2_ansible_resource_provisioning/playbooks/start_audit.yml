@@ -1,11 +1,26 @@
-- hosts: all
+- hosts: audit_linux
   gather_facts: True
   become: true
   vars_files:
     - ../../configs/attack_range_default.yml
-#  roles:
-    # clear linux logs
-    # clear windows logs
-    # timeout ?
-    # start wireshark win
-    # start wireshark linux
+  roles:
+    - linux_clear_logs
+    - linux_start_wireshark
+
+
+- hosts: windows
+  gather_facts: true
+  become: true
+  roles:
+    - windows_clear_logs
+    - windows_start_wireshark
+
+
+- hosts: aggregation_server
+  tasks:
+    #place textfile with current timestamp
+    - name: place timestamp file
+      become: true
+      shell: |      
+          date +%d-%m-%Y-%H-%M > ~/dataset/timestamp.txt
+

@@ -1,0 +1,17 @@
+--- 
+
+- name: Clean logs in /var/log
+  become: true
+  shell: |
+    find /var/log -type f -regex ".*\.gz$"
+    find /var/log -type f -regex ".*\.[0-9]$"
+    
+    for CLEAN in $(find /var/log/ -type f)
+    do
+        cp /dev/null  $CLEAN
+    done
+
+    for CLEAN in $(find /var/log/samba -type f)
+    do
+        rm -rf $CLEAN
+    done

@@ -1,0 +1,12 @@
+--- 
+  
+- name: clear logs
+  ansible.windows.win_powershell:
+    script: |
+      $channels = Get-Content -Path "C:\Export-EventLogs\selected_channels.txt"
+
+      foreach ($channel in $channels)
+      {
+          Clear-EventLog "$channel"
+      }
+      

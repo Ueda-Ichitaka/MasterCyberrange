@@ -1,0 +1,6 @@
+--- 
+
+- name: stop wireshark process
+  ansible.windows.win_powershell:
+    script: |
+      Stop-Process -Name "tshark"

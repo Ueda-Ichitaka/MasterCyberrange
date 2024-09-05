@@ -145,11 +145,23 @@ kali:
 
 access_via_proxy:
   hosts:
-    windows_gateway_server:
-    windows_workstation:
-    windows_sql_server:
-    windows_engineering:
-    windows_operating:
+    IT-Win-DC:
+    OT-Win-DC:
+    IT-Win-Share:
+    IT-Win-PC-1:
+    IT-Win-Server-1:
+    OT-Win-PC-1:
+    OT-Win-PC-2:
+
+
+
+
+audit_linux: 
+  hosts:
+    OT-PLC-Linux:
+    OT-HMI-Linux: 
+    IT-Inside-Attacker:
+    IT-Linux-PC-1:
 
 
 
