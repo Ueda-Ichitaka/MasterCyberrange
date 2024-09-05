@@ -31,9 +31,6 @@ Key findings include the successful construction of the cyber range named Attack
 The contributions of this work lie in the development of a sophisticated cyber range envi- ronment and the achievement of full detectability, offering researchers a valuable platform for conducting reproducible cyber security experiments. Future research directions include enhancing scenario complexity and exploring AI-driven data analysis.
 Overall, this thesis contributes to advancing cyber security research by providing in- novative tools and methodologies for evaluating cyber threats in critical infrastructure networks.
 
-## Installation
-The usage of the AROS requires a running OpenStack instance.
-
 ## Support
 If support is needed, please contact the uueaj@student.kit.edu E-Mail.
 
@@ -46,17 +43,18 @@ Special thanks to PhD Kaibin Bao, Qi Liu and Richard Rudolf for supporting the c
 Development for this project is currently ongoing.
 
 ---------------------
-# Cyberrange
-
-todo
-
 ## Terraform
-
-
+<div>
+  <img align="center" width="100%" src="docs/1-ReadMe_Images/2-1-Terraform.png" alt="Terraform is used for provisioning the basic infrastructure of any given scenario" title="Terraform is used for provisioning the basic infrastructure of any given scenario">
+</div>
 
 ## Ansible
+<div>
+  <img align="center" width="100%" src="docs/1-ReadMe_Images/2-2-Ansible.png" alt="Ansible is used for the automatic configuration of the instances that were created during the terraform stage" title="Ansible is used for the automatic configuration of the instances that were created during the terraform stage">
+</div>
 
 ## Deployment
+The usage of the AROS requires a running OpenStack instance.
 
 scp -r .  cyberrange-copy:/home/iai/attack_range_openstack
 ssh cyberrange-copy
