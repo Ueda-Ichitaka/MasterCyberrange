@@ -25,9 +25,9 @@ data "openstack_images_image_v2" "debian12" {
 
 resource "openstack_compute_flavor_v2" "proxy-flavor" {
     name = "proxy-flavor"
-    ram = "4"
-    vcpus = "2"
-    disk = "100"
+    ram = "256"
+    vcpus = "1"
+    disk = "500"
     swap = "4"
 }
 
@@ -37,7 +37,7 @@ resource "openstack_compute_instance_v2" "access-proxy" {
   flavor_id = openstack_compute_flavor_v2.proxy-flavor.id
   image_id = data.openstack_images_image_v2.debian12.id
   key_pair = "iai_vm-cyberrange-host"
-  security_groups = ["default", openstack_networking_secgroup_v2.secgroup_access-proxy.name]
+  security_groups = ["default", openstack_networking_secgroup_v2.secgroup_access-proxy.id]
 
   network {
     access_network = true

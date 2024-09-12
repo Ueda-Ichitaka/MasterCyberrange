@@ -59,9 +59,9 @@ resource "openstack_compute_instance_v2" "IT-Win-DC" {
   key_pair = data.openstack_compute_keypair_v2.default_keypair.name
   security_groups = [
     "default",
-    openstack_networking_secgroup_v2.secgroup_windows_remote.name,
-    openstack_networking_secgroup_v2.secgroup_attack_range_internal.name,
-    openstack_networking_secgroup_v2.secgroup_splunk_universal_forwarder.name,
+    openstack_networking_secgroup_v2.secgroup_windows_remote.id,
+    openstack_networking_secgroup_v2.secgroup_attack_range_internal.id,
+    openstack_networking_secgroup_v2.secgroup_splunk_universal_forwarder.id,
     ]
   user_data = data.template_file.win_user_data_cloud_init.rendered
 
@@ -114,9 +114,9 @@ resource "openstack_compute_instance_v2" "IT-Win-Share" {
   key_pair = data.openstack_compute_keypair_v2.default_keypair.name
   security_groups = [
     "default",
-    openstack_networking_secgroup_v2.secgroup_windows_remote.name,
-    openstack_networking_secgroup_v2.secgroup_attack_range_internal.name,
-    openstack_networking_secgroup_v2.secgroup_splunk_universal_forwarder.name,
+    openstack_networking_secgroup_v2.secgroup_windows_remote.id,
+    openstack_networking_secgroup_v2.secgroup_attack_range_internal.id,
+    openstack_networking_secgroup_v2.secgroup_splunk_universal_forwarder.id,
     ]
   user_data = data.template_file.win_user_data_cloud_init.rendered
 
@@ -180,8 +180,8 @@ resource "openstack_compute_instance_v2" "IT-Win-PC-1" {
   key_pair = data.openstack_compute_keypair_v2.default_keypair.name
   security_groups = [
     "default",
-    openstack_networking_secgroup_v2.secgroup_windows_remote.name,
-    openstack_networking_secgroup_v2.secgroup_attack_range_internal.name,       
+    openstack_networking_secgroup_v2.secgroup_windows_remote.id,
+    openstack_networking_secgroup_v2.secgroup_attack_range_internal.id,       
     ]
   user_data = data.template_file.win_user_data_cloud_init.rendered
 
@@ -234,9 +234,9 @@ resource "openstack_compute_instance_v2" "IT-Win-Server-1" {
   key_pair = data.openstack_compute_keypair_v2.default_keypair.name
   security_groups = [
     "default",
-    openstack_networking_secgroup_v2.secgroup_windows_remote.name,
-    openstack_networking_secgroup_v2.secgroup_attack_range_internal.name,
-    openstack_networking_secgroup_v2.secgroup_splunk_universal_forwarder.name,
+    openstack_networking_secgroup_v2.secgroup_windows_remote.id,
+    openstack_networking_secgroup_v2.secgroup_attack_range_internal.id,
+    openstack_networking_secgroup_v2.secgroup_splunk_universal_forwarder.id,
     ]
   user_data = data.template_file.win_user_data_cloud_init.rendered
 
@@ -302,7 +302,7 @@ resource "openstack_compute_instance_v2" "IT-Linux-PC-1" {
   #flavor_id = openstack_compute_flavor_v2.it-linux-pc-1-flavor.id
   image_id = "d508e903-4f41-491e-bf41-b0cbc0f1712a"    #data.openstack_images_image_v2.ubuntu_test.id
   key_pair = "iai_vm-cyberrange-host"
-  security_groups = ["default",openstack_networking_secgroup_v2.secgroup_splunk_universal_forwarder.name]
+  security_groups = ["default",openstack_networking_secgroup_v2.secgroup_splunk_universal_forwarder.id]
 
    network {  
       access_network = true

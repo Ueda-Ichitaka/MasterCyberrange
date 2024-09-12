@@ -56,9 +56,9 @@ resource "openstack_compute_instance_v2" "OT-Win-DC" {
   key_pair = data.openstack_compute_keypair_v2.default_keypair.name
   security_groups = [
     "default",
-    openstack_networking_secgroup_v2.secgroup_windows_remote.name,
-    openstack_networking_secgroup_v2.secgroup_attack_range_internal.name,
-    openstack_networking_secgroup_v2.secgroup_splunk_universal_forwarder.name,
+    openstack_networking_secgroup_v2.secgroup_windows_remote.id,
+    openstack_networking_secgroup_v2.secgroup_attack_range_internal.id,
+    openstack_networking_secgroup_v2.secgroup_splunk_universal_forwarder.id,
     ]
   user_data = data.template_file.win_user_data_cloud_init.rendered
    network {  
@@ -118,8 +118,8 @@ resource "openstack_compute_instance_v2" "OT-Win-PC-1" {
   key_pair = data.openstack_compute_keypair_v2.default_keypair.name
   security_groups = [
     "default",
-    openstack_networking_secgroup_v2.secgroup_windows_remote.name,
-    openstack_networking_secgroup_v2.secgroup_attack_range_internal.name,       
+    openstack_networking_secgroup_v2.secgroup_windows_remote.id,
+    openstack_networking_secgroup_v2.secgroup_attack_range_internal.id,       
     ]
  user_data = data.template_file.win_user_data_cloud_init.rendered
    network {
@@ -176,8 +176,8 @@ resource "openstack_compute_instance_v2" "OT-Win-PC-2" {
   key_pair = data.openstack_compute_keypair_v2.default_keypair.name
   security_groups = [
     "default",
-    openstack_networking_secgroup_v2.secgroup_windows_remote.name,
-    openstack_networking_secgroup_v2.secgroup_attack_range_internal.name,       #
+    openstack_networking_secgroup_v2.secgroup_windows_remote.id,
+    openstack_networking_secgroup_v2.secgroup_attack_range_internal.id,
     ]
   user_data = data.template_file.win_user_data_cloud_init.rendered
 
@@ -233,7 +233,7 @@ resource "openstack_compute_instance_v2" "OT-PLC-Linux" {
 
   image_id = "63688ae7-c167-41e5-80db-164ef5714eef" #debian 12
   key_pair = "iai_vm-cyberrange-host"
-  security_groups = ["default",openstack_networking_secgroup_v2.secgroup_splunk_universal_forwarder.name]
+  security_groups = ["default",openstack_networking_secgroup_v2.secgroup_splunk_universal_forwarder.id]
 
   network {  
       access_network = true
@@ -284,7 +284,7 @@ resource "openstack_compute_instance_v2" "OT-HMI-Linux" {
   #flavor_id = openstack_compute_flavor_v2.ot-hmi-linux.flavor.id
   image_id = "63688ae7-c167-41e5-80db-164ef5714eef" #debian 12
   key_pair = "iai_vm-cyberrange-host"
-  security_groups = ["default",openstack_networking_secgroup_v2.secgroup_splunk_universal_forwarder.name]
+  security_groups = ["default",openstack_networking_secgroup_v2.secgroup_splunk_universal_forwarder.id]
 
   network {  
       access_network = true

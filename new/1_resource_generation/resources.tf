@@ -23,8 +23,8 @@ resource "openstack_networking_floatingip_v2" "floatip_1" {
 
 resource "openstack_compute_flavor_v2" "aggregation-server-flavor" {
     name = "aggregation-server-flavor"
-    ram = "10"
-    vcpus = "4"
+    ram = "256"
+    vcpus = "1"
     disk = "500"
     swap = "4"
 }
@@ -38,8 +38,8 @@ resource "openstack_compute_instance_v2" "aggregation-server" {
    admin_pass = "secreT123%"
    security_groups = [
     "default",
-    openstack_networking_secgroup_v2.secgroup_splunk_server.name,
-    openstack_networking_secgroup_v2.secgroup_attack_range_internal.name,       
+    openstack_networking_secgroup_v2.secgroup_splunk_server.id,
+    openstack_networking_secgroup_v2.secgroup_attack_range_internal.id,       
     ]
 
    network {
