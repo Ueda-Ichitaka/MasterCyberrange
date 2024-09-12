@@ -24,12 +24,9 @@ resource "openstack_networking_port_v2" "IT-network-port_1" {
   }
 }
 
-
-
 resource "openstack_networking_floatingip_v2" "floatip_2" {
   pool = "public"
 }
-
 
 resource "openstack_networking_router_v2" "IT_router" {
   name                = "IT_router"
@@ -41,10 +38,6 @@ resource "openstack_networking_router_interface_v2" "router_interface_1" {
   router_id = openstack_networking_router_v2.IT_router.id
   subnet_id = openstack_networking_subnet_v2.IT-subnet.id
 }
-
-
-
-
 
 #------------------------------------
 # Windows IT Domain Controller
@@ -100,10 +93,6 @@ resource "openstack_compute_instance_v2" "IT-Win-DC" {
   }
 
 }
-
-
-
-
 
 #------------------------------------
 # Windows Share and Gateway Server
@@ -171,8 +160,6 @@ resource "openstack_compute_instance_v2" "IT-Win-Share" {
 
 }
 
-
-
 #-----------------------
 # APT29 Windows Workstation
 #-----------------------
@@ -225,13 +212,6 @@ resource "openstack_compute_instance_v2" "IT-Win-PC-1" {
   }  
 
 }
-
-
-
-
-
-
-
 
 # Todo: Server applications
 #------------------------------------
@@ -298,13 +278,7 @@ resource "openstack_compute_instance_v2" "IT-Win-Server-1" {
 
 }
 
-
-
-
-
-
-
-# Todo: Anwendungen
+# Todo: Applications
 #-----------------------
 # Ubuntu Workstation
 #-----------------------
@@ -355,9 +329,6 @@ resource "openstack_compute_instance_v2" "IT-Linux-PC-1" {
 
 }
 
-
-
-
 #-----------------------
 # Inside-Attacker-Kali
 #-----------------------
@@ -405,6 +376,4 @@ resource "openstack_compute_instance_v2" "IT-Inside-Attacker" {
     working_dir = "../2_ansible_resource_provisioning"
     command = "ansible-playbook -l 'IT-Inside-Attacker,' playbooks/kali.yml"
   }
-
-
 }

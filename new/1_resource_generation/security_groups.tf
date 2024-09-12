@@ -1,6 +1,6 @@
 
 #------------------------------------
-# attack_range-windows-remote-sg
+# attack_range-windows-remote-security_group
 #------------------------------------
 
 resource "openstack_networking_secgroup_v2" "secgroup_windows_remote" {
@@ -55,7 +55,6 @@ resource "openstack_networking_secgroup_rule_v2" "ssh2" {
 #   security_group_id = openstack_networking_secgroup_v2.secgroup_windows_remote.id
 # }
 
-
 resource "openstack_networking_secgroup_rule_v2" "anyvingress" {
   direction         = "ingress"
   ethertype         = "IPv4"
@@ -70,8 +69,6 @@ resource "openstack_networking_secgroup_rule_v2" "anyv6ingress" {
   remote_ip_prefix  = "::/0"
   security_group_id = openstack_networking_secgroup_v2.secgroup_windows_remote.id
 }
-
-
 
 resource "openstack_networking_secgroup_rule_v2" "winrm" {
   direction         = "ingress"
@@ -94,7 +91,7 @@ resource "openstack_networking_secgroup_rule_v2" "winrm2" {
 }
 
 #------------------------------------
-# secgroup_splunk_universal_forwarder
+# splunk_universal_forwarder-security_group
 #------------------------------------
 
 resource "openstack_networking_secgroup_v2" "secgroup_splunk_universal_forwarder" {
@@ -113,7 +110,7 @@ resource "openstack_networking_secgroup_rule_v2" "splunk_universal_forwarder" {
 }
 
 #------------------------------------
-# secgroup_splunk_server
+# splunk_server-security_group
 #------------------------------------
 
 resource "openstack_networking_secgroup_v2" "secgroup_splunk_server" {
@@ -132,7 +129,7 @@ resource "openstack_networking_secgroup_rule_v2" "splunk_server" {
 }
 
 #------------------------------------
-# attack_range-internal
+# attack_range-internal-security_group
 #------------------------------------
 
 resource "openstack_networking_secgroup_v2" "secgroup_attack_range_internal" {

@@ -25,7 +25,6 @@ resource "openstack_networking_port_v2" "OT-network-port_1" {
   }
 }
 
-
 resource "openstack_networking_router_interface_v2" "router_interface_2" {
   router_id = openstack_networking_router_v2.IT_router.id
   subnet_id = openstack_networking_subnet_v2.OT-subnet.id

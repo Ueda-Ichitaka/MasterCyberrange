@@ -14,12 +14,9 @@ resource "openstack_networking_subnet_v2" "APT-subnet" {
   cidr = "10.3.0.0/16"
 }
 
-
 resource "openstack_networking_floatingip_v2" "floatip_2" {
   pool = "public"
 }
-
-
 
 resource "openstack_networking_router_v2" "APT_router" {
   name                = "APT_router"
@@ -31,13 +28,6 @@ resource "openstack_networking_router_interface_v2" "router_interface_3" {
   router_id = openstack_networking_router_v2.APT_router.id
   subnet_id = openstack_networking_subnet_v2.APT-subnet.id
 }
-
-
-
-
-
-
-
 
 #-----------------------
 # Outside-Attacker-Kali
@@ -66,7 +56,6 @@ resource "openstack_compute_instance_v2" "APT-Outside-Attacker" {
       fixed_ip_v4 = "10.0.3.37"
    }
 
-
    stop_before_destroy = false
 
   connection {
@@ -80,8 +69,6 @@ resource "openstack_compute_instance_v2" "APT-Outside-Attacker" {
     working_dir = "../2_ansible_resource_provisioning"
     command = "ansible-playbook -l 'outside_kali,' playbooks/kali.yml"
   }
-
-
 }
 
 

@@ -23,7 +23,6 @@ data "openstack_images_image_v2" "debian12" {
     most_recent = true
 }
 
-
 resource "openstack_compute_flavor_v2" "proxy-flavor" {
     name = "proxy-flavor"
     ram = "4"
@@ -31,7 +30,6 @@ resource "openstack_compute_flavor_v2" "proxy-flavor" {
     disk = "100"
     swap = "4"
 }
-
 
 resource "openstack_compute_instance_v2" "access-proxy" {
   name = "attack_range-access-proxy"
