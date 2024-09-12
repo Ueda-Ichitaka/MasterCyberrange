@@ -25,7 +25,15 @@ This basic scenario describes the following steps:
 4. Access: The attacker escalates privileges and moves laterally within the network to gain control over more critical systems or data.
 5. Exfiltration: The attacker transfers valuable or sensitive information from the compromised network to their own external location without detection.
 
-## Abstract of the corresponding master thesis
+<div>
+  <img align="center" width="100%" src="docs/2-Topology/Network_max.png" alt="The topology shown is the current goal for the maximum scenario construction" title="The topology shown is the current goal for the maximum scenario construction">
+</div>
+
+The current research for this project aims to construct the scenario shown in the previous image.
+Corresponding to that, a cyber kill chain suited to the scenario is established.
+The goal is to automatically construct the scenario and perform the cyber kill chain with minimal manual input.
+
+## Abstract of the corresponding initial master thesis
 This thesis presents the development and evaluation of a self-hosted cyber range environment tailored for attack emulation and detection in large-scale critical infrastructure networks. Leveraging Infrastructure as Code (IaC) tools and cloud platforms, the research addresses challenges in accessing cloud services and the scarcity of cyber ranges for critical infrastructure research.
 Key findings include the successful construction of the cyber range named Attack Range Open Stack (AROS) capable of handling complex environments and providing full de- tectability of network tra￿c and actions on virtual machines. The research highlights challenges in setup-time optimization, scalability testing, and integration of real energy hardware for enhanced testing capabilities.
 The contributions of this work lie in the development of a sophisticated cyber range envi- ronment and the achievement of full detectability, offering researchers a valuable platform for conducting reproducible cyber security experiments. Future research directions include enhancing scenario complexity and exploring AI-driven data analysis.
@@ -42,7 +50,6 @@ Special thanks to PhD Kaibin Bao, Qi Liu and Richard Rudolf for supporting the c
 ## Project status
 Development for this project is currently ongoing.
 
----------------------
 ## Terraform
 <div>
   <img align="center" width="100%" src="docs/1-ReadMe_Images/2-1-Terraform.png" alt="Terraform is used for provisioning the basic infrastructure of any given scenario" title="Terraform is used for provisioning the basic infrastructure of any given scenario">
