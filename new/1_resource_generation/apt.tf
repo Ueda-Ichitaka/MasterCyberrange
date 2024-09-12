@@ -14,9 +14,9 @@ resource "openstack_networking_subnet_v2" "APT-subnet" {
   cidr = "10.3.0.0/16"
 }
 
-resource "openstack_networking_floatingip_v2" "floatip_2" {
-  pool = "public"
-}
+# resource "openstack_networking_floatingip_v2" "floatip_2" {
+#   pool = "public"
+# }
 
 resource "openstack_networking_router_v2" "APT_router" {
   name                = "APT_router"
