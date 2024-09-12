@@ -54,8 +54,8 @@ resource "openstack_compute_flavor_v2" "it-dc-flavor" {
 resource "openstack_compute_instance_v2" "IT-Win-DC" {
   name            = "IT-Win-DC"
   image_id = "b34c1867-728f-4d7b-839c-06c05a108088"  #Windows Server 2019 Eval   
-  #flavor_name     = "m1.medium"
-  flavor_id = openstack_compute_flavor_v2.it-dc-flavor.id
+  flavor_name     = "m1.medium"
+  #flavor_id = openstack_compute_flavor_v2.it-dc-flavor.id
   key_pair = data.openstack_compute_keypair_v2.default_keypair.name
   security_groups = [
     "default",
@@ -174,8 +174,8 @@ resource "openstack_compute_flavor_v2" "it-win-pc-1-flavor" {
 
 resource "openstack_compute_instance_v2" "IT-Win-PC-1" {
   name = "IT-Win-PC-1"
-  #flavor_name = "m1.medium"
-  flavor_id = openstack_compute_flavor_v2.it-win-pc-1-flavor.id
+  flavor_name = "m1.medium"
+  #flavor_id = openstack_compute_flavor_v2.it-win-pc-1-flavor.id
   image_id = "b34c1867-728f-4d7b-839c-06c05a108088"  #Windows Server 2019 Eval 
   key_pair = data.openstack_compute_keypair_v2.default_keypair.name
   security_groups = [
@@ -229,8 +229,8 @@ resource "openstack_compute_flavor_v2" "it-win-server-1-flavor" {
 resource "openstack_compute_instance_v2" "IT-Win-Server-1" {
   name            = "IT-Win-Server-1"
   image_id = "b34c1867-728f-4d7b-839c-06c05a108088"  #Windows Server 2019 Eval  
-  #flavor_name     = "m1.medium"
-  flavor_id = openstack_compute_flavor_v2.it-win-server-flavor.id
+  flavor_name     = "m1.medium"
+  #flavor_id = openstack_compute_flavor_v2.it-win-server-flavor.id
   key_pair = data.openstack_compute_keypair_v2.default_keypair.name
   security_groups = [
     "default",
@@ -298,8 +298,8 @@ resource "openstack_compute_flavor_v2" "it-linux-pc-1-flavor" {
 
 resource "openstack_compute_instance_v2" "IT-Linux-PC-1" {
   name = "IT-Linux-PC-1"
-  #flavor_name = "m1.small"
-  flavor_id = openstack_compute_flavor_v2.it-linux-pc-1-flavor.id
+  flavor_name = "m1.small"
+  #flavor_id = openstack_compute_flavor_v2.it-linux-pc-1-flavor.id
   image_id = "d508e903-4f41-491e-bf41-b0cbc0f1712a"    #data.openstack_images_image_v2.ubuntu_test.id
   key_pair = "iai_vm-cyberrange-host"
   security_groups = ["default",openstack_networking_secgroup_v2.secgroup_splunk_universal_forwarder.name]
@@ -343,8 +343,8 @@ resource "openstack_compute_flavor_v2" "it-inside-attacker-flavor" {
 
 resource "openstack_compute_instance_v2" "IT-Inside-Attacker" {
    name = "IT-Inside-Attacker"
-   #flavor_name = "m1.medium"
-   flavor_id = openstack_compute_flavor_v2.it-inside-attacker-flavor.id
+   flavor_name = "m1.medium"
+   #flavor_id = openstack_compute_flavor_v2.it-inside-attacker-flavor.id
    image_id = "bf8afd2a-f61b-4e2d-a747-caf2803c8d37"
    key_pair = data.openstack_compute_keypair_v2.default_keypair.name
    admin_pass = "1337"

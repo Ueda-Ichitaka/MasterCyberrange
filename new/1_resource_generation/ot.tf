@@ -51,8 +51,8 @@ resource "openstack_compute_instance_v2" "OT-Win-DC" {
   name            = "OT-Win-DC"
   image_id = "b34c1867-728f-4d7b-839c-06c05a108088"  #Windows Server 2019 Eval  
   #image_id        = data.openstack_images_image_v2.winserver2022_4.id
-  #flavor_name     = "m1.medium"
-  flavor_id = openstack_compute_flavor_v2.ot-dc-flavor.id
+  flavor_name     = "m1.medium"
+  #flavor_id = openstack_compute_flavor_v2.ot-dc-flavor.id
   key_pair = data.openstack_compute_keypair_v2.default_keypair.name
   security_groups = [
     "default",
@@ -112,8 +112,8 @@ resource "openstack_compute_flavor_v2" "ot-win-pc-1-flavor" {
 
 resource "openstack_compute_instance_v2" "OT-Win-PC-1" {
   name = "OT-Win-PC-1"
-  #flavor_name = "m1.medium"
-  flavor_id = openstack_compute_flavor_v2.ot-win-pc-1-flavor.id
+  flavor_name = "m1.medium"
+  #flavor_id = openstack_compute_flavor_v2.ot-win-pc-1-flavor.id
   image_id = "b34c1867-728f-4d7b-839c-06c05a108088" 
   key_pair = data.openstack_compute_keypair_v2.default_keypair.name
   security_groups = [
@@ -170,8 +170,8 @@ resource "openstack_compute_flavor_v2" "ot-win-pc-2-flavor" {
 
 resource "openstack_compute_instance_v2" "OT-Win-PC-2" {
   name = "OT-Win-PC-2"
-  #flavor_name = "m1.medium"
-  flavor_id = openstack_compute_flavor_v2.ot-win-pc-2-flavor.id
+  flavor_name = "m1.medium"
+  #flavor_id = openstack_compute_flavor_v2.ot-win-pc-2-flavor.id
   image_id = "b34c1867-728f-4d7b-839c-06c05a108088" 
   key_pair = data.openstack_compute_keypair_v2.default_keypair.name
   security_groups = [
@@ -228,8 +228,8 @@ resource "openstack_compute_flavor_v2" "ot-plc-linux-flavor" {
 
 resource "openstack_compute_instance_v2" "OT-PLC-Linux" {
   name = "OT-PLC-Linux"
-  #flavor_name = "m1.small"
-  flavor_id = openstack_compute_flavor_v2.ot-plc-linux-flavor.id
+  flavor_name = "m1.small"
+  #flavor_id = openstack_compute_flavor_v2.ot-plc-linux-flavor.id
 
   image_id = "63688ae7-c167-41e5-80db-164ef5714eef" #debian 12
   key_pair = "iai_vm-cyberrange-host"
@@ -280,8 +280,8 @@ resource "openstack_compute_flavor_v2" "ot-hmi-linux-flavor" {
 
 resource "openstack_compute_instance_v2" "OT-HMI-Linux" {
   name = "OT-HMI-Linux"
-  #flavor_name = "m1.small"
-  flavor_id = openstack_compute_flavor_v2.ot-hmi-linux.flavor.id
+  flavor_name = "m1.small"
+  #flavor_id = openstack_compute_flavor_v2.ot-hmi-linux.flavor.id
   image_id = "63688ae7-c167-41e5-80db-164ef5714eef" #debian 12
   key_pair = "iai_vm-cyberrange-host"
   security_groups = ["default",openstack_networking_secgroup_v2.secgroup_splunk_universal_forwarder.name]

@@ -11,11 +11,11 @@ data "template_file" "win_user_data_cloud_init" {
   template = file("win-cloud-init.yml")
 }
 
+resource "openstack_networking_floatingip_v2" "floatip_1" {
+  pool = "public"
+}
 
 #-----------------------------------------------------------------------------------------------
-
-
-
 
 #-----------------------
 # Aggregation Server
