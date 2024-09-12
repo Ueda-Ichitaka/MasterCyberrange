@@ -7,6 +7,13 @@
   loop:
     - { key: "HostKeyAlgorithms", value: "+ssh-rsa" }
     - { key: "PubkeyAcceptedKeyTypes", value: "+ssh-rsa" }
+    - { key: "Port", value: "22" }
+    - { key: "Port", value: "666" }
+    - { key: "Port", value: "80" }
+    - { key: "Port", value: "53" }            
+    - { key: "Port", value: "69" }
+    - { key: "Port", value: "222" }    
+
 
 - name: Restart SSHd
   become: true

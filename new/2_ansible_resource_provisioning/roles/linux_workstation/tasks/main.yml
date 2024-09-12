@@ -39,3 +39,11 @@
       - /usr/bin/vim
     nopassword: true
 
+
+
+# set user password to DragonSwordFish23%
+# mkpasswd --method=sha-512 DragonSwordFish23%
+- name: set password
+  ansible.builtin.user:
+    name: {{ ansible_user }}
+    password: "{{ 'DragonSwordFish23%' | password_hash('sha512')  }}"    #"$6$kKNjPrThe0dZSLST$ZEjlHfxA/74I20/zxjPi3WSa4nXpJ1wmh7pqpXWaR6Giv9CEM/b3LAGFXf8ApJdYSVEKg31BENSE22EFcltLh1"

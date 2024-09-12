@@ -1,0 +1,29 @@
+version: '2'
+
+services:
+  elasticsearch:
+    container_name: elasticsearch:7.17.15
+    user: "1000:1000"
+    build:
+      context: elasticsearch/
+    restart: always  
+    volumes:
+       - ./elasticsearch/data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      xpack.security.enabled: false
+      ES_JAVA_OPTS: "-Xms8g -Xmx8g"
+      ELASTIC_PASSWORD: changeme
+      discovery.type: single-node
+
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.17.15
+    ports:
+      - "5601:5601"
+    environment:
+      ELASTICSEARCH_HOSTS: '["http://10.0.1.12:9200"]'
+    depends_on:
+      - elasticsearch

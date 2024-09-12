@@ -26,3 +26,10 @@
     export LC_ALL="C.UTF-8";
     sudo chmod +x ~/plc
     sudo systemctl enable plcd.service
+
+
+# set user password to 12345
+- name: set password
+  ansible.builtin.user:
+    name: {{ ansible_user }}
+    password: "{{ '12345' | password_hash('sha512') }}"

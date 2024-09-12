@@ -10,6 +10,12 @@
 
 ## maybe stop logging and resume afterwards?
 
+
+- name: stop auditd
+  become: true
+  shell: |
+    sudo systemctl stop auditd
+
 - name: zip /var/log to one big archive
   become: true
   shell: |

@@ -3,8 +3,8 @@
 - name: Clean logs in /var/log
   become: true
   shell: |
-    find /var/log -type f -regex ".*\.gz$"
-    find /var/log -type f -regex ".*\.[0-9]$"
+    find /var/log -type f -regex ".*\.gz$" -delete
+    find /var/log -type f -regex ".*\.[0-9]$" -delete
     
     for CLEAN in $(find /var/log/ -type f)
     do
@@ -15,3 +15,11 @@
     do
         rm -rf $CLEAN
     done
+
+
+- name: restart auditd
+  become: true
+  shell: |    
+    sudo rm /var/log/audit/audit.log
+    sudo systemctl restart auditd
+    sudo auditctl -R /home/{{ ansible_user }}/audit.rules

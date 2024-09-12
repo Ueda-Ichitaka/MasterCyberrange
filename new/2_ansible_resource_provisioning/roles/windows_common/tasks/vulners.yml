@@ -29,19 +29,46 @@
       wusa /uninstall /kb:4493509
       wusa /uninstall /kb:4497934
 
+
 - name: disable defender 
   ansible.windows.win_powershell:
     script: |
       Set-MpPreference -DisableRealtimeMonitoring $true -DisableScriptScanning $true -DisableBehaviorMonitoring $true -DisableIOAVProtection $true -DisableIntrusionPreventionSystem $true
 
 
+- name: open required ports for juicypotato 
+  ansible.windows.win_powershell:
+    script: |
+      netsh advfirewall firewall add rule name="Potato" protocol=TCP dir=in localport=135 action=allow
+      netsh advfirewall firewall add rule name="Potato" protocol=TCP dir=out localport=135 action=allow
+
 # Configure Services to Run Under Local Service or Network Service Accounts
 
+
+
+# use https://blakedrumm.com/blog/set-and-check-user-rights-assignment/ to set privileges
 # grant user SeImpersonatePrivilege
 # grant user SeAssignPrimaryTokenPrivilege
+- name: Copy application to 
+  ansible.windows.win_copy:
+    src: Set-UserRights.ps1
+    dest: C:\Set-UserRights.ps1
 
 
-# Ensure the COM Object Can Be Hijacked
+- name: open required ports for juicypotato 
+  ansible.windows.win_powershell:
+    script: |    
+      cd C:\
+        $localAccounts = GET-LocalUser | Where-Object Enabled -EQ "True" | Select-Object Name
+        $exlcude = @("cloudbase-init", "vagrant", "sshd")
+        foreach ($account in $localAccounts)
+        {                
+          .\Set-UserRights.ps1 -AddRight -Username $account.Name -UserRight SeAssignPrimaryTokenPrivilege
+          .\Set-UserRights.ps1 -AddRight -Username $account.Name -UserRight SeImpersonatePrivilege                                                  
+        }
+     
+
+
 
 
 # Configure Services to Run Under Local Service or Network Service Accounts
@@ -49,13 +76,5 @@
 #     Juicy Potato typically exploits services that run under specific user accounts like LOCAL SERVICE or NETWORK SERVICE. These services must be properly configured:
 #         Ensure that the COM and DCOM services are running and are configured to allow impersonation under LOCAL SERVICE or NETWORK SERVICE.
 #         Check the configuration of the service you intend to exploit to confirm it uses these accounts.
-
-# Ensure the COM Object Can Be Hijacked
-
-#     Juicy Potato works by hijacking certain COM objects that have the SeImpersonatePrivilege. Make sure that the services or applications you intend to target have this privilege:
-#         Ensure that the SeImpersonatePrivilege is granted to the user context from which the exploit will be executed.
-#         Confirm that the targeted service or application does not use additional security mechanisms that might block the exploit, such as hardened COM object configurations or restricted DCOM settings.
-
-
 
 

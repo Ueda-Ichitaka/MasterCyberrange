@@ -37,7 +37,7 @@
 ### update and check config
 
 - name: Replace default elasticsearch.yml configurations
-  become: yes
+  become: true
   template:
     src: elasticsearch.yml
     dest: /etc/elasticsearch/elasticsearch.yml

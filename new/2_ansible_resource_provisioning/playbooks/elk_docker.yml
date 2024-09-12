@@ -1,0 +1,9 @@
+- hosts: aggregation-server
+  gather_facts: True
+  become: true
+  vars:  
+    hostname: aggregation-server
+    ansible_user: 'debian'
+  roles:
+    - java_linux
+    - elk_docker

@@ -48,4 +48,12 @@
   win_shell: |
     bcdedit /set testsigning on
     bcdedit /set nointegritychecks off 
+
+
+# place text file with ubuntu pw
+- name: Copy pw text file
+  ansible.windows.win_copy:
+    src: pw.txt
+    dest: C:\pw.txt
+
  

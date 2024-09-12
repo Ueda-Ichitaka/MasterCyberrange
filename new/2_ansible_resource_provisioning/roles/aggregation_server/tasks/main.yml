@@ -24,3 +24,10 @@
         mkdir "~/dataset/$i/logs/"
         mkdir "~/dataset/$i/network/"
     done
+
+
+
+- name: create subfolder for host
+  become: true
+  shell: |
+    mkdir ~/elk/

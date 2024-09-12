@@ -20,7 +20,7 @@ runcmd:
   - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=in localport=8065 action=allow'
   - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=out localport=8065 action=allow'
   - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=in localport=8191 action=allow'
-  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=out localport=8191 action=allow' 
+  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=out localport=8191 action=allow'   
   - 'echo test >> C:\out.txt'
   - |
     powershell -Command "Set-ItemProperty -Path HKLM:SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU -Name UseWUServer -Value 0"

@@ -28,10 +28,16 @@
     - build-essential
     - screen
     - traceroute
+    - auditd
+    - nmap
     update_cache: true
     state: present
 
 
+- name: Place auditd rules
+  template:
+    src: audit.rules
+    dest: /home/{{ ansible_user }}/audit.rules
 
 
 - name: Install wireshark

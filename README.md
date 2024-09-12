@@ -45,7 +45,7 @@ If support is needed, please contact the uueaj@student.kit.edu E-Mail.
 ## Roadmap
 
 ## Authors and acknowledgment
-Special thanks to PhD Kaibin Bao, Qi Liu and Richard Rudolf for supporting the construction of the cyber range.
+Special thanks to PhD Kaibin Bao, Qi Liu and Richard Rudolph for supporting the construction of the cyber range.
 
 ## Project status
 Development for this project is currently ongoing.
@@ -63,10 +63,11 @@ Development for this project is currently ongoing.
 ## Deployment
 The usage of the AROS requires a running OpenStack instance.
 
+```
 scp -r .  cyberrange-copy:/home/iai/attack_range_openstack
 ssh cyberrange-copy
 terraform apply
-
+```
 
 ## Working with the Infrastructure
 
