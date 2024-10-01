@@ -41,18 +41,18 @@ resource "openstack_networking_router_interface_v2" "router_interface_2" {
 
 resource "openstack_compute_flavor_v2" "ot-dc-flavor" {
     name = "ot-dc-flavor"
-    ram = "4"
+    ram = "4096"
     vcpus = "2"
     disk = "10"
-    swap = "4"
+    swap = "4096"
 }
 
 resource "openstack_compute_instance_v2" "OT-Win-DC" {
   name            = "OT-Win-DC"
   image_id = "b34c1867-728f-4d7b-839c-06c05a108088"  #Windows Server 2019 Eval  
   #image_id        = data.openstack_images_image_v2.winserver2022_4.id
-  flavor_name     = "m1.medium"
-  #flavor_id = openstack_compute_flavor_v2.ot-dc-flavor.id
+  #flavor_name     = "m1.medium"
+  flavor_id = openstack_compute_flavor_v2.ot-dc-flavor.id
   key_pair = data.openstack_compute_keypair_v2.default_keypair.name
   security_groups = [
     "default",
@@ -68,30 +68,30 @@ resource "openstack_compute_instance_v2" "OT-Win-DC" {
    }   
 
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'OT-Win-DC,' playbooks/windows.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'OT-Win-DC,' playbooks/windows.yml"
+  # }
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'OT-Win-DC,' playbooks/beats_windows.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'OT-Win-DC,' playbooks/beats_windows.yml"
+  # }
 
   # provisioner "local-exec" {
   #   working_dir = "../2_ansible_resource_provisioning"
   #   command = "ansible-playbook -l 'OT-Win-DC,' playbooks/splunk_forwarder_windows.yml"
   # }
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'OT-Win-DC,' playbooks/windows_dc.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'OT-Win-DC,' playbooks/windows_dc.yml"
+  # }
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'OT-Win-DC,' playbooks/vulnerabilities.yml"
-  }  
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'OT-Win-DC,' playbooks/vulnerabilities.yml"
+  # }  
 
 
 }
@@ -109,16 +109,16 @@ resource "openstack_compute_instance_v2" "OT-Win-DC" {
 
 resource "openstack_compute_flavor_v2" "ot-win-pc-1-flavor" {
     name = "ot-win-pc-1-flavor"
-    ram = "4"
+    ram = "4096"
     vcpus = "2"
     disk = "20"
-    swap = "4"
+    swap = "4096"
 }
 
 resource "openstack_compute_instance_v2" "OT-Win-PC-1" {
   name = "OT-Win-PC-1"
-  flavor_name = "m1.medium"
-  #flavor_id = openstack_compute_flavor_v2.ot-win-pc-1-flavor.id
+  #flavor_name = "m1.medium"
+  flavor_id = openstack_compute_flavor_v2.ot-win-pc-1-flavor.id
   image_id = "b34c1867-728f-4d7b-839c-06c05a108088" 
   key_pair = data.openstack_compute_keypair_v2.default_keypair.name
   security_groups = [
@@ -133,30 +133,30 @@ resource "openstack_compute_instance_v2" "OT-Win-PC-1" {
       fixed_ip_v4 = "10.0.2.15"
    }
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'OT-Win-PC-1,' playbooks/windows.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'OT-Win-PC-1,' playbooks/windows.yml"
+  # }
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'OT-Win-PC-1,' playbooks/beats_windows.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'OT-Win-PC-1,' playbooks/beats_windows.yml"
+  # }
 
   # provisioner "local-exec" {
   #   working_dir = "../2_ansible_resource_provisioning"
   #   command = "ansible-playbook -l 'OT-Win-PC-1,' playbooks/splunk_forwarder_windows.yml"
   # }
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'OT-Win-PC-1,' playbooks/windows_workstation.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'OT-Win-PC-1,' playbooks/windows_workstation.yml"
+  # }
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'OT-Win-PC-1,' playbooks/vulnerabilities.yml"
-  }  
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'OT-Win-PC-1,' playbooks/vulnerabilities.yml"
+  # }  
 
 
 
@@ -172,16 +172,16 @@ resource "openstack_compute_instance_v2" "OT-Win-PC-1" {
 
 resource "openstack_compute_flavor_v2" "ot-win-pc-2-flavor" {
     name = "ot-win-pc-2-flavor"
-    ram = "4"
+    ram = "4096"
     vcpus = "2"
     disk = "20"
-    swap = "4"
+    swap = "4096"
 }
 
 resource "openstack_compute_instance_v2" "OT-Win-PC-2" {
   name = "OT-Win-PC-2"
-  flavor_name = "m1.medium"
-  #flavor_id = openstack_compute_flavor_v2.ot-win-pc-2-flavor.id
+  #flavor_name = "m1.medium"
+  flavor_id = openstack_compute_flavor_v2.ot-win-pc-2-flavor.id
   image_id = "b34c1867-728f-4d7b-839c-06c05a108088" 
   key_pair = data.openstack_compute_keypair_v2.default_keypair.name
   security_groups = [
@@ -198,30 +198,30 @@ resource "openstack_compute_instance_v2" "OT-Win-PC-2" {
    }
 
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'OT-Win-PC-2,' playbooks/windows.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'OT-Win-PC-2,' playbooks/windows.yml"
+  # }
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'OT-Win-PC-2,' playbooks/beats_windows.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'OT-Win-PC-2,' playbooks/beats_windows.yml"
+  # }
 
   # provisioner "local-exec" {
   #   working_dir = "../2_ansible_resource_provisioning"
   #   command = "ansible-playbook -l 'OT-Win-PC-2,' playbooks/splunk_forwarder_windows.yml"
   # }
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'OT-Win-PC-2,' playbooks/windows_workstation.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'OT-Win-PC-2,' playbooks/windows_workstation.yml"
+  # }
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'OT-Win-PC-2,' playbooks/vulnerabilities.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'OT-Win-PC-2,' playbooks/vulnerabilities.yml"
+  # }
 
 
 }
@@ -235,16 +235,16 @@ resource "openstack_compute_instance_v2" "OT-Win-PC-2" {
 
 resource "openstack_compute_flavor_v2" "ot-plc-linux-flavor" {
     name = "ot-plc-linux-flavor"
-    ram = "2"
+    ram = "2048"
     vcpus = "1"
     disk = "10"
-    swap = "2"
+    swap = "2048"
 }
 
 resource "openstack_compute_instance_v2" "OT-PLC-Linux" {
   name = "OT-PLC-Linux"
-  flavor_name = "m1.small"
-  #flavor_id = openstack_compute_flavor_v2.ot-plc-linux-flavor.id
+  #flavor_name = "m1.small"
+  flavor_id = openstack_compute_flavor_v2.ot-plc-linux-flavor.id
 
   image_id = "63688ae7-c167-41e5-80db-164ef5714eef" #debian 12
   key_pair = "iai_vm-cyberrange-host"
@@ -268,20 +268,20 @@ resource "openstack_compute_instance_v2" "OT-PLC-Linux" {
   }
 
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'OT-PLC-Linux,' playbooks/linux.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'OT-PLC-Linux,' playbooks/linux.yml"
+  # }
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'OT-PLC-Linux,' playbooks/beats_linux.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'OT-PLC-Linux,' playbooks/beats_linux.yml"
+  # }
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'OT-PLC-Linux,' playbooks/plc_debian.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'OT-PLC-Linux,' playbooks/plc_debian.yml"
+  # }
 
 }
 
@@ -292,16 +292,16 @@ resource "openstack_compute_instance_v2" "OT-PLC-Linux" {
 
 resource "openstack_compute_flavor_v2" "ot-hmi-linux-flavor" {
     name = "ot-hmi-linux-flavor"
-    ram = "2"
+    ram = "2048"
     vcpus = "1"
     disk = "10"
-    swap = "2"
+    swap = "2048"
 }
 
 resource "openstack_compute_instance_v2" "OT-HMI-Linux" {
   name = "OT-HMI-Linux"
-  flavor_name = "m1.small"
-  #flavor_id = openstack_compute_flavor_v2.ot-hmi-linux.flavor.id
+  #flavor_name = "m1.small"
+  flavor_id = openstack_compute_flavor_v2.ot-hmi-linux-flavor.id
   image_id = "63688ae7-c167-41e5-80db-164ef5714eef" #debian 12
   key_pair = "iai_vm-cyberrange-host"
   security_groups = ["default",openstack_networking_secgroup_v2.secgroup_splunk_universal_forwarder.id]
@@ -324,20 +324,20 @@ resource "openstack_compute_instance_v2" "OT-HMI-Linux" {
   }
 
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'OT-HMI-Linux,' playbooks/linux.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'OT-HMI-Linux,' playbooks/linux.yml"
+  # }
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'OT-HMI-Linux,' playbooks/beats_linux.yml"
-  } 
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'OT-HMI-Linux,' playbooks/beats_linux.yml"
+  # } 
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'OT-HMI-Linux,' playbooks/hmi_debian.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'OT-HMI-Linux,' playbooks/hmi_debian.yml"
+  # }
 
  
 

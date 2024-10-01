@@ -24,14 +24,14 @@ resource "openstack_networking_port_v2" "IT-network-port_1" {
   }
 }
 
-resource "openstack_networking_floatingip_v2" "floatip_2" {
-  pool = "public"
-}
+# resource "openstack_networking_floatingip_v2" "floatip_2" {
+#   pool = "public-network"
+# }
 
 resource "openstack_networking_router_v2" "IT_router" {
   name                = "IT_router"
   admin_state_up      = true
-  external_network_id = "b4def106-3c27-4de8-9848-434dacf07ba3"  ### ID von public network
+  external_network_id = "0245222e-694c-4765-9e14-ab51de39d941"  ### ID von public network
 }
 
 resource "openstack_networking_router_interface_v2" "router_interface_1" {
@@ -45,10 +45,10 @@ resource "openstack_networking_router_interface_v2" "router_interface_1" {
 
 resource "openstack_compute_flavor_v2" "it-dc-flavor" {
     name = "it-dc-flavor"
-    ram = "4"
+    ram = "4096"
     vcpus = "2"
     disk = "10"
-    swap = "4"
+    swap = "4096"
 }
 
 resource "openstack_compute_instance_v2" "IT-Win-DC" {
@@ -72,30 +72,30 @@ resource "openstack_compute_instance_v2" "IT-Win-DC" {
    }   
 
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'IT-Win-DC,' playbooks/windows.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'IT-Win-DC,' playbooks/windows.yml"
+  # }
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'IT-Win-DC,' playbooks/beats_windows.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'IT-Win-DC,' playbooks/beats_windows.yml"
+  # }
 
   # provisioner "local-exec" {
   #   working_dir = "../2_ansible_resource_provisioning"
   #   command = "ansible-playbook -l 'IT-Win-DC,' playbooks/splunk_forwarder_windows.yml"
   # }
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'IT-Win-DC,' playbooks/windows_dc.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'IT-Win-DC,' playbooks/windows_dc.yml"
+  # }
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'IT-Win-DC,' playbooks/vulnerabilities.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'IT-Win-DC,' playbooks/vulnerabilities.yml"
+  # }
 
 
 }
@@ -106,10 +106,10 @@ resource "openstack_compute_instance_v2" "IT-Win-DC" {
 
 resource "openstack_compute_flavor_v2" "it-win-share-flavor" {
     name = "it-win-share-flavor"
-    ram = "4"
+    ram = "4096"
     vcpus = "2"
     disk = "10"
-    swap = "4"
+    swap = "4096"
 }
 
 resource "openstack_compute_instance_v2" "IT-Win-Share" {
@@ -139,35 +139,35 @@ resource "openstack_compute_instance_v2" "IT-Win-Share" {
    } 
 
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'IT-Win-Share,' playbooks/windows.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'IT-Win-Share,' playbooks/windows.yml"
+  # }
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'IT-Win-Share,' playbooks/beats_windows.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'IT-Win-Share,' playbooks/beats_windows.yml"
+  # }
 
   # provisioner "local-exec" {
   #   working_dir = "../2_ansible_resource_provisioning"
   #   command = "ansible-playbook -l 'IT-Win-Share,' playbooks/splunk_forwarder_windows.yml"
   # }
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'IT-Win-Share,' playbooks/windows_fileshare.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'IT-Win-Share,' playbooks/windows_fileshare.yml"
+  # }
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'IT-Win-Share,' playbooks/windows_server.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'IT-Win-Share,' playbooks/windows_server.yml"
+  # }
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'IT-Win-Share,' playbooks/vulnerabilities.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'IT-Win-Share,' playbooks/vulnerabilities.yml"
+  # }
 
 
 
@@ -179,11 +179,12 @@ resource "openstack_compute_instance_v2" "IT-Win-Share" {
 
 resource "openstack_compute_flavor_v2" "it-win-pc-1-flavor" {
     name = "it-win-pc-1-flavor"
-    ram = "4"
+    ram = "4096"
     vcpus = "2"
     disk = "20"
-    swap = "4"
+    swap = "4096"
 }
+
 
 resource "openstack_compute_instance_v2" "IT-Win-PC-1" {
   name = "IT-Win-PC-1"
@@ -204,30 +205,30 @@ resource "openstack_compute_instance_v2" "IT-Win-PC-1" {
       fixed_ip_v4 = "10.0.1.15"
    }
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'IT-Win-PC-1,' playbooks/windows.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'IT-Win-PC-1,' playbooks/windows.yml"
+  # }
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'IT-Win-PC-1,' playbooks/beats_windows.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'IT-Win-PC-1,' playbooks/beats_windows.yml"
+  # }
 
   # provisioner "local-exec" {
   #   working_dir = "../2_ansible_resource_provisioning"
   #   command = "ansible-playbook -l 'IT-Win-PC-1,' playbooks/splunk_forwarder_windows.yml"
   # }
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'IT-Win-PC-1,' playbooks/windows_workstation.yml"
-  }  
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'IT-Win-PC-1,' playbooks/windows_workstation.yml"
+  # }  
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'IT-Win-PC-1,' playbooks/vulnerabilities.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'IT-Win-PC-1,' playbooks/vulnerabilities.yml"
+  # }
 
 
 }
@@ -239,10 +240,10 @@ resource "openstack_compute_instance_v2" "IT-Win-PC-1" {
 
 resource "openstack_compute_flavor_v2" "it-win-server-1-flavor" {
     name = "it-win-server-1-flavor"
-    ram = "4"
+    ram = "4096"
     vcpus = "2"
     disk = "20"
-    swap = "4"
+    swap = "4096"
 }
 
 resource "openstack_compute_instance_v2" "IT-Win-Server-1" {
@@ -265,15 +266,15 @@ resource "openstack_compute_instance_v2" "IT-Win-Server-1" {
     fixed_ip_v4 = "10.0.1.18"
   }
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'IT-Win-Server-1,' playbooks/windows.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'IT-Win-Server-1,' playbooks/windows.yml"
+  # }
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'IT-Win-Server-1,' playbooks/beats_windows.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'IT-Win-Server-1,' playbooks/beats_windows.yml"
+  # }
 
   # provisioner "local-exec" {
   #   working_dir = "../2_ansible_resource_provisioning"
@@ -290,15 +291,15 @@ resource "openstack_compute_instance_v2" "IT-Win-Server-1" {
   #   command = "ansible-playbook -l 'IT-Win-Server-1,' playbooks/windows_exchange.yml"
   # }
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'IT-Win-Server-1,' playbooks/windows_server.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'IT-Win-Server-1,' playbooks/windows_server.yml"
+  # }
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'IT-Win-Server-1,' playbooks/vulnerabilities.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'IT-Win-Server-1,' playbooks/vulnerabilities.yml"
+  # }
 
 
 }
@@ -315,10 +316,10 @@ data "openstack_images_image_v2" "IT-Linux-PC-1" {
 
 resource "openstack_compute_flavor_v2" "it-linux-pc-1-flavor" {
     name = "it-linux-pc-1-flavor"
-    ram = "4"
+    ram = "4096"
     vcpus = "2"
     disk = "20"
-    swap = "4"
+    swap = "4096"
 }
 
 resource "openstack_compute_instance_v2" "IT-Linux-PC-1" {
@@ -347,20 +348,20 @@ resource "openstack_compute_instance_v2" "IT-Linux-PC-1" {
   }
 
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'IT-Linux-PC-1,' playbooks/linux.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'IT-Linux-PC-1,' playbooks/linux.yml"
+  # }
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'IT-Linux-PC-1,' playbooks/beats_linux.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'IT-Linux-PC-1,' playbooks/beats_linux.yml"
+  # }
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'IT-Linux-PC-1,' playbooks/linux_workstation.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'IT-Linux-PC-1,' playbooks/linux_workstation.yml"
+  # }
 
 }
 
@@ -370,10 +371,10 @@ resource "openstack_compute_instance_v2" "IT-Linux-PC-1" {
 
 resource "openstack_compute_flavor_v2" "it-inside-attacker-flavor" {
     name = "it-inside-attacker-flavor"
-    ram = "4"
+    ram = "4096"
     vcpus = "2"
     disk = "20"
-    swap = "4"
+    swap = "4096"
 }
 
 resource "openstack_compute_instance_v2" "IT-Inside-Attacker" {
@@ -402,13 +403,14 @@ resource "openstack_compute_instance_v2" "IT-Inside-Attacker" {
   }
 
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'IT-Inside-Attacker,' playbooks/linux.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'IT-Inside-Attacker,' playbooks/linux.yml"
+  # }
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'IT-Inside-Attacker,' playbooks/kali.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'IT-Inside-Attacker,' playbooks/kali.yml"
+  # }
+
 }

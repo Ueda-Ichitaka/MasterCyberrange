@@ -10,7 +10,7 @@ resource "openstack_networking_port_v2" "IT-network-access-proxy-port" {
 }
 
 resource "openstack_networking_floatingip_v2" "floatip-access-proxy" {
-  pool = "public"
+  pool = "public-network"
 }
 
 resource "openstack_networking_floatingip_associate_v2" "floatingip-access-proxy" {
@@ -25,10 +25,10 @@ data "openstack_images_image_v2" "debian12" {
 
 resource "openstack_compute_flavor_v2" "proxy-flavor" {
     name = "proxy-flavor"
-    ram = "256"
+    ram = "2048"
     vcpus = "1"
-    disk = "500"
-    swap = "4"
+    disk = "100"
+    swap = "4096"
 }
 
 resource "openstack_compute_instance_v2" "access-proxy" {

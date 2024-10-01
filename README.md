@@ -39,16 +39,9 @@ Key findings include the successful construction of the cyber range named Attack
 The contributions of this work lie in the development of a sophisticated cyber range envi- ronment and the achievement of full detectability, offering researchers a valuable platform for conducting reproducible cyber security experiments. Future research directions include enhancing scenario complexity and exploring AI-driven data analysis.
 Overall, this thesis contributes to advancing cyber security research by providing in- novative tools and methodologies for evaluating cyber threats in critical infrastructure networks.
 
-## Support
-If support is needed, please contact the uueaj@student.kit.edu E-Mail.
 
-## Roadmap
 
-## Authors and acknowledgment
-Special thanks to PhD Kaibin Bao, Qi Liu and Richard Rudolph for supporting the construction of the cyber range.
 
-## Project status
-Development for this project is currently ongoing.
 
 ## Terraform
 <div>
@@ -71,7 +64,9 @@ terraform apply
 
 ## Working with the Infrastructure
 
-figure szenario_max
+<div>
+  <img align="center" width="100%" src="docs/2-Topology/Network_max.png" alt="A big maximum resource usage network">
+</div>
 
 ## Data collection
 
@@ -81,4 +76,78 @@ wireshark
 
 ## Dataset
 
-figure structure dataset
+<div>
+  <img align="center" width="100%" src="docs/2-Topology/Struktur_Dataset.png" alt="The dataset Architecture">
+</div>
+
+
+
+## Troubleshooting
+
+### delete all remains
+
+if terraform destroy does not clean up everything
+
+delete all instances in openstack
+delete all routers
+delete ports in all networks
+delete all networks but public
+
+### complete network wipe
+
+If you need a complete wipe and routers do not want to be destroyed
+
+```
+openstack project show admin
+```
+
+-> id
+
++-------------+-----------------------------------------------+
+| Field       | Value                                         |
++-------------+-----------------------------------------------+
+| description | Bootstrap project for initializing the cloud. |
+| domain_id   | default                                       |
+| enabled     | True                                          |
+| id          | 65e52ade32d74c699bef395584d2c91c              |
+| is_domain   | False                                         |
+| name        | admin                                         |
+| options     | {}                                            |
+| parent_id   | default                                       |
+| tags        | []                                            |
++-------------+-----------------------------------------------+
+
+``
+neutron pruge [id]
+
+this wipes all network stuff
+
+so now you have to re-create the public network for internet access
+
+```
+openstack network create public --external --provider-physical-network physnet1 --provider-network-type flat
+neutron subnet-create public 10.0.1.0/8 --name public --allocation-pool start=10.0.1.2,end=10.3.254.254 --dns-nameserver DNS_RESOLVER --gateway 10.0.1.1
+```
+
+physnet1 is the name of of the physical network adapter in your machine 
+
+manually create new public subnet with network address 10.0.1.0/24
+
+after that you need to update the router id in your terraform config for every router (external network id)
+
+
+
+
+## Roadmap
+
+## Authors and acknowledgment
+Special thanks to PhD Kaibin Bao, Qi Liu and Richard Rudolph for supporting the construction of the cyber range.
+
+
+## Support
+If support is needed, please contact the uueaj@student.kit.edu E-Mail.
+
+
+## Project status
+Development for this project is currently ongoing.
+

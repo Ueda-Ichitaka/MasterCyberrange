@@ -21,7 +21,7 @@ resource "openstack_networking_subnet_v2" "APT-subnet" {
 resource "openstack_networking_router_v2" "APT_router" {
   name                = "APT_router"
   admin_state_up      = true
-  external_network_id = "b4def106-3c27-4de8-9848-434dacf07ba3"  
+  external_network_id = "0245222e-694c-4765-9e14-ab51de39d941"  
 }
 
 resource "openstack_networking_router_interface_v2" "router_interface_3" {
@@ -35,10 +35,10 @@ resource "openstack_networking_router_interface_v2" "router_interface_3" {
 
 resource "openstack_compute_flavor_v2" "apt-outisde-attacker-flavor" {
     name = "apt-outside-attacker-flavor"
-    ram = "4"
+    ram = "4096"
     vcpus = "2"
     disk = "20"
-    swap = "4"
+    swap = "4096"
 }
 
 resource "openstack_compute_instance_v2" "APT-Outside-Attacker" {
@@ -65,10 +65,10 @@ resource "openstack_compute_instance_v2" "APT-Outside-Attacker" {
     host     = openstack_networking_floatingip_v2.floatip-access-proxy.address #openstack_networking_floatingip_v2.floatip_3.address
   }
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'outside_kali,' playbooks/kali.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'outside_kali,' playbooks/kali.yml"
+  # }
 }
 
 
@@ -82,10 +82,10 @@ resource "openstack_compute_instance_v2" "APT-Outside-Attacker" {
 
 resource "openstack_compute_flavor_v2" "apt-oc2-server-flavor" {
     name = "apt-c2-server-flavor"
-    ram = "4"
+    ram = "4096"
     vcpus = "2"
     disk = "20"
-    swap = "4"
+    swap = "4096"
 }
 
 # Todo: Implement or delete
@@ -130,10 +130,12 @@ resource "openstack_compute_instance_v2" "APT-C2-Server" {
     private_key = file("~/.ssh/id_ed25519") # iai_vm-cyberrange-host
     host     = openstack_networking_floatingip_v2.floatip-access-proxy.address #openstack_networking_floatingip_v2.floatip_3.address
   }
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'APT-C2-Server,' playbooks/kali.yml"
-  }
+
+
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'APT-C2-Server,' playbooks/kali.yml"
+  # }
 
 }
 
@@ -145,10 +147,10 @@ resource "openstack_compute_instance_v2" "APT-C2-Server" {
 
 resource "openstack_compute_flavor_v2" "apt-download-server-flavor" {
     name = "apt-download-server-flavor"
-    ram = "2"
+    ram = "2048"
     vcpus = "1"
     disk = "10"
-    swap = "2"
+    swap = "2048"
 }
 
 resource "openstack_compute_instance_v2" "APT-Download-Server" {
@@ -177,9 +179,9 @@ resource "openstack_compute_instance_v2" "APT-Download-Server" {
   }
 
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'APT-Download-Server,' playbooks/linux.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'APT-Download-Server,' playbooks/linux.yml"
+  # }
 
 }

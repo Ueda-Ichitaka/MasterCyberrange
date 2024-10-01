@@ -11,11 +11,12 @@ data "template_file" "win_user_data_cloud_init" {
   template = file("win-cloud-init.yml")
 }
 
-resource "openstack_networking_floatingip_v2" "floatip_1" {
-  pool = "public"
-}
+# resource "openstack_networking_floatingip_v2" "floatip_1" {
+#   pool = "public-network"
+# }
 
 #-----------------------------------------------------------------------------------------------
+
 
 #-----------------------
 # Aggregation Server
@@ -23,10 +24,10 @@ resource "openstack_networking_floatingip_v2" "floatip_1" {
 
 resource "openstack_compute_flavor_v2" "aggregation-server-flavor" {
     name = "aggregation-server-flavor"
-    ram = "256"
-    vcpus = "1"
+    ram = "10240"
+    vcpus = "4"
     disk = "500"
-    swap = "4"
+    swap = "4096"
 }
 
 resource "openstack_compute_instance_v2" "aggregation-server" {
@@ -56,29 +57,30 @@ resource "openstack_compute_instance_v2" "aggregation-server" {
       type     = "ssh"
       user     = "debian"
       private_key = file("~/.ssh/id_ed25519") # iai_vm-cyberrange-host
-      host     = openstack_networking_floatingip_v2.floatip_1.address
+      host     = openstack_networking_floatingip_v2.floatip-access-proxy.address
+      #host     = openstack_networking_floatingip_v2.floatip_1.address
     }
 
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'aggregation_server,' playbooks/linux.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'aggregation_server,' playbooks/linux.yml"
+  # }
 
   # provisioner "local-exec" {
   #   working_dir = "../2_ansible_resource_provisioning"
   #   command = "ansible-playbook -l 'aggregation_server,' playbooks/splunk_server.yml"
   # }
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'aggregation_server,' playbooks/elk_docker.yml"   
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'aggregation_server,' playbooks/elk_docker.yml"   
+  # }
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'aggregation_server,' playbooks/aggregation_server.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'aggregation_server,' playbooks/aggregation_server.yml"
+  # }
 
 
 
