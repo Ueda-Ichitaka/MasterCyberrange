@@ -42,11 +42,3 @@
   register: _windows_domain_controller
 
 
-- name: uninstall updates against ZeroLogon (CVE-2020-1472) 
-  win_shell: |
-    powershell -command "wusa /uninstall /kb:4571723"
-    powershell -command "wusa /uninstall /kb:4586793"
-    powershell -command "wusa /uninstall /kb:4571729"
-    powershell -command "wusa /uninstall /kb:4570334"
-    powershell -command "wusa /uninstall /kb:4577668"
-

@@ -18,5 +18,5 @@
     - "microsoft-office-deployment"
     - "thunderbird"
     - "wireshark"
-- include: vulners.yml
+#- include: vulners.yml
 - include: applications.yml

@@ -1,0 +1,29 @@
+- hosts: windows
+  gather_facts: True
+  become: true
+  roles:
+    - windows_juicypotato
+
+
+- hosts: IT-Win-PC-1 
+  gather_facts: true
+  become: true
+  roles:
+    - windows_printnightmare
+
+
+- hosts: IT-Win-Share 
+  gather_facts: true
+  become: true
+  roles:
+    - windows_hivenightmare
+
+
+- hosts: IT-Win-DC
+  gather_facts: true
+  become: true
+  roles:    
+    - windows_zerologon
+
+
+

@@ -32,8 +32,11 @@ ssh auf kali
 4 terminals
 
 terminal 1: poshc2 projekt erstellen
+                posh-project -n apt29
             poshc2 config anpassen
+                posh-config
             poshc2 server starten
+                posh-server
 
 jetzt werden payloads etc generiert. diese sind allerdings evtl nicht komplett korrekt generiert worden, da evtl die ip des servers nicht eingebunden wurde. dafür müssen adressen angepasst, base64 encodierte teile entschlüsselt, angepasst und wieder encoded werden. anzupassen bzw zu überprüfen sind hier die teile, die in die exploit ps1 files geschrieben werden sowie die payload.bat, rg, cs und alle anderen base64 encoded dateien und urls die aufgerufen werden
 
