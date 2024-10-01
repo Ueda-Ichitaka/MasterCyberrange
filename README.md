@@ -39,9 +39,13 @@ Key findings include the successful construction of the cyber range named Attack
 The contributions of this work lie in the development of a sophisticated cyber range envi- ronment and the achievement of full detectability, offering researchers a valuable platform for conducting reproducible cyber security experiments. Future research directions include enhancing scenario complexity and exploring AI-driven data analysis.
 Overall, this thesis contributes to advancing cyber security research by providing in- novative tools and methodologies for evaluating cyber threats in critical infrastructure networks.
 
+## Support
+If support is needed, please contact the uueaj@student.kit.edu E-Mail.
 
-
-
+Creating a public network after neutron purge
+To make the cyber range fully usable a public network is needed.
+This can be created through the OpenStack UI or by using a corresponding terraform configuration.
+It is important to note that a public-subnet is also required for the full usability of the public network.
 
 ## Terraform
 <div>
