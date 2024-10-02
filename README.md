@@ -263,6 +263,85 @@ now you need to set the correct network id for all the routers
 
 ```
 
+### Re-Installing OpenStack using kolla-ansible
+
+1. delete all docker containers and volumes
+2. reboot
+
+kolla-ansible venv aktivieren:
+```
+sudo -i
+source kolla-ansible-venv/bin/activate
+```
+
+kolla-ansible updaten:
+```
+pip install git+https://opendev.org/openstack/kolla-ansible@18.2.0
+```
+
+ansible updaten:
+```
+pip install 'ansible-core>=2.15,<2.16.99'
+```
+
+config globals.yml anpassen:
+```
+cd /etc/kolla
+mv globals.yml globals_old.yml
+cp ~/kolla-ansible-venv/share/kolla-ansible/etc_examples/kolla/globals.yml .
+diff globals_old.yml globals.yml
+vim globals.yml
+```
+
+kolla-ansible setup:
+```
+cd ~
+cp kolla-ansible-venv/share/kolla-ansible/ansible/inventory/all-in-one .
+kolla-ansible -i all-in-one genconfig
+# failed=0
+kolla-ansible install-deps
+# wieso nicht auch passwörter reseten?
+cp ~/kolla-ansible-venv/share/kolla-ansible/etc_examples/kolla/passwords.yml /etc/kolla
+kolla-genpwd
+#kolla-ansible -i ./all-in-one bootstrap-servers
+## pip install dbus-python ist fehlgeschlagen aufgrund fehlender dev-Packete:
+apt install build-essential
+apt install libdbus-1-dev libglib2.0-dev
+apt install pkg-config
+kolla-ansible -i ./all-in-one bootstrap-servers
+# failed=0
+kolla-ansible -i ./all-in-one prechecks
+# failed=0
+kolla-ansible -i ./all-in-one deploy
+# failed=0
+```
+
+update openstackclient:
+```
+deactivate
+pip install python-openstackclient -c https://releases.openstack.org/constraints/upper/master
+```
+
+post-deploy:
+```
+source kolla-ansible-venv/bin/activate
+kolla-ansible post-deploy
+```
+
+init demo:
+```
+cp ~/kolla-ansible-venv/share/kolla-ansible/init-runonce .
+vim init-runonce
+./init-runonce
+```
+
+final touch:
+```
+cd /etc/kolla
+chgrp adm admin-openrc.sh
+chmod g+r admin-openrc.sh
+```
+
 ### I need to re-install more than openstack
 
 
