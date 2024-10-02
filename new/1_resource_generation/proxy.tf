@@ -10,7 +10,7 @@ resource "openstack_networking_port_v2" "IT-network-access-proxy-port" {
 }
 
 resource "openstack_networking_floatingip_v2" "floatip-access-proxy" {
-  pool = "public-network"
+  pool = "public"
 }
 
 resource "openstack_networking_floatingip_associate_v2" "floatingip-access-proxy" {

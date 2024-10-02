@@ -21,7 +21,7 @@ resource "openstack_networking_subnet_v2" "APT-subnet" {
 resource "openstack_networking_router_v2" "APT_router" {
   name                = "APT_router"
   admin_state_up      = true
-  external_network_id = "0245222e-694c-4765-9e14-ab51de39d941"  
+  external_network_id = "78cdde39-5312-4380-b43d-15bbbe0464a7"  
 }
 
 # resource "openstack_networking_router_interface_v2" "router_interface_3" {
