@@ -89,38 +89,3 @@ resource "openstack_networking_secgroup_rule_v2" "secgroup_access-proxy_smb" {
   security_group_id = openstack_networking_secgroup_v2.secgroup_access-proxy.id
 }
 
-#-------------------------------
-# Quick Test Server for Debugging
-#-------------------------------
-
-# resource "openstack_compute_instance_v2" "internal-test-server-2" {
-#    name = "internal-test-server"
-#    flavor_name = "m1.medium"
-#    image_id = data.openstack_images_image_v2.debian12.id
-#    key_pair = "iai_vm-cyberrange-host"
-#    security_groups = ["default"]
-
-#    network {
-#       access_network = true
-#       uuid = openstack_networking_network_v2.attack_range-network.id
-#       fixed_ip_v4 = "10.0.1.123"
-#    }
-# }
-
-# resource "openstack_compute_instance_v2" "internal-test-server-2" {
-#    name = "internal-test-server"
-#    flavor_name = "m1.medium"
-#    image_id = data.openstack_images_image_v2.debian12.id
-#    key_pair = "iai_vm-cyberrange-host"
-#    security_groups = ["default"]
-
-#    network {
-#       access_network = true
-#       uuid = openstack_networking_network_v2.attack_range-network.id
-#       fixed_ip_v4 = "10.0.1.123"
-#    }
-
-#    provisioner "local-exec" {
-#      command = "echo ip: ${self.access_ip_v4}"
-#    }
-# }

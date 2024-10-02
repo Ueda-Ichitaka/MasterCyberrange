@@ -57,6 +57,12 @@ It is important to note that a public-subnet is also required for the full usabi
   <img align="center" width="100%" src="docs/1-ReadMe_Images/2-2-Ansible.png" alt="Ansible is used for the automatic configuration of the instances that were created during the terraform stage" title="Ansible is used for the automatic configuration of the instances that were created during the terraform stage">
 </div>
 
+
+## Prerequisites
+
+install ansible requirements
+
+
 ## Deployment
 The usage of the AROS requires a running OpenStack instance.
 
@@ -158,7 +164,17 @@ unset IFS
 
 sudo -i
 source kolla-ansible-venv/bin/activate
+
+docker stop $(docker ps -a -q)
+docker kill $(docker ps -a -q)
+
+#search quemu process and kill it
+ps aux | grep qemu
+
 kolla-ansible -i all-in-one destroy
+
+
+
 kolla-ansible -i all-in-one deploy
 kolla-ansible -i all-in-one post-deploy
 
@@ -170,14 +186,15 @@ do
   glance image-create --name ${file%.*} --disk-format qcow2 --container-format bare --file $file --visibility private --progress
 done
 
+
+
+
+
 openstack network create --share --external --provider-physical-network physnet1 --provider-network-type flat public
 
-/etc/kolla/neutron-server/ml2_conf.ini ->
-[ml2_type_flat]
-flat_networks = physnet1
-
-#[ovs]
-#bridge_mappings = public:eth1
+#/etc/kolla/neutron-server/ml2_conf.ini ->
+#[ml2_type_flat]
+#flat_networks = physnet1
 
 openstack subnet create --network public --subnet-range 10.0.0.0/24 --allocation-pool start=10.0.0.2,end=10.0.0.254 --dns-nameserver 127.0.0.53 --gateway 10.0.0.1 public
 
@@ -185,10 +202,16 @@ kolla-ansible -i all-in-one genconfig
 kolla-ansible -i all-in-one reconfigure
 
 
-import ssh key
+#import ssh key
 
 
 ```
+
+now you need to set the correct network id for all the routers
+
+
+
+
 
 ```
 #glance image-download --file ./28e7b185-4428-4c00-b82c-51aa1809e8f7 bionic-server-cloudimg-20230607-amd64
@@ -239,6 +262,22 @@ import ssh key
 #echo "" >> Metadata.txt
 
 ```
+
+### I need to re-install more than openstack
+
+
+
+
+### My copy of the VM does not have internet access
+
+Ask Kaibin Bao
+
+
+
+
+
+
+
 
 
 <!--### complete network wipe
