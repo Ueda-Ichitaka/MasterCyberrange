@@ -27,7 +27,7 @@ resource "openstack_networking_port_v2" "IT-network-port_1" {
 resource "openstack_networking_router_v2" "IT_router" {
   name                = "IT_router"
   admin_state_up      = true
-  external_network_id = "38a3712d-7cfe-4ae8-aad9-1b873a9fec94"  ### ID von public network
+  external_network_id = "cc737076-5b14-4c74-a2ed-d3fb490663ac"  ### ID von public network
 }
 
 resource "openstack_networking_router_interface_v2" "router_interface_1" {
@@ -43,29 +43,29 @@ resource "openstack_compute_flavor_v2" "it-dc-flavor" {
     name = "it-dc-flavor"
     ram = "4096"
     vcpus = "2"
-    disk = "10"
+    disk = "32"
     swap = "4096"
 }
 
-# resource "openstack_compute_instance_v2" "IT-Win-DC" {
-#   name            = "IT-Win-DC"
-#   image_id = "b34c1867-728f-4d7b-839c-06c05a108088"  #Windows Server 2019 Eval   
-#   flavor_name     = "m1.medium"
-#   #flavor_id = openstack_compute_flavor_v2.it-dc-flavor.id
-#   key_pair = data.openstack_compute_keypair_v2.default_keypair.name
-#   security_groups = [
-#     "default",
-#     openstack_networking_secgroup_v2.secgroup_windows_remote.id,
-#     openstack_networking_secgroup_v2.secgroup_attack_range_internal.id,
-#     openstack_networking_secgroup_v2.secgroup_splunk_universal_forwarder.id,
-#     ]
-#   user_data = data.template_file.win_user_data_cloud_init.rendered
+resource "openstack_compute_instance_v2" "IT-Win-DC" {
+  name            = "IT-Win-DC"
+  image_id = "b34c1867-728f-4d7b-839c-06c05a108088"  #Windows Server 2019 Eval   
+  #flavor_name     = "m1.medium"
+  flavor_id = openstack_compute_flavor_v2.it-dc-flavor.id
+  key_pair = data.openstack_compute_keypair_v2.default_keypair.name
+  security_groups = [
+    "default",
+    openstack_networking_secgroup_v2.secgroup_windows_remote.id,
+    openstack_networking_secgroup_v2.secgroup_attack_range_internal.id,
+    openstack_networking_secgroup_v2.secgroup_splunk_universal_forwarder.id,
+    ]
+  user_data = data.template_file.win_user_data_cloud_init.rendered
 
-#    network {  
-#       access_network = true
-#       name = openstack_networking_network_v2.IT-network.name
-#       fixed_ip_v4 = "10.0.1.14"
-#    }   
+   network {  
+      access_network = true
+      name = openstack_networking_network_v2.IT-network.name
+      fixed_ip_v4 = "10.0.1.14"
+   }   
 
 
   # provisioner "local-exec" {
@@ -94,7 +94,7 @@ resource "openstack_compute_flavor_v2" "it-dc-flavor" {
   # }
 
 
-# }
+}
 
 # #------------------------------------
 # # Windows Share and Gateway Server
@@ -104,35 +104,35 @@ resource "openstack_compute_flavor_v2" "it-win-share-flavor" {
     name = "it-win-share-flavor"
     ram = "4096"
     vcpus = "2"
-    disk = "10"
+    disk = "32"
     swap = "4096"
 }
 
-# resource "openstack_compute_instance_v2" "IT-Win-Share" {
-#   name            = "IT-Win-Share"
-#   image_id = "b34c1867-728f-4d7b-839c-06c05a108088"  #Windows Server 2019 Eval  
-#   flavor_name     = "m1.medium"
-#   flavor_id = openstack_compute_flavor_v2.it-win-share-flavor.id
-#   key_pair = data.openstack_compute_keypair_v2.default_keypair.name
-#   security_groups = [
-#     "default",
-#     openstack_networking_secgroup_v2.secgroup_windows_remote.id,
-#     openstack_networking_secgroup_v2.secgroup_attack_range_internal.id,
-#     openstack_networking_secgroup_v2.secgroup_splunk_universal_forwarder.id,
-#     ]
-#   user_data = data.template_file.win_user_data_cloud_init.rendered
+resource "openstack_compute_instance_v2" "IT-Win-Share" {
+  name            = "IT-Win-Share"
+  image_id = "b34c1867-728f-4d7b-839c-06c05a108088"  #Windows Server 2019 Eval  
+  #flavor_name     = "m1.medium"
+  flavor_id = openstack_compute_flavor_v2.it-win-share-flavor.id
+  key_pair = data.openstack_compute_keypair_v2.default_keypair.name
+  security_groups = [
+    "default",
+    openstack_networking_secgroup_v2.secgroup_windows_remote.id,
+    openstack_networking_secgroup_v2.secgroup_attack_range_internal.id,
+    openstack_networking_secgroup_v2.secgroup_splunk_universal_forwarder.id,
+    ]
+  user_data = data.template_file.win_user_data_cloud_init.rendered
 
-#    network {  
-#       access_network = true
-#       name = openstack_networking_network_v2.IT-network.name
-#       fixed_ip_v4 = "10.0.1.20"
-#    }   
+   network {  
+      access_network = true
+      name = openstack_networking_network_v2.IT-network.name
+      fixed_ip_v4 = "10.0.1.20"
+   }   
 
-#    network {  
-#       access_network = true
-#       name = openstack_networking_network_v2.OT-network.name
-#       fixed_ip_v4 = "10.0.2.20"
-#    } 
+   network {  
+      access_network = true
+      name = openstack_networking_network_v2.OT-network.name
+      fixed_ip_v4 = "10.0.2.20"
+   } 
 
 
   # provisioner "local-exec" {
@@ -167,7 +167,7 @@ resource "openstack_compute_flavor_v2" "it-win-share-flavor" {
 
 
 
-# }
+}
 
 # #-----------------------
 # # APT29 Windows Workstation
@@ -177,29 +177,29 @@ resource "openstack_compute_flavor_v2" "it-win-pc-1-flavor" {
     name = "it-win-pc-1-flavor"
     ram = "4096"
     vcpus = "2"
-    disk = "20"
+    disk = "32"
     swap = "4096"
 }
 
 
-# resource "openstack_compute_instance_v2" "IT-Win-PC-1" {
-#   name = "IT-Win-PC-1"
-#   flavor_name = "m1.medium"
-#   #flavor_id = openstack_compute_flavor_v2.it-win-pc-1-flavor.id
-#   image_id = "b34c1867-728f-4d7b-839c-06c05a108088"  #Windows Server 2019 Eval 
-#   key_pair = data.openstack_compute_keypair_v2.default_keypair.name
-#   security_groups = [
-#     "default",
-#     openstack_networking_secgroup_v2.secgroup_windows_remote.id,
-#     openstack_networking_secgroup_v2.secgroup_attack_range_internal.id,       
-#     ]
-#   user_data = data.template_file.win_user_data_cloud_init.rendered
+resource "openstack_compute_instance_v2" "IT-Win-PC-1" {
+  name = "IT-Win-PC-1"
+  #flavor_name = "m1.medium"
+  flavor_id = openstack_compute_flavor_v2.it-win-pc-1-flavor.id
+  image_id = "b34c1867-728f-4d7b-839c-06c05a108088"  #Windows Server 2019 Eval 
+  key_pair = data.openstack_compute_keypair_v2.default_keypair.name
+  security_groups = [
+    "default",
+    openstack_networking_secgroup_v2.secgroup_windows_remote.id,
+    openstack_networking_secgroup_v2.secgroup_attack_range_internal.id,       
+    ]
+  user_data = data.template_file.win_user_data_cloud_init.rendered
 
-#   network {
-#       access_network = true
-#       name = openstack_networking_network_v2.IT-network.name
-#       fixed_ip_v4 = "10.0.1.15"
-#    }
+  network {
+      access_network = true
+      name = openstack_networking_network_v2.IT-network.name
+      fixed_ip_v4 = "10.0.1.15"
+   }
 
   # provisioner "local-exec" {
   #   working_dir = "../2_ansible_resource_provisioning"
@@ -227,7 +227,7 @@ resource "openstack_compute_flavor_v2" "it-win-pc-1-flavor" {
   # }
 
 
-# }
+}
 
 # # Todo: Server applications
 # #------------------------------------
@@ -238,29 +238,29 @@ resource "openstack_compute_flavor_v2" "it-win-server-1-flavor" {
     name = "it-win-server-1-flavor"
     ram = "4096"
     vcpus = "2"
-    disk = "20"
+    disk = "32"
     swap = "4096"
 }
 
-# resource "openstack_compute_instance_v2" "IT-Win-Server-1" {
-#   name            = "IT-Win-Server-1"
-#   image_id = "b34c1867-728f-4d7b-839c-06c05a108088"  #Windows Server 2019 Eval  
-#   flavor_name     = "m1.medium"
-#   #flavor_id = openstack_compute_flavor_v2.it-win-server-flavor.id
-#   key_pair = data.openstack_compute_keypair_v2.default_keypair.name
-#   security_groups = [
-#     "default",
-#     openstack_networking_secgroup_v2.secgroup_windows_remote.id,
-#     openstack_networking_secgroup_v2.secgroup_attack_range_internal.id,
-#     openstack_networking_secgroup_v2.secgroup_splunk_universal_forwarder.id,
-#     ]
-#   user_data = data.template_file.win_user_data_cloud_init.rendered
+resource "openstack_compute_instance_v2" "IT-Win-Server-1" {
+  name            = "IT-Win-Server-1"
+  image_id = "b34c1867-728f-4d7b-839c-06c05a108088"  #Windows Server 2019 Eval  
+  #flavor_name     = "m1.medium"
+  flavor_id = openstack_compute_flavor_v2.it-win-server-1-flavor.id
+  key_pair = data.openstack_compute_keypair_v2.default_keypair.name
+  security_groups = [
+    "default",
+    openstack_networking_secgroup_v2.secgroup_windows_remote.id,
+    openstack_networking_secgroup_v2.secgroup_attack_range_internal.id,
+    openstack_networking_secgroup_v2.secgroup_splunk_universal_forwarder.id,
+    ]
+  user_data = data.template_file.win_user_data_cloud_init.rendered
 
-#   network {
-#     access_network = true
-#     name = openstack_networking_network_v2.IT-network.name
-#     fixed_ip_v4 = "10.0.1.18"
-#   }
+  network {
+    access_network = true
+    name = openstack_networking_network_v2.IT-network.name
+    fixed_ip_v4 = "10.0.1.18"
+  }
 
   # provisioner "local-exec" {
   #   working_dir = "../2_ansible_resource_provisioning"
@@ -298,7 +298,7 @@ resource "openstack_compute_flavor_v2" "it-win-server-1-flavor" {
   # }
 
 
-# }
+}
 
 # # Todo: Applications
 # #-----------------------
@@ -314,34 +314,34 @@ resource "openstack_compute_flavor_v2" "it-linux-pc-1-flavor" {
     name = "it-linux-pc-1-flavor"
     ram = "4096"
     vcpus = "2"
-    disk = "20"
+    disk = "30"
     swap = "4096"
 }
 
-# resource "openstack_compute_instance_v2" "IT-Linux-PC-1" {
-#   name = "IT-Linux-PC-1"
-#   flavor_name = "m1.small"
-#   #flavor_id = openstack_compute_flavor_v2.it-linux-pc-1-flavor.id
-#   image_id = "d508e903-4f41-491e-bf41-b0cbc0f1712a"    #data.openstack_images_image_v2.ubuntu_test.id
-#   key_pair = "iai_vm-cyberrange-host"
-#   security_groups = ["default",openstack_networking_secgroup_v2.secgroup_splunk_universal_forwarder.id]
+resource "openstack_compute_instance_v2" "IT-Linux-PC-1" {
+  name = "IT-Linux-PC-1"
+  #flavor_name = "m1.small"
+  flavor_id = openstack_compute_flavor_v2.it-linux-pc-1-flavor.id
+  image_id = "d508e903-4f41-491e-bf41-b0cbc0f1712a"    #data.openstack_images_image_v2.ubuntu_test.id
+  key_pair = "iai_vm-cyberrange-host"
+  security_groups = ["default",openstack_networking_secgroup_v2.secgroup_splunk_universal_forwarder.id]
 
-#    network {  
-#       access_network = true
-#       name = openstack_networking_network_v2.OT-network.name
-#       fixed_ip_v4 = "10.0.1.16"
-#    }
-
-
-#   stop_before_destroy = false
+   network {  
+      access_network = true
+      name = openstack_networking_network_v2.IT-network.name
+      fixed_ip_v4 = "10.0.1.16"
+   }
 
 
-#   connection {
-#     type     = "ssh"
-#     user     = "ubuntu"
-#     private_key = file("~/.ssh/id_ed25519") # iai_vm-cyberrange-host
-#     host     = openstack_networking_floatingip_v2.floatip-access-proxy.address
-#   }
+  stop_before_destroy = false
+
+
+  connection {
+    type     = "ssh"
+    user     = "ubuntu"
+    private_key = file("~/.ssh/id_ed25519") # iai_vm-cyberrange-host
+    host     = openstack_networking_floatingip_v2.floatip-access-proxy.address
+  }
 
 
   # provisioner "local-exec" {
@@ -359,24 +359,24 @@ resource "openstack_compute_flavor_v2" "it-linux-pc-1-flavor" {
   #   command = "ansible-playbook -l 'IT-Linux-PC-1,' playbooks/linux_workstation.yml"
   # }
 
-# }
+}
 
 # #-----------------------
 # # Inside-Attacker-Kali
 # #-----------------------
 
-resource "openstack_compute_flavor_v2" "it-inside-attacker-flavor" {
-    name = "it-inside-attacker-flavor"
-    ram = "4096"
-    vcpus = "2"
-    disk = "20"
-    swap = "4096"
-}
+# resource "openstack_compute_flavor_v2" "it-inside-attacker-flavor" {
+#     name = "it-inside-attacker-flavor"
+#     ram = "4096"
+#     vcpus = "2"
+#     disk = "50"
+#     swap = "4096"
+# }
 
 # resource "openstack_compute_instance_v2" "IT-Inside-Attacker" {
 #    name = "IT-Inside-Attacker"
-#    flavor_name = "m1.medium"
-#    #flavor_id = openstack_compute_flavor_v2.it-inside-attacker-flavor.id
+#    #flavor_name = "m1.medium"
+#    flavor_id = openstack_compute_flavor_v2.it-inside-attacker-flavor.id
 #    image_id = "bf8afd2a-f61b-4e2d-a747-caf2803c8d37"
 #    key_pair = data.openstack_compute_keypair_v2.default_keypair.name
 #    admin_pass = "1337"
@@ -399,14 +399,14 @@ resource "openstack_compute_flavor_v2" "it-inside-attacker-flavor" {
 #   }
 
 
-  # provisioner "local-exec" {
-  #   working_dir = "../2_ansible_resource_provisioning"
-  #   command = "ansible-playbook -l 'IT-Inside-Attacker,' playbooks/linux.yml"
-  # }
+#   # provisioner "local-exec" {
+#   #   working_dir = "../2_ansible_resource_provisioning"
+#   #   command = "ansible-playbook -l 'IT-Inside-Attacker,' playbooks/linux.yml"
+#   # }
 
-  # provisioner "local-exec" {
-  #   working_dir = "../2_ansible_resource_provisioning"
-  #   command = "ansible-playbook -l 'IT-Inside-Attacker,' playbooks/kali.yml"
-  # }
+#   # provisioner "local-exec" {
+#   #   working_dir = "../2_ansible_resource_provisioning"
+#   #   command = "ansible-playbook -l 'IT-Inside-Attacker,' playbooks/kali.yml"
+#   # }
 
-}
+# }

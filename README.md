@@ -130,7 +130,7 @@ mv terraform.tfstate.backup terraform.tfstate.backup.old
 
 ### I accidentally deleted network public
 
-Much desaster, now you have to re-install Openstack. Save your OS images and metadata and re-run the install script.
+<!--Much desaster, now you have to re-install Openstack. Save your OS images and metadata and re-run the install script.
 
 ```
 #!/bin/bash
@@ -173,7 +173,11 @@ ps aux | grep qemu
 
 kolla-ansible -i all-in-one destroy
 
-
+cd /etc/kolla
+mv globals.yml globals_old.yml
+cp ~/kolla-ansible-venv/share/kolla-ansible/etc_examples/kolla/globals.yml .
+diff globals_old.yml globals.yml
+vim globals.yml
 
 kolla-ansible -i all-in-one deploy
 kolla-ansible -i all-in-one post-deploy
@@ -198,75 +202,61 @@ openstack network create --share --external --provider-physical-network physnet1
 
 openstack subnet create --network public --subnet-range 10.0.0.0/24 --allocation-pool start=10.0.0.2,end=10.0.0.254 --dns-nameserver 127.0.0.53 --gateway 10.0.0.1 public
 
+
+
+
+
+
+
 kolla-ansible -i all-in-one genconfig
 kolla-ansible -i all-in-one reconfigure
 
 
-#import ssh key
+```-->
 
-
-```
-
-now you need to set the correct network id for all the routers
+Follow the last steps on how to re-install openstack. Check the init demo setup, modify them to generate the correct IP adresses and run the init demo script. Afterwards a new public network should be spawned. You wil need to modify the network name and router ID in your terraform code tough. 
 
 
 
-
-
-```
-#glance image-download --file ./28e7b185-4428-4c00-b82c-51aa1809e8f7 bionic-server-cloudimg-20230607-amd64
-#glance image-download --file ./cirros 24f96693-f499-4ef0-9ea3-ef5254c3fd5f 
-#glance image-download --file ./Debian_11-generic_amd64_20240211-1654 49dc9a1b-6189-4126-9e24-86cb9120e625 
-#glance image-download --file ./Debian_12_generic_amd64_20240211-1654 63688ae7-c167-41e5-80db-164ef5714eef 
-#glance image-download --file ./debian-10-man 73bb8e02-b572-43e1-8815-502069f6a551 
-#glance image-download --file ./debian-10-openstack-arm64-splunk-base e4c61468-4c60-484d-bbb9-7ac42a1440bf 
-#glance image-download --file ./debian-11-man 1ce71d8f-298c-41d5-b304-bc794ccd6894 
-#glance image-download --file ./debian-9-x86_64 b5c710e2-678a-4731-a1bb-10f6632cea88 
-#glance image-download --file ./kali bf8afd2a-f61b-4e2d-a747-caf2803c8d37
-#glance image-download --file ./ubuntu-focal-x86_64 d508e903-4f41-491e-bf41-b0cbc0f1712a 
-#glance image-download --file ./Windows_Server_2019_Eval_x86_64 b34c1867-728f-4d7b-839c-06c05a108088  
-#glance image-download --file ./Windows_Server_2022_Eval_x86_64 3e8237b6-6910-4e81-aa08-787c5b4d149d  
-#glance image-download --file ./Windows_Server_2022_Eval_x86_64_Debug 1da3950e-149c-4656-83ed-5fb89cf306fa  
-#glance image-download --file ./windows_server_2012_domain_server d03af688-84ac-4ed5-8b05-efe12358f941  
-#glance image-download --file ./windows_server_2012_kvm_exchange_server_basis 10c7f82f-8440-4714-89c1-4f8f02da8ab5  
-
-#glance image-show 28e7b185-4428-4c00-b82c-51aa1809e8f7 >> Metadata.txt
-#echo "" >> Metadata.txt
-#glance image-show 24f96693-f499-4ef0-9ea3-ef5254c3fd5f >> Metadata.txt
-#echo "" >> Metadata.txt
-#glance image-show 49dc9a1b-6189-4126-9e24-86cb9120e625 >> Metadata.txt
-#echo "" >> Metadata.txt
-#glance image-show 63688ae7-c167-41e5-80db-164ef5714eef >> Metadata.txt
-#echo "" >> Metadata.txt
-#glance image-show 73bb8e02-b572-43e1-8815-502069f6a551 >> Metadata.txt
-#echo "" >> Metadata.txt
-#glance image-show e4c61468-4c60-484d-bbb9-7ac42a1440bf >> Metadata.txt
-#echo "" >> Metadata.txt
-#glance image-show 1ce71d8f-298c-41d5-b304-bc794ccd6894 >> Metadata.txt
-#echo "" >> Metadata.txt
-#glance image-show b5c710e2-678a-4731-a1bb-10f6632cea88 >> Metadata.txt
-#echo "" >> Metadata.txt
-#glance image-show bf8afd2a-f61b-4e2d-a747-caf2803c8d37 >> Metadata.txt
-#echo "" >> Metadata.txt
-#glance image-show d508e903-4f41-491e-bf41-b0cbc0f1712a >> Metadata.txt
-#echo "" >> Metadata.txt
-#glance image-show b34c1867-728f-4d7b-839c-06c05a108088 >> Metadata.txt
-#echo "" >> Metadata.txt
-#glance image-show 3e8237b6-6910-4e81-aa08-787c5b4d149d >> Metadata.txt
-#echo "" >> Metadata.txt
-#glance image-show 1da3950e-149c-4656-83ed-5fb89cf306fa >> Metadata.txt
-#echo "" >> Metadata.txt
-#glance image-show d03af688-84ac-4ed5-8b05-efe12358f941 >> Metadata.txt
-#echo "" >> Metadata.txt
-#glance image-show 10c7f82f-8440-4714-89c1-4f8f02da8ab5 >> Metadata.txt
-#echo "" >> Metadata.txt
-
-```
 
 ### Re-Installing OpenStack using kolla-ansible
 
+0. save your images and Metadata
 1. delete all docker containers and volumes
 2. reboot
+
+
+```
+#!/bin/bash
+
+image_path=/home/iai/attack_range_openstack/0_image_generation/
+cd "$image_path"
+mkdir save
+cd save
+
+if [ -f Metadata.txt ]
+then
+  echo "" > Metadata.txt
+else 
+  touch Metadata.txt
+fi
+
+IFS=$'\n'
+images=( $(glance image-list | head -n -1 | tail -n +4 | sed 's/|//g' | awk '{$1=$1};1') )
+
+for image in "${images[@]}"
+do
+  id=$(echo $image | cut -c1-36)
+  name=$(echo $image | cut -d " " -f 2- | sed 's/ /_/g')
+  glance image-download --file ./$name.img $id
+  glance image-show $id >> Metadata.txt
+  echo "" >> Metadata.txt
+done
+
+unset IFS
+```
+
+
 
 kolla-ansible venv aktivieren:
 ```
@@ -342,16 +332,55 @@ chgrp adm admin-openrc.sh
 chmod g+r admin-openrc.sh
 ```
 
+then re-upload the images with their metadata
+
+
+also do not forget to upload your ssh keys and edit the terraform stages to have the correct public net id in your routers and image ids. this will be everywhere you defined a router or floating IP (so APT.tf, IT.tf and proxy.tf)
+then after re-building the terraform stuff, get the IP of proxy and import it to the ansible 
+
 ### I need to re-install more than openstack
 
+
+
+### I lost my openstackcredentials
+
+You can find your username and password in /etc/kolla/admin-openrc.sh
+
+```
+grep "OS_PASSWORD" /etc/kolla/admin-openrc.sh
+```
+
+
+
+### I have keypair errors
+
+upload the public key from your cyberrange host (id_ed25519.pub)
+create a keypair iai_vm-cyberrrange-host
 
 
 
 ### My copy of the VM does not have internet access
 
+Try the steps from above to re-create the public network.
+
 Ask Kaibin Bao
 
 
+### Terraform reports instances in state error not coming active 
+
+terraform cannot destory that instance itself. perform terraform destroy or terraform destroy -target openstack_compute_instance_v2.[Name]
+
+if this does not work you have to delete them in openstack or even worse with glance. this will corrupt your terraform state files. delete them.
+
+
+### I need to delete a Network/Router but Openstack does not let me do it
+
+You need to delete things in a certing order
+
+delete affected routers
+delete all remaining floating IPs for this router or/and network
+delete ports in these networks
+delete the network
 
 
 
@@ -423,7 +452,8 @@ after that you need to update the router id in your terraform config for every r
 ## Authors and acknowledgment
 Special thanks to Dr.Ing Kaibin Bao, Qi Liu and Richard Rudolph for supporting the construction of the cyber range.
 
-Author of AROS: Leon Huck
+Author of AROS: Leon Huck 
+
 Project coordinator: Kaibin Bao, Richard Rudolph
 
 ## Support
