@@ -36,7 +36,7 @@ resource "openstack_compute_instance_v2" "access-proxy" {
   #flavor_name = "standard.medium"
   flavor_id = openstack_compute_flavor_v2.proxy-flavor.id
   image_id = data.openstack_images_image_v2.debian12.id
-  key_pair = "iai_vm-cyberrange-host"
+  key_pair = data.openstack_compute_keypair_v2.default_keypair.name
   security_groups = ["default", openstack_networking_secgroup_v2.secgroup_access-proxy.id]
 
   network {

@@ -323,7 +323,7 @@ resource "openstack_compute_instance_v2" "IT-Linux-PC-1" {
   #flavor_name = "m1.small"
   flavor_id = openstack_compute_flavor_v2.it-linux-pc-1-flavor.id
   image_id = "d508e903-4f41-491e-bf41-b0cbc0f1712a"    #data.openstack_images_image_v2.ubuntu_test.id
-  key_pair = "iai_vm-cyberrange-host"
+  key_pair = data.openstack_compute_keypair_v2.default_keypair.name
   security_groups = ["default",openstack_networking_secgroup_v2.secgroup_splunk_universal_forwarder.id]
 
    network {  

@@ -3,7 +3,7 @@
 #-----------------------
 
 data "openstack_compute_keypair_v2" "default_keypair" {
-  name = "iai_vm-cyberrange-host"
+  name = "id_ed25519"   #"iai_vm-cyberrange-host"
 }
 
 
@@ -17,34 +17,40 @@ data "template_file" "win_user_data_cloud_init" {
 
 #-----------------------------------------------------------------------------------------------
 
+# ToDO: create ressources from images -> no more image IDs
 
-# Todo: Make public network with terraform
-# #-----------------------
-# # Public network
-# #-----------------------
-# # Create a public network
-# resource "openstack_networking_network_v2" "public" {
-#   name           = "public"
-#   admin_state_up = true
-#   shared         = true
-# }
+# data.openstack_images_image_v2.debian12.id
+data "openstack_images_image_v2" "Debian12" {
+    name_regex = "^Debian 12 generic amd64 .*"
+    most_recent = true
+}
 
-# # Create a public subnet in the public network
-# resource "openstack_networking_subnet_v2" "public-subnet" {
-#   name            = "public-subnet"
-#   network_id      = openstack_networking_network_v2.public.id
-#   ip_version      = 4
-#   cidr            = "10.0.0.0/24"
-#   gateway_ip      = "10.0.0.1" # Gateway IP address for the subnet
 
-#   # Allocation pool for the subnet's IP addresses
-#   allocation_pool {
-#     start = "10.0.0.10" # Starting IP address in the pool
-#     end   = "10.0.0.50" # Ending IP address in the pool
-#   }
+data "openstack_images_image_v2" "Debian11" {
+    name_regex = "^Debian 11 generic amd64 .*"
+    most_recent = true
+}
 
-#   dns_nameservers = ["8.8.8.8", "8.8.4.4"]
-# }
+data "openstack_images_image_v2" "Kali" {
+    name_regex = "kali"
+    most_recent = true
+}
+
+
+data "openstack_images_image_v2" "Win_Server_2019" {
+    name_regex = "^Windows Server 2019 .*"
+    most_recent = true
+}
+
+
+data "openstack_images_image_v2" "Win_Server_2022" {
+    name = "Windows Server 2022 Eval x86_64"
+    most_recent = true
+}
+
+
+#-----------------------------------------------------------------------------------------------
+
 
 
 

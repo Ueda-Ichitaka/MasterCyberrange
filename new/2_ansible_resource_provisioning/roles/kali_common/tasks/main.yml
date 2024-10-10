@@ -9,3 +9,9 @@
     export LC_ALL="C.UTF-8";
     cd /usr/share/nmap/scripts/
     sudo git clone https://github.com/vulnersCom/nmap-vulners.git
+
+
+- name: Set timezone to Europe/Berlin
+  become: true
+  community.general.timezone:
+    name: Europe/Berlin

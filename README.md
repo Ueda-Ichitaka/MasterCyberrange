@@ -384,6 +384,16 @@ delete the network
 
 
 
+### I cannot type the windows password in the spice console
+
+open a on screen keyboard
+now you should be able to type. a considerable delay is normal
+in windows itself your keyboard should behave as it does
+
+
+
+### I cant reach the VMs with ssh
+
 
 
 

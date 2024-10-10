@@ -11,65 +11,125 @@ users:
     primary_group: Users
     inactive: False  
 runcmd:
-  - 'netsh advfirewall firewall add rule name="WinRM 5985" protocol=TCP dir=in localport=5985 action=allow'
-  - 'netsh advfirewall firewall add rule name="WinRM 5986" protocol=TCP dir=in localport=5986 action=allow'
-  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=in localport=8000 action=allow'
-  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=out localport=8000 action=allow'  
-  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=in localport=8089 action=allow'
-  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=out localport=8089 action=allow'  
-  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=in localport=8065 action=allow'
-  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=out localport=8065 action=allow'
-  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=in localport=8191 action=allow'
-  - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=out localport=8191 action=allow'   
-  - 'echo test >> C:\out.txt'
   - |
+    netsh advfirewall firewall add rule name="WinRM 5985" protocol=TCP dir=in localport=5985 action=allow
+    netsh advfirewall firewall add rule name="WinRM 5986" protocol=TCP dir=in localport=5986 action=allow
+    netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=in localport=8000 action=allow
+    netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=out localport=8000 action=allow  
+    netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=in localport=8089 action=allow
+    netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=out localport=8089 action=allow  
+    netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=in localport=8065 action=allow
+    netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=out localport=8065 action=allow
+    netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=in localport=8191 action=allow
+    netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=out localport=8191 action=allow  
+    echo test >> C:\out.txt
     powershell -Command "Set-ItemProperty -Path HKLM:SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU -Name UseWUServer -Value 0"
-  - |
     powershell -Command "Restart-Service -Name wuauserv -Force"
-  - |
     powershell -Command "Get-WindowsCapability -Online | Where-Object Name -like 'OpenSSH.Server*' | Add-WindowsCapability -Online"
-  - 'echo test >> C:\ps.txt'
-  - |
+    echo test >> C:\ps.txt
     powershell -Command " Echo Y | powershell Set-Item WSMan:\localhost\Client\TrustedHosts -Value '10.0.1.12,10.0.1.14,10.0.1.15,10.0.1.16,10.0.1.17,10.0.1.18,10.0.1.5,10.1.3.152'"
-  - |
     powershell -Command " Echo Y | powershell Set-Item WSMan:\localhost\Client\TrustedHosts -Value '*'"
-  - 'echo test >> C:\hosts.txt'
-  - 'powershell Set-Service -Name sshd -StartupType Automatic'
-  - 'powershell Set-Service -Name ssh-agent -StartupType Automatic'  
-  - 'net start "ssh-agent"'
-  - 'net start "ssh"'  
-  - 'echo test >> C:\net.txt'  
-  - 'powershell New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\WDigest" -Name UseLogonCredential -Value 1 -Force'
-  - 'netsh advfirewall firewall add rule name "SSH" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh"'
-  - 'netsh advfirewall firewall add rule name "SSH-add" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-add"'
-  - 'netsh advfirewall firewall add rule name "SSH-agent" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-agent"'
-  - 'netsh advfirewall firewall add rule name "SSH-keygen" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-keygen"'
-  - 'netsh advfirewall firewall add rule name "SSH-keyscan" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-keyscan"'
-  - 'netsh advfirewall firewall add rule name "SSH" dir=out action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh"'
-  - 'netsh advfirewall firewall add rule name "SSH-add" dir=out action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-add"'
-  - 'netsh advfirewall firewall add rule name "SSH-agent" dir=out action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-agent"'
-  - 'netsh advfirewall firewall add rule name "SSH-keygen" dir=out action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-keygen"'
-  - 'netsh advfirewall firewall add rule name "SSH-keyscan" dir=out action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-keyscan"'  
-  - 'echo test >> C:\fw.txt'  
-  - 'winrm quickconfig -q'
-  - 'echo test >> C:\1.txt'
-  - |
+    echo test >> C:\hosts.txt
+    powershell Set-Service -Name sshd -StartupType Automatic
+    powershell Set-Service -Name ssh-agent -StartupType Automatic
+    net start "ssh-agent"
+    net start "ssh"
+    echo test >> C:\net.txt
+    powershell New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\WDigest" -Name UseLogonCredential -Value 1 -Force
+    netsh advfirewall firewall add rule name "SSH" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh"
+    netsh advfirewall firewall add rule name "SSH-add" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-add"
+    netsh advfirewall firewall add rule name "SSH-agent" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-agent"
+    netsh advfirewall firewall add rule name "SSH-keygen" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-keygen"
+    netsh advfirewall firewall add rule name "SSH-keyscan" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-keyscan"
+    netsh advfirewall firewall add rule name "SSH" dir=out action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh"
+    netsh advfirewall firewall add rule name "SSH-add" dir=out action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-add"
+    netsh advfirewall firewall add rule name "SSH-agent" dir=out action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-agent"
+    netsh advfirewall firewall add rule name "SSH-keygen" dir=out action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-keygen"
+    netsh advfirewall firewall add rule name "SSH-keyscan" dir=out action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-keyscan"  
+    powershell Set-TimeZone -Id "W. Europe Standard Time"
+    powershell Set-WinSystemLocale de-DE
+    powershell Set-WinUserLanguageList -Force 'de-DE'
+    powershell Set-WinUILanguageOverride -Language en-US
+    echo test >> C:\fw.txt
+    powershell winrm quickconfig >> C:\\quickconfig.txt
+    echo test >> C:\1.txt
     winrm set winrm/config/winrs @{MaxMemoryPerShellMB="1024"}
-  - 'echo test >> C:\2.txt'
-  - |
+    echo test >> C:\2.txt
     winrm set winrm/config @{MaxTimeoutms="1800000"}
-  - 'echo test >> C:\3.txt'
-  - |
+    echo test >> C:\3.txt
     winrm set winrm/config/service @{AllowUnencrypted="true"}
-  - 'echo test >> C:\4.txt'
-  - |
+    echo test >> C:\4.txt
     winrm set winrm/config/service/auth @{Basic="true"}
-  - 'echo test >> C:\5.txt'
-  - 'net stop winrm'
-  - 'echo test >> C:\6.txt'
-  - 'powershell Set-Service -Name winrm -StartupType Automatic'
-  - 'echo test >> C:\7.txt'
-  - 'net start winrm'
-  - 'echo test >> C:\8.txt'
-  - 'powershell -Command "Enable-PSRemoting -SkipNetworkProfileCheck -Force"'
-  - 'winrm enumerate winrm/config/Listener >> C:\wrm.txt'
+    echo test >> C:\5.txt
+    net stop winrm
+    echo test >> C:\6.txt
+    powershell Set-Service -Name winrm -StartupType Automatic
+    echo test >> C:\7.txt
+    net start winrm
+    echo test >> C:\8.txt
+    powershell -Command "Enable-PSRemoting -SkipNetworkProfileCheck -Force"
+    winrm enumerate winrm/config/Listener >> C:\wrm.txt
+
+
+  # - 'netsh advfirewall firewall add rule name="WinRM 5985" protocol=TCP dir=in localport=5985 action=allow'
+  # - 'netsh advfirewall firewall add rule name="WinRM 5986" protocol=TCP dir=in localport=5986 action=allow'
+  # - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=in localport=8000 action=allow'
+  # - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=out localport=8000 action=allow'  
+  # - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=in localport=8089 action=allow'
+  # - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=out localport=8089 action=allow'  
+  # - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=in localport=8065 action=allow'
+  # - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=out localport=8065 action=allow'
+  # - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=in localport=8191 action=allow'
+  # - 'netsh advfirewall firewall add rule name="Splunk" protocol=TCP dir=out localport=8191 action=allow'   
+  # - 'echo test >> C:\out.txt'
+  # - |
+  #   powershell -Command "Set-ItemProperty -Path HKLM:SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU -Name UseWUServer -Value 0"
+  # - |
+  #   powershell -Command "Restart-Service -Name wuauserv -Force"
+  # - |
+  #   powershell -Command "Get-WindowsCapability -Online | Where-Object Name -like 'OpenSSH.Server*' | Add-WindowsCapability -Online"
+  # - 'echo test >> C:\ps.txt'
+  # - |
+  #   powershell -Command " Echo Y | powershell Set-Item WSMan:\localhost\Client\TrustedHosts -Value '10.0.1.12,10.0.1.14,10.0.1.15,10.0.1.16,10.0.1.17,10.0.1.18,10.0.1.5,10.1.3.152'"
+  # - |
+  #   powershell -Command " Echo Y | powershell Set-Item WSMan:\localhost\Client\TrustedHosts -Value '*'"
+  # - 'echo test >> C:\hosts.txt'
+  # - 'powershell Set-Service -Name sshd -StartupType Automatic'
+  # - 'powershell Set-Service -Name ssh-agent -StartupType Automatic'  
+  # - 'net start "ssh-agent"'
+  # - 'net start "ssh"'  
+  # - 'echo test >> C:\net.txt'  
+  # - 'powershell New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\WDigest" -Name UseLogonCredential -Value 1 -Force'
+  # - 'netsh advfirewall firewall add rule name "SSH" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh"'
+  # - 'netsh advfirewall firewall add rule name "SSH-add" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-add"'
+  # - 'netsh advfirewall firewall add rule name "SSH-agent" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-agent"'
+  # - 'netsh advfirewall firewall add rule name "SSH-keygen" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-keygen"'
+  # - 'netsh advfirewall firewall add rule name "SSH-keyscan" dir=in action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-keyscan"'
+  # - 'netsh advfirewall firewall add rule name "SSH" dir=out action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh"'
+  # - 'netsh advfirewall firewall add rule name "SSH-add" dir=out action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-add"'
+  # - 'netsh advfirewall firewall add rule name "SSH-agent" dir=out action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-agent"'
+  # - 'netsh advfirewall firewall add rule name "SSH-keygen" dir=out action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-keygen"'
+  # - 'netsh advfirewall firewall add rule name "SSH-keyscan" dir=out action=allow enable=yes program="C:\Windows\System32\OpenSSH\ssh-keyscan"'  
+  # - 'echo test >> C:\fw.txt'  
+  # - 'winrm quickconfig -q'
+  # - 'echo test >> C:\1.txt'
+  # - |
+  #   winrm set winrm/config/winrs @{MaxMemoryPerShellMB="1024"}
+  # - 'echo test >> C:\2.txt'
+  # - |
+  #   winrm set winrm/config @{MaxTimeoutms="1800000"}
+  # - 'echo test >> C:\3.txt'
+  # - |
+  #   winrm set winrm/config/service @{AllowUnencrypted="true"}
+  # - 'echo test >> C:\4.txt'
+  # - |
+  #   winrm set winrm/config/service/auth @{Basic="true"}
+  # - 'echo test >> C:\5.txt'
+  # - 'net stop winrm'
+  # - 'echo test >> C:\6.txt'
+  # - 'powershell Set-Service -Name winrm -StartupType Automatic'
+  # - 'echo test >> C:\7.txt'
+  # - 'net start winrm'
+  # - 'echo test >> C:\8.txt'
+  # - 'powershell -Command "Enable-PSRemoting -SkipNetworkProfileCheck -Force"'
+  # - 'winrm enumerate winrm/config/Listener >> C:\wrm.txt'  

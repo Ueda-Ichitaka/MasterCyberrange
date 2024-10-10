@@ -247,7 +247,7 @@ resource "openstack_compute_instance_v2" "OT-PLC-Linux" {
   flavor_id = openstack_compute_flavor_v2.ot-plc-linux-flavor.id
 
   image_id = "63688ae7-c167-41e5-80db-164ef5714eef" #debian 12
-  key_pair = "iai_vm-cyberrange-host"
+  key_pair = data.openstack_compute_keypair_v2.default_keypair.name
   security_groups = ["default",openstack_networking_secgroup_v2.secgroup_splunk_universal_forwarder.id]
 
   network {  
@@ -303,7 +303,7 @@ resource "openstack_compute_instance_v2" "OT-HMI-Linux" {
   #flavor_name = "m1.small"
   flavor_id = openstack_compute_flavor_v2.ot-hmi-linux-flavor.id
   image_id = "63688ae7-c167-41e5-80db-164ef5714eef" #debian 12
-  key_pair = "iai_vm-cyberrange-host"
+  key_pair = data.openstack_compute_keypair_v2.default_keypair.name
   security_groups = ["default",openstack_networking_secgroup_v2.secgroup_splunk_universal_forwarder.id]
 
   network {  
