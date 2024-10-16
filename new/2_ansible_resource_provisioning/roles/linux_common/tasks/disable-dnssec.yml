@@ -17,11 +17,13 @@
     mode: 0644
 
 
-
+# TODO: debug this dot from systemctl
 - name: restart service
   ignore_errors: true
-  ansible.builtin.shell: >
+  ansible.builtin.shell: |
     export LC_ALL="C.UTF-8";
     SERVICE=$(systemctl list-units --type=service --all | grep resolved | sed -e 's/^[ \t]*//' | awk '{ print $1 }')
     sudo systemctl restart $SERVICE
+
+
 

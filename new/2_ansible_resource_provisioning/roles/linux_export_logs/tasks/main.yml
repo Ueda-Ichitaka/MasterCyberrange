@@ -20,7 +20,7 @@
   become: true
   shell: |
     tar -czvf {{ hostname }}_{{ timestamp }}_logs.tar.gz /var/log
-    tar -czvf {{ hostname }}_{{ timestamp }}_pcap.tar.gz $hostname.pcap
+    tar -czvf {{ hostname }}_{{ timestamp }}_pcap.tar.gz /home/debian/tshark/$hostname.pcap
 
 
 - name: Transfer logfiles file from ServerA to ServerB

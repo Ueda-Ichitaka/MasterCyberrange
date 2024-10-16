@@ -1,11 +1,11 @@
 ---
 
-- name: uninstall updates against HiveNightmare (CVE-2021-36934) 
-  ansible.windows.win_powershell:
-    script: |
-      wusa /uninstall /kb:5004296
-      wusa /uninstall /kb:5005030
-      wusa /uninstall /kb:5005568
+# - name: uninstall updates against HiveNightmare (CVE-2021-36934) 
+#   ansible.windows.win_powershell:
+#     script: |
+#       wusa /uninstall /kb:5004296
+#       wusa /uninstall /kb:5005030
+#       wusa /uninstall /kb:5005568
 
 
 - name: Misconfigure Registry Permissions

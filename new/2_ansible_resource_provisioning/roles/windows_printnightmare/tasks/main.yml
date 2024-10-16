@@ -1,11 +1,11 @@
 ---
 
-- name: uninstall updates against PrintNightmare (CVE-2021-34527)
-  ansible.windows.win_powershell:
-    script: |
-      wusa /uninstall /kb:5004945
-      wusa /uninstall /kb:5004237
-      wusa /uninstall /kb:5005394
+# - name: uninstall updates against PrintNightmare (CVE-2021-34527)
+#   ansible.windows.win_powershell:
+#     script: |
+#       wusa /uninstall /kb:5004945
+#       wusa /uninstall /kb:5004237
+#       wusa /uninstall /kb:5005394
 
 
 - name: Re-enable the Print Spooler Service

@@ -17,21 +17,45 @@
   apt:
     pkg: 
     - tmux
-    - plocate
-    - mlocate
     - qemu-guest-agent
     - nano
     - vim
     - nmap
-    - netcat
     - xrdp
     - build-essential
     - screen
     - traceroute
-    - auditd
-    - nmap
     update_cache: true
     state: present
+
+
+- name: Install auditd
+  ignore_errors: true
+  apt:
+    name: auditd
+    update_cache: true
+    state: present
+
+
+- name: Install netcat
+  ignore_errors: true
+  apt:
+    pkg:
+    - netcat-traditional
+    - netcat
+    update_cache: true
+    state: present
+
+
+- name: Install locate
+  ignore_errors: true
+  apt:
+    pkg:
+    - plocate
+    - mlocate
+    update_cache: true
+    state: present
+
 
 
 - name: Place auditd rules

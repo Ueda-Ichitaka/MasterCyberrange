@@ -1,16 +1,16 @@
 - hosts: ubuntu, debian
   gather_facts: True
   become: true
-  vars_files:
-    - ../../configs/attack_range_default.yml
+  # vars_files:
+  #   - ../../configs/attack_range_default.yml
   roles:
     - set_hostname_linux
     - linux_common
-    - update_sysmon_config_linux
-    - linux_sysmon
-    - linux_install_art
-    - linux_osquery    
-
+    #- linux_sysmon
+    #- update_sysmon_config_linux
+    #- linux_install_art
+    #- linux_osquery    
+    # sysmon and osquery seem to be only for splunk which we currently do not use. omit
 
 
 

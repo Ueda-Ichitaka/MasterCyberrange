@@ -7,13 +7,13 @@
 #include <errno.h>
 
 #define SERVER_IP "10.0.2.17"
-#define PORT 1502
+#define PORT 502
 #define NUM_MESSAGES 120 // 10 hours = 120 * 5 minutes
 
 int main() {
     modbus_t *ctx;
     uint16_t tab_reg[10];
-    int rc;
+    int rc = 0;
     int message_index = 0;
 
     // Create a new Modbus TCP context

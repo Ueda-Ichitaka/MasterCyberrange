@@ -1,7 +1,7 @@
 ---
 - include: install_ansible_prerequisits.yml
-- include: install_ansible.yml
 - include: copy_ansible_files_from_host.yml
   when: check_if_ansible_files_are_present
+- include: install_ansible.yml
 - include: copy_hosts_file.yml
 - include: copy_ssh_key_for_ansible_access.yml

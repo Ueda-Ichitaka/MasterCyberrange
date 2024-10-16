@@ -5,8 +5,9 @@
   ignore_errors: true
   apt:
     pkg: 
-    - docker-compose-v2
+    - docker-compose
     - openssl
+    - docker-compose-v2
     update_cache: true
     state: present
 

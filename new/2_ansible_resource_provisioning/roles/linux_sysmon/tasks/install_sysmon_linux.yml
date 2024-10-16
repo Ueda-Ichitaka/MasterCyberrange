@@ -6,11 +6,19 @@
   ansible.builtin.shell: lsb_release -rs
   register: result
 
-- name: add the microsoft repo
-  become: true
-  get_url:
-    url: https://packages.microsoft.com/config/ubuntu/{{ result.stdout }}/packages-microsoft-prod.deb 
+# - name: add the microsoft repo
+#   become: true
+#   get_url:
+#     url: https://packages.microsoft.com/config/ubuntu/{{ result.stdout }}/packages-microsoft-prod.deb 
+#     dest: /tmp/packages-microsoft-prod.deb
+
+
+- name: disable ubuntu autoupgrade
+  ansible.builtin.copy:
+    src: /home/iai/attack_range_openstack/2_ansible_resource_provisioning/remote_host_files/sysmon/packages-microsoft-prod.deb
     dest: /tmp/packages-microsoft-prod.deb
+
+
 
 - name: dpkg install the deb
   become: true
@@ -41,9 +49,9 @@
   become: true
   ansible.builtin.shell: sysmon -accepteula -i /tmp/SysMonLinux-CatchAll.xml
 
-- name: install powershell
-  become: true
-  apt:
-    name: powershell
-    state: latest
-    update_cache: yes
+# - name: install powershell
+#   become: true
+#   apt:
+#     name: powershell
+#     state: latest
+#     update_cache: yes

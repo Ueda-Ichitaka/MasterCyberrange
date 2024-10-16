@@ -35,66 +35,66 @@ resource "openstack_networking_router_interface_v2" "router_interface_2" {
 
 
 
-# #------------------------------------
-# # Windows OT Domain Controller
-# #------------------------------------
+# # #------------------------------------
+# # # Windows OT Domain Controller
+# # #------------------------------------
 
-resource "openstack_compute_flavor_v2" "ot-dc-flavor" {
-    name = "ot-dc-flavor"
-    ram = "4096"
-    vcpus = "2"
-    disk = "32"
-    swap = "4096"
-}
+# resource "openstack_compute_flavor_v2" "ot-dc-flavor" {
+#     name = "ot-dc-flavor"
+#     ram = "4096"
+#     vcpus = "2"
+#     disk = "32"
+#     swap = "4096"
+# }
 
-resource "openstack_compute_instance_v2" "OT-Win-DC" {
-  name            = "OT-Win-DC"
-  image_id = "b34c1867-728f-4d7b-839c-06c05a108088"  #Windows Server 2019 Eval  
-  #image_id        = data.openstack_images_image_v2.winserver2022_4.id
-  #flavor_name     = "m1.medium"
-  flavor_id = openstack_compute_flavor_v2.ot-dc-flavor.id
-  key_pair = data.openstack_compute_keypair_v2.default_keypair.name
-  security_groups = [
-    "default",
-    openstack_networking_secgroup_v2.secgroup_windows_remote.id,
-    openstack_networking_secgroup_v2.secgroup_attack_range_internal.id,
-    openstack_networking_secgroup_v2.secgroup_splunk_universal_forwarder.id,
-    ]
-  user_data = data.template_file.win_user_data_cloud_init.rendered
-   network {  
-      access_network = true
-      name = openstack_networking_network_v2.OT-network.name
-      fixed_ip_v4 = "10.0.2.14"
-   }   
-
-
-  # provisioner "local-exec" {
-  #   working_dir = "../2_ansible_resource_provisioning"
-  #   command = "ansible-playbook -l 'OT-Win-DC,' playbooks/windows.yml"
-  # }
-
-  # provisioner "local-exec" {
-  #   working_dir = "../2_ansible_resource_provisioning"
-  #   command = "ansible-playbook -l 'OT-Win-DC,' playbooks/beats_windows.yml"
-  # }
-
-  # provisioner "local-exec" {
-  #   working_dir = "../2_ansible_resource_provisioning"
-  #   command = "ansible-playbook -l 'OT-Win-DC,' playbooks/splunk_forwarder_windows.yml"
-  # }
-
-  # provisioner "local-exec" {
-  #   working_dir = "../2_ansible_resource_provisioning"
-  #   command = "ansible-playbook -l 'OT-Win-DC,' playbooks/windows_dc.yml"
-  # }
-
-  # provisioner "local-exec" {
-  #   working_dir = "../2_ansible_resource_provisioning"
-  #   command = "ansible-playbook -l 'OT-Win-DC,' playbooks/vulnerabilities.yml"
-  # }  
+# resource "openstack_compute_instance_v2" "OT-Win-DC" {
+#   name            = "OT-Win-DC"
+#   image_id = "b34c1867-728f-4d7b-839c-06c05a108088"  #Windows Server 2019 Eval  
+#   #image_id        = data.openstack_images_image_v2.winserver2022_4.id
+#   #flavor_name     = "m1.medium"
+#   flavor_id = openstack_compute_flavor_v2.ot-dc-flavor.id
+#   key_pair = data.openstack_compute_keypair_v2.default_keypair.name
+#   security_groups = [
+#     "default",
+#     openstack_networking_secgroup_v2.secgroup_windows_remote.id,
+#     openstack_networking_secgroup_v2.secgroup_attack_range_internal.id,
+#     openstack_networking_secgroup_v2.secgroup_splunk_universal_forwarder.id,
+#     ]
+#   user_data = data.template_file.win_user_data_cloud_init.rendered
+#    network {  
+#       access_network = true
+#       name = openstack_networking_network_v2.OT-network.name
+#       fixed_ip_v4 = "10.0.2.14"
+#    }   
 
 
- }
+#   # provisioner "local-exec" {
+#   #   working_dir = "../2_ansible_resource_provisioning"
+#   #   command = "ansible-playbook -l 'OT-Win-DC,' playbooks/windows.yml"
+#   # }
+
+#   # provisioner "local-exec" {
+#   #   working_dir = "../2_ansible_resource_provisioning"
+#   #   command = "ansible-playbook -l 'OT-Win-DC,' playbooks/beats_windows.yml"
+#   # }
+
+#   # provisioner "local-exec" {
+#   #   working_dir = "../2_ansible_resource_provisioning"
+#   #   command = "ansible-playbook -l 'OT-Win-DC,' playbooks/splunk_forwarder_windows.yml"
+#   # }
+
+#   # provisioner "local-exec" {
+#   #   working_dir = "../2_ansible_resource_provisioning"
+#   #   command = "ansible-playbook -l 'OT-Win-DC,' playbooks/windows_dc.yml"
+#   # }
+
+#   # provisioner "local-exec" {
+#   #   working_dir = "../2_ansible_resource_provisioning"
+#   #   command = "ansible-playbook -l 'OT-Win-DC,' playbooks/vulnerabilities.yml"
+#   # }  
+
+
+#  }
 
 
 
@@ -166,65 +166,65 @@ resource "openstack_compute_instance_v2" "OT-Win-PC-1" {
 
 
 
-# #-----------------------
-# # APT29 Windows Operating-PC
-# #-----------------------
+# # #-----------------------
+# # # APT29 Windows Operating-PC
+# # #-----------------------
 
-resource "openstack_compute_flavor_v2" "ot-win-pc-2-flavor" {
-    name = "ot-win-pc-2-flavor"
-    ram = "4096"
-    vcpus = "2"
-    disk = "32"
-    swap = "4096"
-}
+# resource "openstack_compute_flavor_v2" "ot-win-pc-2-flavor" {
+#     name = "ot-win-pc-2-flavor"
+#     ram = "4096"
+#     vcpus = "2"
+#     disk = "32"
+#     swap = "4096"
+# }
 
-resource "openstack_compute_instance_v2" "OT-Win-PC-2" {
-  name = "OT-Win-PC-2"
-  #flavor_name = "m1.medium"
-  flavor_id = openstack_compute_flavor_v2.ot-win-pc-2-flavor.id
-  image_id = "b34c1867-728f-4d7b-839c-06c05a108088" 
-  key_pair = data.openstack_compute_keypair_v2.default_keypair.name
-  security_groups = [
-    "default",
-    openstack_networking_secgroup_v2.secgroup_windows_remote.id,
-    openstack_networking_secgroup_v2.secgroup_attack_range_internal.id,
-    ]
-  user_data = data.template_file.win_user_data_cloud_init.rendered
+# resource "openstack_compute_instance_v2" "OT-Win-PC-2" {
+#   name = "OT-Win-PC-2"
+#   #flavor_name = "m1.medium"
+#   flavor_id = openstack_compute_flavor_v2.ot-win-pc-2-flavor.id
+#   image_id = "b34c1867-728f-4d7b-839c-06c05a108088" 
+#   key_pair = data.openstack_compute_keypair_v2.default_keypair.name
+#   security_groups = [
+#     "default",
+#     openstack_networking_secgroup_v2.secgroup_windows_remote.id,
+#     openstack_networking_secgroup_v2.secgroup_attack_range_internal.id,
+#     ]
+#   user_data = data.template_file.win_user_data_cloud_init.rendered
 
-   network {  
-      access_network = true
-      name = openstack_networking_network_v2.OT-network.name
-      fixed_ip_v4 = "10.0.2.18"
-   }
-
-
-  # provisioner "local-exec" {
-  #   working_dir = "../2_ansible_resource_provisioning"
-  #   command = "ansible-playbook -l 'OT-Win-PC-2,' playbooks/windows.yml"
-  # }
-
-  # provisioner "local-exec" {
-  #   working_dir = "../2_ansible_resource_provisioning"
-  #   command = "ansible-playbook -l 'OT-Win-PC-2,' playbooks/beats_windows.yml"
-  # }
-
-  # provisioner "local-exec" {
-  #   working_dir = "../2_ansible_resource_provisioning"
-  #   command = "ansible-playbook -l 'OT-Win-PC-2,' playbooks/splunk_forwarder_windows.yml"
-  # }
-
-  # provisioner "local-exec" {
-  #   working_dir = "../2_ansible_resource_provisioning"
-  #   command = "ansible-playbook -l 'OT-Win-PC-2,' playbooks/windows_workstation.yml"
-  # }
-
-  # provisioner "local-exec" {
-  #   working_dir = "../2_ansible_resource_provisioning"
-  #   command = "ansible-playbook -l 'OT-Win-PC-2,' playbooks/vulnerabilities.yml"
-  # }
+#    network {  
+#       access_network = true
+#       name = openstack_networking_network_v2.OT-network.name
+#       fixed_ip_v4 = "10.0.2.18"
+#    }
 
 
- }
+#   # provisioner "local-exec" {
+#   #   working_dir = "../2_ansible_resource_provisioning"
+#   #   command = "ansible-playbook -l 'OT-Win-PC-2,' playbooks/windows.yml"
+#   # }
+
+#   # provisioner "local-exec" {
+#   #   working_dir = "../2_ansible_resource_provisioning"
+#   #   command = "ansible-playbook -l 'OT-Win-PC-2,' playbooks/beats_windows.yml"
+#   # }
+
+#   # provisioner "local-exec" {
+#   #   working_dir = "../2_ansible_resource_provisioning"
+#   #   command = "ansible-playbook -l 'OT-Win-PC-2,' playbooks/splunk_forwarder_windows.yml"
+#   # }
+
+#   # provisioner "local-exec" {
+#   #   working_dir = "../2_ansible_resource_provisioning"
+#   #   command = "ansible-playbook -l 'OT-Win-PC-2,' playbooks/windows_workstation.yml"
+#   # }
+
+#   # provisioner "local-exec" {
+#   #   working_dir = "../2_ansible_resource_provisioning"
+#   #   command = "ansible-playbook -l 'OT-Win-PC-2,' playbooks/vulnerabilities.yml"
+#   # }
+
+
+#  }
 
 
 
@@ -268,20 +268,20 @@ resource "openstack_compute_instance_v2" "OT-PLC-Linux" {
   }
 
 
-  # provisioner "local-exec" {
-  #   working_dir = "../2_ansible_resource_provisioning"
-  #   command = "ansible-playbook -l 'OT-PLC-Linux,' playbooks/linux.yml"
-  # }
+  provisioner "local-exec" {
+    working_dir = "../2_ansible_resource_provisioning"
+    command = "ansible-playbook -l 'OT-PLC-Linux,' playbooks/linux.yml"
+  }
 
   # provisioner "local-exec" {
   #   working_dir = "../2_ansible_resource_provisioning"
   #   command = "ansible-playbook -l 'OT-PLC-Linux,' playbooks/beats_linux.yml"
   # }
 
-  # provisioner "local-exec" {
-  #   working_dir = "../2_ansible_resource_provisioning"
-  #   command = "ansible-playbook -l 'OT-PLC-Linux,' playbooks/plc_debian.yml"
-  # }
+  provisioner "local-exec" {
+    working_dir = "../2_ansible_resource_provisioning"
+    command = "ansible-playbook -l 'OT-PLC-Linux,' playbooks/plc_debian.yml"
+  }
 
  }
 
@@ -324,14 +324,14 @@ resource "openstack_compute_instance_v2" "OT-HMI-Linux" {
   }
 
 
-  # provisioner "local-exec" {
-  #   working_dir = "../2_ansible_resource_provisioning"
-  #   command = "ansible-playbook -l 'OT-HMI-Linux,' playbooks/linux.yml"
-  # }
+  provisioner "local-exec" {
+    working_dir = "../2_ansible_resource_provisioning"
+    command = "ansible-playbook -l 'OT-HMI-Linux,' playbooks/linux.yml"
+  }
 
-  # provisioner "local-exec" {
-  #   working_dir = "../2_ansible_resource_provisioning"
-  #   command = "ansible-playbook -l 'OT-HMI-Linux,' playbooks/hmi_debian.yml"
-  # }
+  provisioner "local-exec" {
+    working_dir = "../2_ansible_resource_provisioning"
+    command = "ansible-playbook -l 'OT-HMI-Linux,' playbooks/hmi_debian.yml"
+  }
 
 }

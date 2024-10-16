@@ -2,32 +2,37 @@
 
 - name: create subfolder for host
   become: true
-  shell: |
+  ansible.builtin.raw: |
+    #!/bin/bash
     declare -a hosts=("OT-PLC-Linux"
-                      "OT-HMI-Linux"
-                      "IT-Inside-Attacker"
-                      "IT-Linux-PC-1"
-                      "IT-Win-DC"
-                      "OT-Win-DC"
-                      "IT-Win-Share"
-                      "IT-Win-PC-1"
-                      "IT-Win-Server-1"
-                      "OT-Win-PC-1"
-                      "OT-Win-PC-2"
-                      )
+                      "OT-HMI-Linux" 
+                      "IT-Inside-Attacker" 
+                      "IT-Linux-PC-1" 
+                      "IT-Win-DC" 
+                      "OT-Win-DC" 
+                      "IT-Win-Share" 
+                      "IT-Win-PC-1" 
+                      "IT-Win-Server-1" 
+                      "OT-Win-PC-1" 
+                      "OT-Win-PC-2" )
     
-    mkdir ~/dataset/
+    if [ ! -d /home/debian/dataset/ ]
+    then 
+      mkdir "/home/debian/dataset/"
 
-    for i in "${hosts[@]}"
-    do
-        mkdir "~/dataset/$i/"
-        mkdir "~/dataset/$i/logs/"
-        mkdir "~/dataset/$i/network/"
-    done
-
+      for i in "${hosts[@]}"
+      do
+          mkdir "/home/debian/dataset/$i/"
+          mkdir "/home/debian/dataset/$i/logs/"
+          mkdir "/home/debian/dataset/$i/network/"
+      done
+    fi
+  args:
+    executable: /bin/bash
+    
 
 
 - name: create subfolder for host
   become: true
   shell: |
-    mkdir ~/elk/
+    mkdir /home/debian/elk/

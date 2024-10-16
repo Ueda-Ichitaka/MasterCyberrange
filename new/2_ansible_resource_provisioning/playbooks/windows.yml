@@ -10,5 +10,5 @@
     - sysmon
     - update_sysmon_config 
     - red_team_tools_terraform
-    - join_domain       
-    - windows_install_attack_simulation
+    #- join_domain       
+    #- windows_install_attack_simulation

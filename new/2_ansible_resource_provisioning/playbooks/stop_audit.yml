@@ -22,8 +22,8 @@
     - name: insert timestamps
       become: true
       shell: | 
-        timestamp = cat ~/dataset/timestamp.txt
-        for old in ~/dataset/*.gz
+        timestamp = cat /home/debian/dataset/timestamp.txt
+        for old in /home/debian/dataset/*.gz
         do 
           new = $(sed -e 's/_/_$timestamp_/1' <<< "$old")
           mv "$old" "$new"

@@ -7,13 +7,13 @@
 #include <errno.h>
 
 #define SERVER_ID 1
-#define PORT 1502
+#define PORT 502
 #define NUM_MESSAGES 120 // 10 hours = 120 * 5 minutes
 
 int main() {
     modbus_t *ctx;
     modbus_mapping_t *mb_mapping;
-    int rc;
+    int rc = 0;
     uint8_t query[MODBUS_TCP_MAX_ADU_LENGTH];
     int message_index = 0;
 

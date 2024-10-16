@@ -1,3 +1,4 @@
+
 resource "openstack_networking_port_v2" "IT-network-access-proxy-port" {
   name               = "access-proxy-port"
   network_id         = openstack_networking_network_v2.IT-network.id
@@ -8,6 +9,19 @@ resource "openstack_networking_port_v2" "IT-network-access-proxy-port" {
     subnet_id  = openstack_networking_subnet_v2.IT-subnet.id
   }
 }
+
+
+resource "openstack_networking_port_v2" "APT-network-access-proxy-port" {
+  name               = "access-proxy-port"
+  network_id         = openstack_networking_network_v2.APT-network.id
+  admin_state_up     = "true"
+
+  fixed_ip {
+    ip_address = "10.0.4.5"
+    subnet_id  = openstack_networking_subnet_v2.APT-subnet.id
+  }
+}
+
 
 resource "openstack_networking_floatingip_v2" "floatip-access-proxy" {
   pool = "public1"
@@ -43,6 +57,11 @@ resource "openstack_compute_instance_v2" "access-proxy" {
     access_network = true
     port = openstack_networking_port_v2.IT-network-access-proxy-port.id
   }
+
+   network {  
+      access_network = true
+      port = openstack_networking_port_v2.APT-network-access-proxy-port.id
+   }   
 
   stop_before_destroy = false
 

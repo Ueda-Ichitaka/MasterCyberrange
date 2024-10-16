@@ -5,7 +5,7 @@
     seconds: 30
 
 - name: install nmap vuln scan scripts
-  ansible.builtin.shell: >
+  ansible.builtin.shell: |
     export LC_ALL="C.UTF-8";
     cd /usr/share/nmap/scripts/
     sudo git clone https://github.com/vulnersCom/nmap-vulners.git

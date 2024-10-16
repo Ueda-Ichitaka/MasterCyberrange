@@ -1,4 +1,4 @@
-- hosts: aggregation-server
+- hosts: aggregation_server
   gather_facts: True
   become: true
   vars:  

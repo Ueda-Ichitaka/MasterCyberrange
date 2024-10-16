@@ -22,5 +22,5 @@
     - name: place timestamp file
       become: true
       shell: |      
-          date +%d-%m-%Y-%H-%M > ~/dataset/timestamp.txt
+          date +%d-%m-%Y-%H-%M > /home/debian/dataset/timestamp.txt
 

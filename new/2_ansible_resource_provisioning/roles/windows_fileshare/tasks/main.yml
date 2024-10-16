@@ -7,12 +7,25 @@
       - SMB1Protocol
     state: present
 
+
+- name: Install SMB1
+  ansible.windows.win_optional_feature:
+    name: SMB1Protocol
+    state: present
+
+
 - name: activate smb1
   ansible.windows.win_powershell:
     script: |
-      Enable-WindowsOptionalFeature -Online -FeatureName SMB1Protocol
-      Set-SmbServerConfiguration -EnableSMB1Protocol $true
-      Set-SmbServerConfiguration -EnableSMB2Protocol $false
+      Set-SmbServerConfiguration -EnableSMB1Protocol $true -Confirm:$false
+      Set-SmbServerConfiguration -EnableSMB2Protocol $false -Confirm:$false
+
+
+
+- name: Create directory structure
+  ansible.windows.win_file:
+    path: C:\shares\company
+    state: directory
 
 
 - name: Add public company share
@@ -21,20 +34,21 @@
     description: top secret share
     path: C:\shares\company
     list: true
-    full: Administrators,CEO
-    read: Global
 
-
-- name: uninstall updates against Juicy Potato (CVE-2019-0836) 
-  ansible.windows.win_powershell:
-    script: |
-      wusa /uninstall /kb:4489886
-      wusa /uninstall /kb:4493509
-      wusa /uninstall /kb:4497934
+# this currently does not finish or return. exec manually -> moved to own rule
+# - name: uninstall updates against Juicy Potato (CVE-2019-0836) 
+#   ansible.windows.win_powershell:
+#     script: |
+#       wusa /uninstall /kb:4489886 /quiet /norestart
+#       wusa /uninstall /kb:4493509 /quiet /norestart
+#       wusa /uninstall /kb:4497934 /quiet /norestart
 
 
 - name: copy file
-  ansible.windows.win_template:
+  ansible.windows.win_copy:
     src: confidential_report.txt
     dest: C:\shares\company\confidential_report.txt
 
+
+- name: restart machine
+  win_reboot:

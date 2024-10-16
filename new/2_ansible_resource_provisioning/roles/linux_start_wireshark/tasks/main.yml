@@ -4,4 +4,8 @@
   become: true
   shell: |
     hostname = $(hostname)
-    tshark -i any -w $hostname.pcap -q &
+    if [ ! -d /home/debian/tshark/ ]
+    then
+      sudo mkdir "tshark/"
+    fi  
+    sudo tshark -i any -w $hostname.pcap -q &

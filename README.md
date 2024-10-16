@@ -355,7 +355,7 @@ grep "OS_PASSWORD" /etc/kolla/admin-openrc.sh
 ### I have keypair errors
 
 upload the public key from your cyberrange host (id_ed25519.pub)
-create a keypair iai_vm-cyberrrange-host
+
 
 
 
@@ -395,6 +395,63 @@ in windows itself your keyboard should behave as it does
 ### I cant reach the VMs with ssh
 
 
+generate key id_ed25519
+ssh-copy-id -i ~/.ssh/iai_vm-cyberrange-host.pub 10.1.3.191
+ssh-add -l
+ssh-agent bash
+ssh-add .ssh/id_ed25519
+
+make sure the ssh key gets copied to proxy in the proxy playbook. otherwise there is only the public key under authorized hosts and therefore cannot work with the other VMs
+
+
+
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.1.12"
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.1.14"
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.1.15"
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.1.16"
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.1.17"
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.1.18"
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.1.20"
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.2.12"
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.2.18"
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.2.15"
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.2.14"
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.2.16"
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.2.17"
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.4.97"
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.5.64"
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.6.42"
+
+
+
+
+
+
+login manually with 
+  ssh -vvvv -A -o ProxyCommand="ssh -A -p 22 -W %h:%p -q -l debian 10.1.3.191" debian@10.0.1.12 -o StrictHostKeyChecking=no
+or
+  ssh -vvvv -A -o ProxyCommand="ssh -A -p 22 -W %h:%p debian@10.1.3.191" debian@10.0.1.12 -o StrictHostKeyChecking=no
+
+go back and play the playbook.
+
+
+
+### Windows winrm quickconfig does not return and so winrm is not setup
+
+ssh to windows machine
+
+```
+    powershell winrm quickconfig 
+    winrm set winrm/config/winrs @{MaxMemoryPerShellMB="1024"}
+    winrm set winrm/config @{MaxTimeoutms="1800000"}
+    winrm set winrm/config/service @{AllowUnencrypted="true"}
+    winrm set winrm/config/service/auth @{Basic="true"}
+    net stop winrm
+    powershell Set-Service -Name winrm -StartupType Automatic
+    net start winrm
+    powershell -Command "Enable-PSRemoting -SkipNetworkProfileCheck -Force"
+    winrm enumerate winrm/config/Listener
+```
 
 
 

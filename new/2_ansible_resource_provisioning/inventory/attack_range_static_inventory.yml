@@ -83,7 +83,8 @@ windows:
     ansible_connection: winrm
     ansible_winrm_server_cert_validation: ignore
     ansible_winrm_scheme: http
-    ansible_winrm_http_proxy: "socks5://localhost:1080"  #"socks5://socks_user:socks_password@socks_server:socks_port" 
+    ansible_winrm_http_proxy: "socks5://debian@10.1.3.191:1080"  #"socks5://socks_user:socks_password@socks_server:socks_port" 
+    ansible_winrm_proxy: "socks5://debian@10.1.3.191:1080"
     ansible_winrm_operation_timeout_sec: 120
     ansible_winrm_read_timeout_sec: 150
     ansible_winrm_cert_key_pem: '~/.ssh/id_ed25519'
@@ -121,7 +122,8 @@ debian:
 ubuntu:
   hosts:
     IT-Linux-PC-1:
-      absible_host: '10.0.1.16'
+      ansible_host: '10.0.1.16'
+      hostname: 'IT-Linux-PC-1'
   vars:
     ansible_user: 'ubuntu'
 
@@ -135,17 +137,30 @@ kali:
     APT-Outside-Attacker:
       ansible_host: '10.0.4.97' 
       hostname: 'APT-Outside-Attacker'     
-    APT-C2:
+    APT-C2-Server:
       ansible_host: '10.0.5.64'
-      hostname: 'APT-C2-server'
+      hostname: 'APT-C2-Server'
   vars:
-    ansible_user: 'kali'
+    ansible_user: 'debian'
 
 
 
 
 access_via_proxy:
   hosts:
+    aggregation_server:
+    IT-Inside-Attacker:
+    APT-Outside-Attacker:
+    APT-C2-Server:
+    APT-Download-Server:
+
+
+access_via_proxy_2:
+    OT-PLC-Linux:
+    OT-HMI-Linux: 
+
+
+access_from_proxy:
     IT-Win-DC:
     OT-Win-DC:
     IT-Win-Share:
@@ -153,7 +168,7 @@ access_via_proxy:
     IT-Win-Server-1:
     OT-Win-PC-1:
     OT-Win-PC-2:
-
+    IT-Linux-PC-1:   
 
 
 

@@ -65,10 +65,10 @@ resource "openstack_compute_instance_v2" "APT-Outside-Attacker" {
     host     = openstack_networking_floatingip_v2.floatip-access-proxy.address #openstack_networking_floatingip_v2.floatip_3.address
   }
 
-  # provisioner "local-exec" {
-  #   working_dir = "../2_ansible_resource_provisioning"
-  #   command = "ansible-playbook -l 'outside_kali,' playbooks/kali.yml"
-  # }
+  provisioner "local-exec" {
+    working_dir = "../2_ansible_resource_provisioning"
+    command = "ansible-playbook -l 'APT-Outside-Attacker,' playbooks/kali.yml"
+  }
 }
 
 
@@ -132,56 +132,56 @@ resource "openstack_compute_instance_v2" "APT-C2-Server" {
   }
 
 
-  # provisioner "local-exec" {
-  #   working_dir = "../2_ansible_resource_provisioning"
-  #   command = "ansible-playbook -l 'APT-C2-Server,' playbooks/kali.yml"
-  # }
+  provisioner "local-exec" {
+    working_dir = "../2_ansible_resource_provisioning"
+    command = "ansible-playbook -l 'APT-C2-Server,' playbooks/kali.yml"
+  }
 
  }
 
 
 
-# #-----------------------
-# # APT-Download-Server
-# #-----------------------
+# # #-----------------------
+# # # APT-Download-Server
+# # #-----------------------
 
-resource "openstack_compute_flavor_v2" "apt-download-server-flavor" {
-    name = "apt-download-server-flavor"
-    ram = "2048"
-    vcpus = "1"
-    disk = "20"
-    swap = "2048"
-}
+# resource "openstack_compute_flavor_v2" "apt-download-server-flavor" {
+#     name = "apt-download-server-flavor"
+#     ram = "2048"
+#     vcpus = "1"
+#     disk = "20"
+#     swap = "2048"
+# }
 
-resource "openstack_compute_instance_v2" "APT-Download-Server" {
-  name = "APT-Download-Server"
-  #flavor_name = "m1.small"
-  flavor_id = openstack_compute_flavor_v2.apt-download-server-flavor.id
-  image_id = "63688ae7-c167-41e5-80db-164ef5714eef" #debian 12
-  key_pair = data.openstack_compute_keypair_v2.default_keypair.name
-  security_groups = ["default",openstack_networking_secgroup_v2.secgroup_splunk_universal_forwarder.id]
+# resource "openstack_compute_instance_v2" "APT-Download-Server" {
+#   name = "APT-Download-Server"
+#   #flavor_name = "m1.small"
+#   flavor_id = openstack_compute_flavor_v2.apt-download-server-flavor.id
+#   image_id = "63688ae7-c167-41e5-80db-164ef5714eef" #debian 12
+#   key_pair = data.openstack_compute_keypair_v2.default_keypair.name
+#   security_groups = ["default",openstack_networking_secgroup_v2.secgroup_splunk_universal_forwarder.id]
 
-  network {  
-      access_network = true
-      name = openstack_networking_network_v2.APT-network.name
-      fixed_ip_v4 = "10.0.6.42"
-  }
-
-
-  stop_before_destroy = false
+#   network {  
+#       access_network = true
+#       name = openstack_networking_network_v2.APT-network.name
+#       fixed_ip_v4 = "10.0.6.42"
+#   }
 
 
-  connection {
-    type     = "ssh"
-    user     = "debian"
-    private_key = file("~/.ssh/id_ed25519") # iai_vm-cyberrange-host
-    host     = openstack_networking_floatingip_v2.floatip-access-proxy.address
-  }
+#   stop_before_destroy = false
 
 
-  # provisioner "local-exec" {
-  #   working_dir = "../2_ansible_resource_provisioning"
-  #   command = "ansible-playbook -l 'APT-Download-Server,' playbooks/linux.yml"
-  # }
+#   connection {
+#     type     = "ssh"
+#     user     = "debian"
+#     private_key = file("~/.ssh/id_ed25519") # iai_vm-cyberrange-host
+#     host     = openstack_networking_floatingip_v2.floatip-access-proxy.address
+#   }
 
-}
+
+#   provisioner "local-exec" {
+#     working_dir = "../2_ansible_resource_provisioning"
+#     command = "ansible-playbook -l 'APT-Download-Server,' playbooks/linux.yml"
+#   }
+
+# }

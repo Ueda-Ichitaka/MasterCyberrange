@@ -21,13 +21,14 @@
 
 # make all windows installs vulnerable for juicypotato
 
+# currently does not finish or return via ansible. exec manually
 # uninstall updates
-- name: uninstall updates against Juicy Potato (CVE-2019-0836) 
-  ansible.windows.win_powershell:
-    script: |
-      wusa /uninstall /kb:4489886
-      wusa /uninstall /kb:4493509
-      wusa /uninstall /kb:4497934
+# - name: uninstall updates against Juicy Potato (CVE-2019-0836) 
+#   ansible.windows.win_powershell:
+#     script: |
+#       wusa /uninstall /kb:4489886 /quiet /norestart
+#       wusa /uninstall /kb:4493509 /quiet /norestart
+#       wusa /uninstall /kb:4497934 /quiet /norestart
 
 
 - name: disable defender 
@@ -49,7 +50,7 @@
 # use https://blakedrumm.com/blog/set-and-check-user-rights-assignment/ to set privileges
 # grant user SeImpersonatePrivilege
 # grant user SeAssignPrimaryTokenPrivilege
-- name: Copy application to 
+- name: Copy application to set privileges
   ansible.windows.win_copy:
     src: Set-UserRights.ps1
     dest: C:\Set-UserRights.ps1
