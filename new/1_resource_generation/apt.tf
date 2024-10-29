@@ -14,9 +14,15 @@ resource "openstack_networking_subnet_v2" "APT-subnet" {
   cidr = "10.0.4.0/22"
 }
 
-# resource "openstack_networking_floatingip_v2" "floatip_2" {
-#   pool = "public"
-# }
+
+
+resource "openstack_networking_floatingip_v2" "floatip_c2" {
+  pool = "public1"
+}
+
+resource "openstack_networking_floatingip_v2" "floatip_download_server" {
+  pool = "public1"
+}
 
 resource "openstack_networking_router_v2" "APT_router" {
   name                = "APT_router"
@@ -41,6 +47,26 @@ resource "openstack_compute_flavor_v2" "apt-outside-attacker-flavor" {
     swap = "4096"
 }
 
+resource "openstack_networking_port_v2" "apt-outside-attacker-port" {
+  name               = "apt-outside-attacker-port"
+  network_id         = openstack_networking_network_v2.APT-network.id
+  admin_state_up     = "true"
+
+  fixed_ip {
+    ip_address = "10.0.4.97"
+    subnet_id  = openstack_networking_subnet_v2.APT-subnet.id
+  }
+}
+
+resource "openstack_networking_floatingip_v2" "floatip-outside-attacker" {
+  pool = "public1"
+}
+
+resource "openstack_networking_floatingip_associate_v2" "floatingip-outside-attacker" {
+  floating_ip = openstack_networking_floatingip_v2.floatip-outside-attacker.address
+  port_id = openstack_networking_port_v2.apt-outside-attacker-port.id
+}
+
 resource "openstack_compute_instance_v2" "APT-Outside-Attacker" {
    name = "APT-Outside-Attacker"
    #flavor_name = "m1.medium"
@@ -52,17 +78,18 @@ resource "openstack_compute_instance_v2" "APT-Outside-Attacker" {
 
    network {
       access_network = true
-      name = openstack_networking_network_v2.APT-network.name
-      fixed_ip_v4 = "10.0.4.97"
+      port = openstack_networking_port_v2.apt-outside-attacker-port.id
+      #name = openstack_networking_network_v2.APT-network.name
+      #fixed_ip_v4 = "10.0.4.97"
    }
 
    stop_before_destroy = false
 
   connection {
     type     = "ssh"
-    user     = "kali"
+    user     = "debian"
     private_key = file("~/.ssh/id_ed25519") # iai_vm-cyberrange-host
-    host     = openstack_networking_floatingip_v2.floatip-access-proxy.address #openstack_networking_floatingip_v2.floatip_3.address
+    host     = openstack_networking_floatingip_v2.floatip-outside-attacker.address #openstack_networking_floatingip_v2.floatip_3.address
   }
 
   provisioner "local-exec" {
@@ -88,23 +115,27 @@ resource "openstack_compute_flavor_v2" "apt-c2-server-flavor" {
     swap = "4096"
 }
 
-# # Todo: Implement or delete
-# # resource "openstack_dns_zone_v2" "C2_zone" {
-# #   name        = "cozybear.com."
-# #   email       = "contact@cozybear.com"
-# #   description = "a zone"
-# #   ttl         = 6000
-# #   type        = "PRIMARY"
-# # }
 
-# # resource "openstack_dns_recordset_v2" "apt_cozybear_com" {
-# #   zone_id     = openstack_dns_zone_v2.C2_zone.id
-# #   name        = "apt.cozybear.com."
-# #   description = "An example record set"
-# #   ttl         = 3000
-# #   type        = "A"
-# #   records     = ["10.0.3.38"]
-# # }
+resource "openstack_networking_port_v2" "apt-c2-port" {
+  name               = "apt-c2-port"
+  network_id         = openstack_networking_network_v2.APT-network.id
+  admin_state_up     = "true"
+
+  fixed_ip {
+    ip_address = "10.0.5.64"
+    subnet_id  = openstack_networking_subnet_v2.APT-subnet.id
+  }
+}
+
+resource "openstack_networking_floatingip_v2" "floatip-c2" {
+  pool = "public1"
+}
+
+resource "openstack_networking_floatingip_associate_v2" "floatingip-c2" {
+  floating_ip = openstack_networking_floatingip_v2.floatip-c2.address
+  port_id = openstack_networking_port_v2.apt-c2-port.id
+}
+
 
 resource "openstack_compute_instance_v2" "APT-C2-Server" {
    name = "APT-C2-Server"
@@ -117,8 +148,9 @@ resource "openstack_compute_instance_v2" "APT-C2-Server" {
 
    network {
       access_network = true
-      name = openstack_networking_network_v2.APT-network.name
-      fixed_ip_v4 = "10.0.5.64"
+      port = openstack_networking_port_v2.apt-c2-port.id
+      #name = openstack_networking_network_v2.APT-network.name
+      #fixed_ip_v4 = "10.0.5.64"
    }
 
 
@@ -126,9 +158,9 @@ resource "openstack_compute_instance_v2" "APT-C2-Server" {
 
   connection {
     type     = "ssh"
-    user     = "kali"
+    user     = "debian"
     private_key = file("~/.ssh/id_ed25519") # iai_vm-cyberrange-host
-    host     = openstack_networking_floatingip_v2.floatip-access-proxy.address #openstack_networking_floatingip_v2.floatip_3.address
+    host     = openstack_networking_floatingip_v2.floatip-c2.address #openstack_networking_floatingip_v2.floatip_3.address
   }
 
 
@@ -140,7 +172,7 @@ resource "openstack_compute_instance_v2" "APT-C2-Server" {
  }
 
 
-
+# TODO floatip
 # # #-----------------------
 # # # APT-Download-Server
 # # #-----------------------

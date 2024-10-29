@@ -58,7 +58,8 @@ HTA Payload written to: /var/poshc2/apt29/payloads/Launcher.hta
 
             
             
-terminal 2: als user auf poshc2 server einloggen            
+terminal 2: als user auf poshc2 server einloggen    
+                    posh -u crashoverride
 
 terminal 3: cd var/posh/apt29/payloads
             python3 -m http.server -b 10.0.1.17 9002

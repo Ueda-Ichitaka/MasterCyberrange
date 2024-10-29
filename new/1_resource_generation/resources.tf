@@ -15,6 +15,11 @@ data "template_file" "win_user_data_cloud_init" {
 #   pool = "public-network"
 # }
 
+
+
+
+
+
 #-----------------------------------------------------------------------------------------------
 
 # ToDO: create ressources from images -> no more image IDs
@@ -63,7 +68,7 @@ resource "openstack_compute_flavor_v2" "aggregation-server-flavor" {
     name = "aggregation-server-flavor"
     ram = "10240"
     vcpus = "4"
-    disk = "300"
+    disk = "500"
     swap = "4096"
 }
 

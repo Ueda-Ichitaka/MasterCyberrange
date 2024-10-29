@@ -26,9 +26,9 @@
 # - name: uninstall updates against Juicy Potato (CVE-2019-0836) 
 #   ansible.windows.win_powershell:
 #     script: |
-#       wusa /uninstall /kb:4489886 /quiet /norestart
-#       wusa /uninstall /kb:4493509 /quiet /norestart
-#       wusa /uninstall /kb:4497934 /quiet /norestart
+      # wusa /uninstall /kb:4489886 /quiet /norestart
+      # wusa /uninstall /kb:4493509 /quiet /norestart
+      # wusa /uninstall /kb:4497934 /quiet /norestart
 
 
 - name: disable defender 

@@ -1,8 +1,6 @@
 - hosts: audit_linux
   gather_facts: True
   become: true
-  vars_files:
-    - ../../configs/attack_range_default.yml
   roles:
     - linux_clear_logs
     - linux_start_wireshark
@@ -10,7 +8,6 @@
 
 - hosts: windows
   gather_facts: true
-  become: true
   roles:
     - windows_clear_logs
     - windows_start_wireshark

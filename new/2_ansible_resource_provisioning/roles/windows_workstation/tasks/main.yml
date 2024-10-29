@@ -10,3 +10,32 @@
     dest: C:\pw.txt
 
  
+# place crafted link file on desktop
+- name: Copy pw text file
+  ansible.windows.win_copy:
+    src: 37486-the-shocking-truth-about-election-rigging-in-america.rtf.lnk.download
+    dest: C:\Users\Testadmin\Desktop\37486-the-shocking-truth-about-election-rigging-in-america.rtf.lnk.download
+
+
+- name: Copy pw text file
+  ansible.windows.win_copy:
+    src: schemas.ps1
+    dest: C:\Users\Testadmin\Desktop\schemas.ps1
+
+
+- name: Copy pw text file
+  ansible.windows.win_copy:
+    src: make_lnk.ps1
+    dest: C:\Users\Testadmin\Desktop\make_lnk.ps1   
+
+
+- name: Copy pw text file
+  ansible.windows.win_copy:
+    src: MITRE-ATTACK-EVALS.HTML
+    dest: C:\Users\Testadmin\Documents\MITRE-ATTACK-EVALS.HTML  
+
+
+- name: Copy pw text file
+  ansible.windows.win_copy:
+    src: 2016_United_States_presidential_election_-_Wikipedia.html
+    dest: C:\Users\Testadmin\Desktop\2016_United_States_presidential_election_-_Wikipedia.html

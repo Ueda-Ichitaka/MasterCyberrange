@@ -1,7 +1,8 @@
 ---
+
 - include: set-hostname.yml
 - include: windows-disable-defender.yml
-#- include: windows-disable-firewall.yml
+- include: windows-disable-firewall.yml
 #- include: activate-ssh.yml
 - include: windows-enable-ps-logging.yml
 - include: windows-enable-4688-cmd-line-audit.yml
@@ -20,3 +21,5 @@
     - "wireshark"
 #- include: vulners.yml
 - include: applications.yml
+
+

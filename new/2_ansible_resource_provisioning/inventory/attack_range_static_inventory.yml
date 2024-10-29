@@ -68,9 +68,9 @@ windows:
   vars:
     cloud_provider: openstack
     splunk_uf_win_url: 'https://download.splunk.com/products/universalforwarder/releases/9.0.5/windows/splunkforwarder-9.0.5-e9494146ae5c-x64-release.msi'
-    atomic_red_team_repo: redcanaryco
-    atomic_red_team_branch: master
-    prelude_operator_url: "https://download.prelude.org/latest?arch=x64&platform=linux&variant=zip&edition=headless"
+#    atomic_red_team_repo: redcanaryco
+#    atomic_red_team_branch: master
+#    prelude_operator_url: "https://download.prelude.org/latest?arch=x64&platform=linux&variant=zip&edition=headless"
     use_prebuilt_images_with_packer: 0
     win_sysmon_config: 'SwiftOnSecurity.xml'
     #ansible_connection: psrp
@@ -80,7 +80,11 @@ windows:
     #ansible_psrp_protocol: https
     #ansible_port: 5986
     #ansible_psrp_proxy: 'socks5://localhost:1080'
+    ansible_user: 'TestAdmin'
+    ansible_password: 'secreT123%'
+#    ansible_connection: ssh
     ansible_connection: winrm
+    ansible_port: 5985
     ansible_winrm_server_cert_validation: ignore
     ansible_winrm_scheme: http
     ansible_winrm_http_proxy: "socks5://debian@10.1.3.191:1080"  #"socks5://socks_user:socks_password@socks_server:socks_port" 
@@ -88,16 +92,14 @@ windows:
     ansible_winrm_operation_timeout_sec: 120
     ansible_winrm_read_timeout_sec: 150
     ansible_winrm_cert_key_pem: '~/.ssh/id_ed25519'
-    ansible_port: 5985
-    ansible_winrm_transport: basic
-    ansible_user: 'TestAdmin'
-    ansible_password: 'secreT123%'
+    ansible_winrm_message_encryption: never
+    ansible_winrm_transport: basic    
+    ansible_winrm_user: 'TestAdmin'
     ansible_winrm_password: 'secreT123%'
     attack_range_password: 'secreT123%'
-    ansible_winrm_user: 'TestAdmin'
-    byo_splunk_ip: '10.0.1.123'
-    ansible_winrm_message_encryption: never
-    #ansible_ssh_common_args': f'-vvvv -o ProxyCommand="ssh -vvvv -A -p 22 -W %h:%p -q -l debian 10.1.3.191" -o StrictHostKeyChecking=no
+#    byo_splunk_ip: '10.0.1.123'
+#    ansible_ssh_common_args: '-vvvv -o ProxyCommand="ssh -vvvv -A -p 22 -W %h:%p -q debian@10.1.3.191" -o StrictHostKeyChecking=no'
+#    ansible_ssh_common_args: '-vvvv -o StrictHostKeyChecking=no -o ControlMaster=auto -o ControlPersist=600s -o ControlPath="~/.ssh/mux2win-%r@%h:%p"'
 
 
 debian:
@@ -153,6 +155,15 @@ access_via_proxy:
     APT-Outside-Attacker:
     APT-C2-Server:
     APT-Download-Server:
+    IT-Linux-PC-1:   
+    IT-Win-DC:
+    OT-Win-DC:
+    IT-Win-Share:
+    IT-Win-PC-1:
+    IT-Win-Server-1:
+    OT-Win-PC-1:
+    OT-Win-PC-2:
+
 
 
 access_via_proxy_2:
@@ -161,14 +172,8 @@ access_via_proxy_2:
 
 
 access_from_proxy:
-    IT-Win-DC:
-    OT-Win-DC:
-    IT-Win-Share:
-    IT-Win-PC-1:
-    IT-Win-Server-1:
-    OT-Win-PC-1:
-    OT-Win-PC-2:
-    IT-Linux-PC-1:   
+
+
 
 
 

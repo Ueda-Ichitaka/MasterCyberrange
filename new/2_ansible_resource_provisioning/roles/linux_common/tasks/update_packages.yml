@@ -96,3 +96,8 @@
   become: true
   community.general.timezone:
     name: Europe/Berlin
+
+- name: set timezone
+  become: true
+  ansible.builtin.shell: |
+    echo "Europe/Berlin" > /etc/timezone 
