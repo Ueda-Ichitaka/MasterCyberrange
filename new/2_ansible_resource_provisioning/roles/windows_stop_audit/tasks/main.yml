@@ -1,0 +1,9 @@
+---
+
+
+- name: stop logging 
+  ansible.windows.win_shell: | 
+      logman stop -ets file_read 
+      logman stop -ets Powershell_payload
+      logman stop -ets Registry_read      
+      logman stop -ets "NT Kernel Logger"

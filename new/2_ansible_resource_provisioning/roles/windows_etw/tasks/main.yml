@@ -1,0 +1,30 @@
+--- 
+
+
+  # etw
+- name: Setup logging 
+  ansible.windows.win_shell: | 
+      logman create trace file_read -o C:\Windows\Logs\file_read.etl -max 1000 -ets
+      logman update file_read -p Microsoft-Windows-Kernel-File 0x0000000000000180  -ets
+      logman create trace Registry_read -o C:\Windows\Logs\Registry_read.etl -max 1000 -ets
+      logman update Registry_read -p Microsoft-Windows-Kernel-Registry 0x0000000000002430 -ets      
+      logman create trace Powershell_payload -o C:\Windows\Logs\Powershell_payload.etl -max 1000 -ets
+      logman update Powershell_payload -p Microsoft-Windows-Powershell 0x2000000000000000 -ets
+      
+
+
+- name: Copy log exporter
+  ansible.windows.win_copy:
+    src: setACL.ps1
+    dest: C:\setACL.ps1
+
+
+# evtl das suaber mit ansible regedit modules machen
+# win classic security logs
+- name: Setup win security logs
+  ansible.windows.win_shell: |
+      Auditpol /set /subcategory:"File System" /success:enable /failure:enable
+      powershell -executionpolicy bypass -File "& 'C:\setACL.ps1'"
+      Auditpol /set /subcategory:"Registry" /success:enable /failure:enable
+      reg add HKLM\Software\Policies\Microsoft\Windows\PowerShell\ModuleLogging /t REG_DWORD /v "EnableModuleLogging" /d 1 /f
+      reg add HKLM\Software\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging /t REG_DWORD /v "C:\Windows\System32\winevt\Logs\powershell_audit.evtx"

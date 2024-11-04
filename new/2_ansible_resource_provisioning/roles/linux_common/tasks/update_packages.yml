@@ -36,6 +36,13 @@
     update_cache: true
     state: present
 
+- name: Install audisp-plugins
+  ignore_errors: true
+  apt:
+    name: audisp-plugins
+    update_cache: true
+    state: present    
+
 
 - name: Install netcat
   ignore_errors: true
@@ -62,6 +69,14 @@
   template:
     src: audit.rules
     dest: /home/{{ ansible_user }}/audit.rules
+
+
+- name: Place auditd config
+  template:
+    src: audit.conf
+    dest: /etc/audit/audit.conf
+
+
 
 
 - name: Install wireshark
@@ -101,3 +116,5 @@
   become: true
   ansible.builtin.shell: |
     echo "Europe/Berlin" > /etc/timezone 
+
+# potentiell muss hier noch eine andere datei für die timezone angepasst werden

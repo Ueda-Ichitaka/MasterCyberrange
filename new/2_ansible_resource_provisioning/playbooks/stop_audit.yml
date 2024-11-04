@@ -3,6 +3,7 @@
   become: true
   roles:
     - linux_stop_wireshark
+    - linux_stop_auditd 
     - linux_export_logs
 
 
@@ -10,24 +11,38 @@
   gather_facts: true
   roles:
     - windows_stop_wireshark
+    - windows_stop_audit 
     - windows_export_logs
 
 
 - hosts: aggregation_server
   tasks:
   # insert filenames with start timestamp from textfile
+  # alternate: create folder with timestamp and move files there
     - name: insert timestamps
       become: true
       shell: | 
-        timestamp = cat /home/debian/dataset/timestamp.txt
-        for old in /home/debian/dataset/*.gz
-        do 
-          new = $(sed -e 's/_/_$timestamp_/1' <<< "$old")
-          mv "$old" "$new"
-        done 
+        timestamp = $(cat /home/debian/dataset/timestamp.txt)
 
-        for old in ~/dataset/*.zip
+        for host in /home/debian/dataset/*/
         do 
-          new = $(sed -e 's/_/_$timestamp_/1' <<< "$old")
-          mv "$old" "$new"        
-        done 
+          cd $host
+          mkdir $timestamp
+          for file in ./*.{zip,gz}
+          do
+            mv $file $timestamp/$file
+          done
+        done
+
+
+# for old in /home/debian/dataset/*.gz
+# do 
+#   new = $(sed -e 's/_/_$timestamp_/1' <<< "$old")
+#   mv "$old" "$new"
+# done 
+
+# for old in ~/dataset/*.zip
+# do 
+#   new = $(sed -e 's/_/_$timestamp_/1' <<< "$old")
+#   mv "$old" "$new"        
+# done 

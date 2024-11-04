@@ -26,18 +26,12 @@
     then
       rm /home/debian/tshark/
     fi      
-  args:
-    executable: /bin/bash    
 
-
-- name: restart auditd
-  become: true
-  ansible.builtin.raw: |    
     if [ -f /var/log/audit/audit.log ]
     then
       sudo rm /var/log/audit/audit.log
     fi  
-    sudo systemctl restart auditd
-    sudo auditctl -R /home/{{ ansible_user }}/audit.rules
   args:
     executable: /bin/bash    
+
+ 

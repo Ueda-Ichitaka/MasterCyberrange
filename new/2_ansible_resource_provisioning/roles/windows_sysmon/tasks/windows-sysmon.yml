@@ -25,6 +25,15 @@
         elements: 'c:\Program Files\ansible\sysmon'
       when: not sysmondl.stat.exists
 
+# Set the log size, retention policy and log file
+- name: Set the log size, retention policy and log file
+  ansible.windows.win_shell: |
+      WevtUtil sl Microsoft-Windows-Sysmon/Operational /ms:2097152000  /rt:true /lfn:"C:\Windows\System32\winevt\Logs\sysmon_audit.evtx"
+
+
+
+
+
 - block:
     - name: check if sysmon archive is present
       win_stat:
@@ -33,7 +42,7 @@
 
     - name: Copy Sysmon template
       win_copy:
-        src: "../../../configs/SwiftOnSecurity.xml"
+        src: SwiftOnSecurity.xml
         dest: C:\Program Files\ansible\SwiftOnSecurity.xml
       when: not sysmondl.stat.exists  
 

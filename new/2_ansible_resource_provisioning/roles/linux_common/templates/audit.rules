@@ -1,68 +1,131 @@
 # Linux Audit Daemon - Best Practice Configuration
 # /etc/audit/audit.rules
-#
-# Compiled by 
-#
-# Created  : 
-# Modified : 
-#
-# Based on rules published here:
-#   Gov.uk auditd rules
-#   	https://github.com/gds-operations/puppet-auditd/pull/1
-# 	CentOS 7 hardening
-# 		https://highon.coffee/blog/security-harden-centos-7/#auditd---audit-daemon
-# 	Linux audit repo
-# 		https://github.com/linux-audit/audit-userspace/tree/master/rules
-# 	Auditd high performance linux auditing
-# 		https://linux-audit.com/tuning-auditd-high-performance-linux-auditing/
-#
-# Further rules
-# 	For PCI DSS compliance see:
-# 		https://github.com/linux-audit/audit-userspace/blob/master/rules/30-pci-dss-v31.rules
-# 	For NISPOM compliance see:
-# 		https://github.com/linux-audit/audit-userspace/blob/master/rules/30-nispom.rules
 
 # Remove any existing rules
 -D
 
-# Buffer Size
-## 
--b 8192
+## Increase the buffers to survive stress events.
+## Make this bigger for busy systems
+-b 819200
+
+## This determine how long to wait in burst of events
+--backlog_wait_time 0
+
+## Set failure mode to syslog
+-f 1
 
 
--a always,exit -F arch=b64 -S all  -k prov
+# Filters ---------------------------------------------------------------------
+
+### We put these early because audit is a first match wins system.
+
+## Ignore SELinux AVC records
+-a always,exclude -F msgtype=AVC
+
+## Ignore current working directory records
+-a always,exclude -F msgtype=CWD
+
+## Cron jobs fill the logs with stuff we normally don't want (works with SELinux)
+-a never,user -F subj_type=crond_t
+-a never,exit -F subj_type=crond_t
+
+## This prevents chrony from overwhelming the logs
+-a never,exit -F arch=b32 -S adjtimex -F auid=unset -F uid=chrony -F subj_type=chronyd_t
+-a never,exit -F arch=b64 -S adjtimex -F auid=unset -F uid=chrony -F subj_type=chronyd_t
+
+## This is not very interesting and wastes a lot of space if the server is public facing
+-a always,exclude -F msgtype=CRYPTO_KEY_USER
+
+## VMware tools
+-a never,exit -F arch=b32 -S fork -F success=0 -F path=/usr/lib/vmware-tools -F subj_type=initrc_t -F exit=-2
+-a never,exit -F arch=b64 -S fork -F success=0 -F path=/usr/lib/vmware-tools -F subj_type=initrc_t -F exit=-2
+
+-a exit,never -F arch=b32 -S all -F exe=/usr/bin/vmtoolsd
+-a exit,never -F arch=b64 -S all -F exe=/usr/bin/vmtoolsd
+
+## High Volume Event Filter (especially on Linux Workstations)
+-a never,exit -F arch=b32 -F dir=/dev/shm -k sharedmemaccess
+-a never,exit -F arch=b64 -F dir=/dev/shm -k sharedmemaccess
+-a never,exit -F arch=b32 -F dir=/var/lock/lvm -k locklvm
+-a never,exit -F arch=b64 -F dir=/var/lock/lvm -k locklvm
+
+## FileBeat
+-a never,exit -F arch=b32 -F path=/opt/filebeat -k filebeat
+-a never,exit -F arch=b64 -F path=/opt/filebeat -k filebeat
 
 
-# if recording all is too much for the machines, try with the following
 
-# syscall rules.
-#define	AF_INET		2	/* Internet IP Protocol	*/
-#define AF_INET6	10	/* IP Version 6	*/
+# Audt rules --------------------------------------------------------------------------------------------------
 
-#-a always,exit -F arch=b64 -S open,openat  -k prov
-#-a always,exit -F arch=b64 -S read   -k prov
-#-a always,exit -F arch=b64 -S write -k prov
-#-a always,exit -F arch=b64 -S exit,exit_group -k prov
-#-a always,exit -F arch=b64 -S close -k prov
-#-a always,exit -F arch=b64 -S creat   -k prov
-#-a always,exit -F arch=b64 -S truncate -k prov
-#-a always,exit -F arch=b64 -S rename,renameat -k prov
-#-a always,exit -F arch=b64 -S unlink,unlinkat -k prov
-#-a always,exit -F arch=b64 -S mknod,mknodat -k prov
-#-a always,exit -F arch=b64 -S mkdir,mkdirat -k prov
-#-a always,exit -F arch=b64 -S rmdir -k prov
-#-a always,exit -F arch=b64 -S chdir -k prov
-#-a always,exit -F arch=b64 -S chown   -k prov
-#-a always,exit -F arch=b64 -S lchown -k prov
-#-a always,exit -F arch=b64 -S fchownat -k prov
-#-a always,exit -F arch=b64 -S chmod -k prov
-#-a always,exit -F arch=b64 -S fchmodat   -k prov
-#-a always,exit -F arch=b64 -S link,linkat -k prov
-#-a always,exit -F arch=b64 -S symlink,symlinkat -k prov
-#-a always,exit -F arch=b64 -S readlink,readlinkat -k prov
-#-a always,exit -F arch=b64 -S execve   -k prov
-#-a always,exit -F arch=b64 -S name_to_handle_at -k prov
-#-a exit,always -F arch=b64 -S socket -F success=1
-#-a exit,always -F arch=b64 -S socket -F success=1
-#-a exit,always -F arch=b64 -S socket -F a0=2
-#-a exit,always -F arch=b64 -S socket -F a0=10
+
+# record everything
+#-a always,exit -F arch=b64 -S all  -k prov
+
+
+
+
+# With reference to http://seclab.cs.sunysb.edu/sekar/papers/syscallclassif.htm 
+
+# When sent into the kernel, all syscall fields are put into a mask so that one compare can determine if the syscall is of interest. So, adding multiple syscalls in one rule is very efficient.
+
+# # System call auditing - Process Control
+# # Process Creation and Termination: exit,clone,execve,fork,vfork,waitid,getpid,getppid
+# # Signals: kill,signal,pause
+# # Synchronization: poll,select,semctl,semget,semop
+# # User/Group ID: getuid,getgid,geteuid,getegid,getresuid,getsid,setegid,seteuid,setresuid,setreuid,setuid,setgid
+# # Resource Control: getrlimit,getrlimit,getrlimit,getrlimit,getrlimit,nice
+# # Virtual Memory: brk,mlock,mlockall,munlock,munlockall,mprotect,mremap
+# # Miscellaneous: uselib,profil,ptrace
+# # -a exit,always -F arch=b64 -S exit,clone,execve,fork,vfork,waitid,getpid,getppid,kill,signal,pause,poll,select,semctl,semget,semop,getuid,
+# # getgid,geteuid,getegid,getresuid,getsid,setegid,seteuid,setresuid,setreuid,setuid,setgid,getrlimit,getrlimit,getrlimit,getrlimit,getrlimit,nice,
+# # brk,mlock,mlockall,munlock,munlockall,mprotect,mremap,uselib,profil,ptrace 
+ -a exit,always -F arch=b64 -S fork,vfork,exit,waitid,clone,execve,kill,setresuid,setreuid,setuid,kill,ptrace
+
+# # System call auditing - File Access
+# # Setup: write,open,creat,truncate,pipe
+# # File Attributes: stat,fstat,lstat,access,chmod,chown,fchmod,fchown,link,symlink,umask,utime,utimes,rename,unlink
+# # Read/Write: lseek, readlink
+# # Directory Operations: mkdir,mknod,rmdir,getdents,readdir
+# # Miscellaneous: fdatasync,fsync,msync,chroot,chdir,fchdir 
+# # -a exit,always -F arch=b64 -S write,open,creat,truncate,pipe,stat,fstat,lstat,access,chmod,chown,fchmod,fchown,link,symlink,umask,utime,utimes,rename,
+# # unlink,lseek,readlink,mkdir,mknod,rmdir,getdents,readdir,fdatasync,fsync,msync,chroot,chdir,fchdir
+ -a exit,always -F arch=b64 -S open,openat,creat,close,chmod,fchmod,fchmodat,ftruncate,truncate,link,linkat,unlink,unlinkat,mknod,mknodat,mkdir,rename,renameat,symlink,symlinkat
+
+# # System call auditing - Network Access
+# # Setup: socket,socketpair,getsockopt,setsockopt,bind,getsockname,listen,accept,connect,shutdown
+# # Send/Receive: recv,recvfrom,recvmsg,send,sendto,sendmsg
+# # Naming: sethostname,getpeername  
+# # -a exit,always -F arch=b64 -S socket,socketpair,getsockopt,setsockopt,bind,getsockname,listen,accept,connect,shutdown,recv,recvfrom,recvmsg,send,sendto,sendmsg,sethostname,getpeername 
+ -a exit,always -F arch=b64 -S socket,socketpair,bind,listen,accept,connect,recvfrom,sendto
+ 
+
+# # System call auditing - Message Queues
+# # -a exit,always -F arch=b64 -S msgctl,msgget,msgsnd,msgrcv 
+ -a exit,always -F arch=b64 -S msgrcv 
+
+# # System call auditing - Shared Memory
+# # -a exit,always -F arch=b64 -S shmctl,shmat,shmdt,shmget 
+ -a exit,always -F arch=b64 -S shmget 
+
+# # System call auditing - File Descriptor Operations
+# # Setup: close,mmap,munmap,getdtablesize,dup,dup2,dup3
+# # Read/Write: read,readv,write,writev  (Recording readv takes way too much system resources!)  
+# # File Descriptor Control: flock,fcntl,ioctl
+# # -a exit,always -F arch=b64 -S close,mmap,munmap,getdtablesize,dup,dup2,dup3,read,readv,write,writev,flock,fcntl,ioctl
+ -a exit,always -F arch=b64 -S close,mmap,munmap,dup,dup2,dup3,read,write,fcntl,ioctl
+
+# # System call auditing - Time-Related
+# # -a exit,always -F arch=b64 -S nanosleep,alarm,getitimer,setitimer,time,times
+ -a exit,always -F arch=b64 -S alarm,time,times
+
+# # System call auditing - System-Wide
+# # Unprivileged -- Filesystem: sync,ustat,sysfs
+# # Unprivileged -- Miscellaneous: getpagesize,sysinfo,uname
+# # Privileged -- Filesystem: setup,swapoff,swapon,mount,unmount
+# # Process Scheduling: sched_get_priority_max 
+# # Privileged -- Time: stime,adjtimex 
+# # Loadable Modules: create_module,delete_module 
+# # Accounting and Quota: acct,quotactl 
+# # Privileged -- Miscellaneous: sysctl,syslog,idle,iopl,reboot,ipc,socketcall 
+# -a exit,always -F arch=b64 -S syslog
+

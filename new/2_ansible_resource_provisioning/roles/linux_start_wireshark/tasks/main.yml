@@ -2,10 +2,11 @@
 
 - name: start wireshark in background
   become: true
-  shell: |
+  ansible.builtin.raw: |
     hostname = $(hostname)
     if [ ! -d /home/debian/tshark/ ]
     then
       sudo mkdir "tshark/"
     fi  
-    sudo tshark -i any -w $hostname.pcap -q &
+    screen -d -m sudo tshark -i any -w $hostname.pcap -q &
+    sleep 1

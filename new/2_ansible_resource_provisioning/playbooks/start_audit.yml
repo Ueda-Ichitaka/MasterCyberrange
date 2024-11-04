@@ -3,6 +3,7 @@
   become: true
   roles:
     - linux_clear_logs
+    - linux_start_auditd 
     - linux_start_wireshark
 
 
@@ -10,6 +11,7 @@
   gather_facts: true
   roles:
     - windows_clear_logs
+    - windows_start_audit 
     - windows_start_wireshark
 
 

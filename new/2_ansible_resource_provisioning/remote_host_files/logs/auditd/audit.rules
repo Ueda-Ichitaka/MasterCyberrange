@@ -1,33 +1,294 @@
 # Linux Audit Daemon - Best Practice Configuration
 # /etc/audit/audit.rules
-#
-# Compiled by 
-#
-# Created  : 
-# Modified : 
-#
-# Based on rules published here:
-#   Gov.uk auditd rules
-#   	https://github.com/gds-operations/puppet-auditd/pull/1
-# 	CentOS 7 hardening
-# 		https://highon.coffee/blog/security-harden-centos-7/#auditd---audit-daemon
-# 	Linux audit repo
-# 		https://github.com/linux-audit/audit-userspace/tree/master/rules
-# 	Auditd high performance linux auditing
-# 		https://linux-audit.com/tuning-auditd-high-performance-linux-auditing/
-#
-# Further rules
-# 	For PCI DSS compliance see:
-# 		https://github.com/linux-audit/audit-userspace/blob/master/rules/30-pci-dss-v31.rules
-# 	For NISPOM compliance see:
-# 		https://github.com/linux-audit/audit-userspace/blob/master/rules/30-nispom.rules
 
 # Remove any existing rules
 -D
 
-# Buffer Size
-## 
--b 8192
+## Increase the buffers to survive stress events.
+## Make this bigger for busy systems
+-b 819200
+
+## This determine how long to wait in burst of events
+--backlog_wait_time 0
+
+## Set failure mode to syslog
+-f 1
 
 
--a always,exit -F arch=b64 -S all  -k prov
+
+# record everything
+#-a always,exit -F arch=b64 -S all  -k prov
+
+
+
+
+# With reference to http://seclab.cs.sunysb.edu/sekar/papers/syscallclassif.htm 
+
+# When sent into the kernel, all syscall fields are put into a mask so that one compare can determine if the syscall is of interest. So, adding multiple syscalls in one rule is very efficient.
+
+# # System call auditing - Process Control
+# # Process Creation and Termination: exit,clone,execve,fork,vfork,waitid,getpid,getppid
+# # Signals: kill,signal,pause
+# # Synchronization: poll,select,semctl,semget,semop
+# # User/Group ID: getuid,getgid,geteuid,getegid,getresuid,getsid,setegid,seteuid,setresuid,setreuid,setuid,setgid
+# # Resource Control: getrlimit,getrlimit,getrlimit,getrlimit,getrlimit,nice
+# # Virtual Memory: brk,mlock,mlockall,munlock,munlockall,mprotect,mremap
+# # Miscellaneous: uselib,profil,ptrace
+# # -a exit,always -F arch=b64 -S exit,clone,execve,fork,vfork,waitid,getpid,getppid,kill,signal,pause,poll,select,semctl,semget,semop,getuid,
+# # getgid,geteuid,getegid,getresuid,getsid,setegid,seteuid,setresuid,setreuid,setuid,setgid,getrlimit,getrlimit,getrlimit,getrlimit,getrlimit,nice,
+# # brk,mlock,mlockall,munlock,munlockall,mprotect,mremap,uselib,profil,ptrace 
+ -a exit,always -F arch=b64 -S fork,vfork,exit,waitid,clone,execve,kill,setresuid,setreuid,setuid,kill,ptrace
+
+# # System call auditing - File Access
+# # Setup: write,open,creat,truncate,pipe
+# # File Attributes: stat,fstat,lstat,access,chmod,chown,fchmod,fchown,link,symlink,umask,utime,utimes,rename,unlink
+# # Read/Write: lseek, readlink
+# # Directory Operations: mkdir,mknod,rmdir,getdents,readdir
+# # Miscellaneous: fdatasync,fsync,msync,chroot,chdir,fchdir 
+# # -a exit,always -F arch=b64 -S write,open,creat,truncate,pipe,stat,fstat,lstat,access,chmod,chown,fchmod,fchown,link,symlink,umask,utime,utimes,rename,
+# # unlink,lseek,readlink,mkdir,mknod,rmdir,getdents,readdir,fdatasync,fsync,msync,chroot,chdir,fchdir
+ -a exit,always -F arch=b64 -S open,openat,creat,close,chmod,fchmod,fchmodat,ftruncate,truncate,link,linkat,unlink,unlinkat,mknod,mknodat,mkdir,rename,renameat,symlink,symlinkat
+
+# # System call auditing - Network Access
+# # Setup: socket,socketpair,getsockopt,setsockopt,bind,getsockname,listen,accept,connect,shutdown
+# # Send/Receive: recv,recvfrom,recvmsg,send,sendto,sendmsg
+# # Naming: sethostname,getpeername  
+# # -a exit,always -F arch=b64 -S socket,socketpair,getsockopt,setsockopt,bind,getsockname,listen,accept,connect,shutdown,recv,recvfrom,recvmsg,send,sendto,sendmsg,sethostname,getpeername 
+ -a exit,always -F arch=b64 -S socket,socketpair,bind,listen,accept,connect,recvfrom,sendto
+ 
+
+# # System call auditing - Message Queues
+# # -a exit,always -F arch=b64 -S msgctl,msgget,msgsnd,msgrcv 
+ -a exit,always -F arch=b64 -S msgrcv 
+
+# # System call auditing - Shared Memory
+# # -a exit,always -F arch=b64 -S shmctl,shmat,shmdt,shmget 
+ -a exit,always -F arch=b64 -S shmget 
+
+# # System call auditing - File Descriptor Operations
+# # Setup: close,mmap,munmap,getdtablesize,dup,dup2,dup3
+# # Read/Write: read,readv,write,writev  (Recording readv takes way too much system resources!)  
+# # File Descriptor Control: flock,fcntl,ioctl
+# # -a exit,always -F arch=b64 -S close,mmap,munmap,getdtablesize,dup,dup2,dup3,read,readv,write,writev,flock,fcntl,ioctl
+ -a exit,always -F arch=b64 -S close,mmap,munmap,dup,dup2,dup3,read,write,fcntl,ioctl
+
+# # System call auditing - Time-Related
+# # -a exit,always -F arch=b64 -S nanosleep,alarm,getitimer,setitimer,time,times
+ -a exit,always -F arch=b64 -S alarm,time,times
+
+# # System call auditing - System-Wide
+# # Unprivileged -- Filesystem: sync,ustat,sysfs
+# # Unprivileged -- Miscellaneous: getpagesize,sysinfo,uname
+# # Privileged -- Filesystem: setup,swapoff,swapon,mount,unmount
+# # Process Scheduling: sched_get_priority_max 
+# # Privileged -- Time: stime,adjtimex 
+# # Loadable Modules: create_module,delete_module 
+# # Accounting and Quota: acct,quotactl 
+# # Privileged -- Miscellaneous: sysctl,syslog,idle,iopl,reboot,ipc,socketcall 
+# -a exit,always -F arch=b64 -S syslog
+
+
+
+
+# something different, apthunter
+
+# syscall rules.
+#define	AF_INET		2	/* Internet IP Protocol	*/
+#define AF_INET6	10	/* IP Version 6	*/
+
+-a always,exit -F arch=b64 -S open,openat  -k prov
+-a always,exit -F arch=b64 -S read   -k prov
+-a always,exit -F arch=b64 -S write -k prov
+-a always,exit -F arch=b64 -S exit,exit_group -k prov
+-a always,exit -F arch=b64 -S close -k prov
+#-a always,exit -F arch=b64 -S creat   -k prov
+#-a always,exit -F arch=b64 -S truncate -k prov
+#-a always,exit -F arch=b64 -S rename,renameat -k prov
+#-a always,exit -F arch=b64 -S unlink,unlinkat -k prov
+#-a always,exit -F arch=b64 -S mknod,mknodat -k prov
+#-a always,exit -F arch=b64 -S mkdir,mkdirat -k prov
+#-a always,exit -F arch=b64 -S rmdir -k prov
+#-a always,exit -F arch=b64 -S chdir -k prov
+#-a always,exit -F arch=b64 -S chown   -k prov
+#-a always,exit -F arch=b64 -S lchown -k prov
+#-a always,exit -F arch=b64 -S fchownat -k prov
+#-a always,exit -F arch=b64 -S chmod -k prov
+#-a always,exit -F arch=b64 -S fchmodat   -k prov
+#-a always,exit -F arch=b64 -S link,linkat -k prov
+#-a always,exit -F arch=b64 -S symlink,symlinkat -k prov
+#-a always,exit -F arch=b64 -S readlink,readlinkat -k prov
+-a always,exit -F arch=b64 -S execve   -k prov
+#-a always,exit -F arch=b64 -S name_to_handle_at -k prov
+-a exit,always -F arch=b64 -S socket -F success=1
+-a exit,always -F arch=b64 -S socket -F success=1
+-a exit,always -F arch=b64 -S socket -F a0=2
+-a exit,always -F arch=b64 -S socket -F a0=10
+
+
+
+# shadewatcher
+
+-a never,exit -S all -F subj_type=pulseaudio_t -F subj_type=ntpd_t -F subj_type=cron_t
+
+## Cron jobs fill the logs with stuff we normally don't want (works with SELinux) 
+-a never,user -F subj_type=crond_t
+-a exit,never -F subj_type=crond_t
+-a never,user -F subj_type=cron_t
+-a exit,never -F subj_type=cron_t
+-a never,exit -F dir=/home/anonymized/.cache
+-a never,exit -F dir=/home/anonymized/.mozilla
+-a never,exit -F dir=/home/anonymized/.vscode-server
+-a never,exit -F dir=/sys/dev
+-a never,exit -F dir=/usr/share
+-a never,exit -F dir=/etc/fonts
+-a never,exit -F dir=/var/cache
+-a never,exit -F dir=/root/.cache
+-a never,exit -F dir=/proc
+
+-a never,exit -F auid=4294967295
+-a never,exit -S all -F ppid=1148
+-a never,exit -S all -F pid=1148
+-a never,exit -S all -F ppid=1169
+-a never,exit -S all -F pid=1169
+-a never,exit -S all -F ppid=1222
+-a never,exit -S all -F pid=1222
+-a never,exit -S all -F ppid=1310
+-a never,exit -S all -F pid=1310
+-a never,exit -S all -F ppid=1394
+-a never,exit -S all -F pid=1394
+-a never,exit -S all -F ppid=1589
+-a never,exit -S all -F pid=1589
+-a never,exit -S all -F ppid=2087
+-a never,exit -S all -F pid=2087
+-a never,exit -S all -F ppid=2109
+-a never,exit -S all -F pid=2109
+-a never,exit -S all -F ppid=8032
+-a never,exit -S all -F pid=8032
+-a never,exit -S all -F ppid=8034
+-a never,exit -S all -F pid=8034
+-a never,exit -S all -F ppid=8119
+-a never,exit -S all -F pid=8119
+-a never,exit -S all -F ppid=8131
+-a never,exit -S all -F pid=8131
+-a never,exit -S all -F ppid=8143
+-a never,exit -S all -F pid=8143
+-a never,exit -S all -F ppid=8172
+-a never,exit -S all -F pid=8172
+-a never,exit -S all -F ppid=8174
+-a never,exit -S all -F pid=8174
+-a never,exit -S all -F ppid=8176
+-a never,exit -S all -F pid=8176
+-a never,exit -S all -F ppid=8177
+-a never,exit -S all -F pid=8177
+-a never,exit -S all -F ppid=8188
+-a never,exit -S all -F pid=8188
+-a never,exit -S all -F ppid=8193
+-a never,exit -S all -F pid=8193
+-a never,exit -S all -F ppid=8196
+-a never,exit -S all -F pid=8196
+-a never,exit -S all -F ppid=8207
+-a never,exit -S all -F pid=8207
+-a never,exit -S all -F ppid=8209
+-a never,exit -S all -F pid=8209
+-a never,exit -S all -F ppid=8220
+-a never,exit -S all -F pid=8220
+-a never,exit -S all -F ppid=8223
+-a never,exit -S all -F pid=8223
+-a never,exit -S all -F ppid=8227
+-a never,exit -S all -F pid=8227
+-a never,exit -S all -F ppid=8239
+-a never,exit -S all -F pid=8239
+-a never,exit -S all -F ppid=8264
+-a never,exit -S all -F pid=8264
+-a never,exit -S all -F ppid=8277
+-a never,exit -S all -F pid=8277
+-a never,exit -S all -F ppid=8290
+-a never,exit -S all -F pid=8290
+-a never,exit -S all -F ppid=8320
+-a never,exit -S all -F pid=8320
+-a never,exit -S all -F ppid=8321
+-a never,exit -S all -F pid=8321
+-a never,exit -S all -F ppid=8322
+-a never,exit -S all -F pid=8322
+-a never,exit -S all -F ppid=8325
+-a never,exit -S all -F pid=8325
+-a never,exit -S all -F ppid=8329
+-a never,exit -S all -F pid=8329
+-a never,exit -S all -F ppid=8332
+-a never,exit -S all -F pid=8332
+-a never,exit -S all -F ppid=8334
+-a never,exit -S all -F pid=8334
+-a never,exit -S all -F ppid=8336
+-a never,exit -S all -F pid=8336
+-a never,exit -S all -F ppid=8380
+-a never,exit -S all -F pid=8380
+-a never,exit -S all -F ppid=8431
+-a never,exit -S all -F pid=8431
+-a never,exit -S all -F ppid=8450
+-a never,exit -S all -F pid=8450
+-a never,exit -S all -F ppid=8477
+-a never,exit -S all -F pid=8477
+-a never,exit -S all -F ppid=8505
+-a never,exit -S all -F pid=8505
+-a never,exit -S all -F ppid=8512
+-a never,exit -S all -F pid=8512
+-a never,exit -S all -F ppid=8519
+-a never,exit -S all -F pid=8519
+-a never,exit -S all -F ppid=8541
+-a never,exit -S all -F pid=8541
+-a never,exit -S all -F ppid=8639
+-a never,exit -S all -F pid=8639
+-a never,exit -S all -F ppid=8648
+-a never,exit -S all -F pid=8648
+-a never,exit -S all -F ppid=8659
+-a never,exit -S all -F pid=8659
+-a never,exit -S all -F ppid=8665
+-a never,exit -S all -F pid=8665
+-a never,exit -S all -F ppid=8673
+-a never,exit -S all -F pid=8673
+-a never,exit -S all -F ppid=8693
+-a never,exit -S all -F pid=8693
+-a never,exit -S all -F ppid=8699
+-a never,exit -S all -F pid=8699
+-a never,exit -S all -F ppid=8713
+-a never,exit -S all -F pid=8713
+-a never,exit -S all -F ppid=9014
+-a never,exit -S all -F pid=9014
+-a never,exit -S all -F ppid=9022
+-a never,exit -S all -F pid=9022
+-a never,exit -S all -F ppid=9029
+-a never,exit -S all -F pid=9029
+-a never,exit -S all -F ppid=9031
+-a never,exit -S all -F pid=9031
+-a never,exit -S all -F ppid=9145
+-a never,exit -S all -F pid=9145
+-a never,exit -S all -F ppid=9158
+-a never,exit -S all -F pid=9158
+-a never,exit -S all -F ppid=9224
+-a never,exit -S all -F pid=9224
+-a never,exit -S all -F ppid=14340
+-a never,exit -S all -F pid=14340
+-a never,exit -S all -F ppid=14376
+-a never,exit -S all -F pid=14376
+-a never,exit -S all -F ppid=19041
+-a never,exit -S all -F pid=19041
+-a never,exit -S all -F ppid=19251
+-a never,exit -S all -F pid=19251
+-a never,exit -S all -F ppid=19253
+-a never,exit -S all -F pid=19253
+-a never,exit -S all -F ppid=19486
+-a never,exit -S all -F pid=19486
+-a never,exit -S all -F ppid=20702
+-a never,exit -S all -F pid=20702
+-a never,exit -S all -F ppid=26518
+-a never,exit -S all -F pid=26518
+-a never,exit -S all -F ppid=26738
+-a never,exit -S all -F pid=26738
+-a never,exit -S all -F ppid=26739
+-a never,exit -S all -F pid=26739
+-a never,exit -S all -F ppid=26755
+-a never,exit -S all -F pid=26755
+
+-a always,exit -S read,write,open,close,clone,fork,vfork,execve,kill,mq_open,openat,sendto,recvfrom,sendfile,sendmsg,sendmmsg,recvmsg,recvmmsg,connect,socket,unlink,link,linkat,unlinkat,rmdir,mkdir,rename,pipe,pipe2,dup,dup2,getpeername,fcntl
+
+

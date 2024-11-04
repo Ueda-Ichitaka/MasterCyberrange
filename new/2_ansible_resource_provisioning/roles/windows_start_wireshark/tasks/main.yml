@@ -13,4 +13,4 @@
           $interfaceArgs = -join($interfaceArgs, "-i ", $i, " ")
       }      
       $args = -join($interfaceArgs, " -w C:\Export-EventLogs\", $hostname, ".pcap -q")
-      Start-Process $tsharkPath -ArgumentList $args  
+      Invoke-Command -ComputerName localhost -ScriptBlock { Start-Process $tsharkPath -ArgumentList $args } -asJob

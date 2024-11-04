@@ -1,0 +1,9 @@
+---
+
+
+- name: start logging 
+  ansible.windows.win_shell: | 
+      logman start file_read -ets
+      logman start Powershell_payload -ets
+      logman start Registry_read -ets
+      logman start "NT Kernel Logger" -p "Windows Kernel Trace" 0x0000000000100000 -o C:\Windows\Logs\alpc.etl -max 1000 -ets

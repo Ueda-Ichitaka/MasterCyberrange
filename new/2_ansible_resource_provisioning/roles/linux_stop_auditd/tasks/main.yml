@@ -1,0 +1,9 @@
+---
+
+- name: restart auditd
+  become: true
+  ansible.builtin.raw: |    
+    sudo service auditd stop
+    sudo systemctl disable auditd
+  args:
+    executable: /bin/bash   
