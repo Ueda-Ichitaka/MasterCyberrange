@@ -20,8 +20,27 @@ terraform plan
 terraform apply
 
 cd ../2_ansible_resource_provisioning/
+
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.1.12"
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.1.14"
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.1.15"
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.1.16"
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.1.17"
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.1.18"
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.1.20"
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.2.12"
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.2.18"
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.2.15"
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.2.14"
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.2.16"
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.2.17"
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.4.97"
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.5.64"
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.6.42"
+
+ansible-playbook -l 'proxy,' playbooks/access_proxy.yml
 ansible-playbook -l 'proxy,' make_ansible_controller.yml
-ssh -A debian@10.1.3.152 # ip ist float ip von proxy
+ssh -A debian@10.1.3.179 # ip ist float ip von proxy
 export LC_ALL="C.UTF-8";
 cd ../../2_ansible_resource_provisioning/
 
@@ -31,16 +50,33 @@ cd ../../2_ansible_resource_provisioning/
 
 ssh -A TestAdmin@10.0.1.15
 
-winrm quickconfig -q
-winrm set winrm/config/winrs @{MaxMemoryPerShellMB="1024"}
-winrm set winrm/config @{MaxTimeoutms="1800000"}
-winrm set winrm/config/service @{AllowUnencrypted="true"}
-winrm set winrm/config/service/auth @{Basic="true"}
+echo 'start winrm setup' > C:\winrm_log2.txt
+echo 'quickconfig:' >> C:\winrm_log2.txt
+echo '' >> C:\winrm_log2.txt
+powershell winrm quickconfig >> C:\winrm_log2.txt
+echo 'winrs shell memory:' >> C:\winrm_log2.txt
+echo '' >> C:\winrm_log2.txt
+winrm set winrm/config/winrs @{MaxMemoryPerShellMB="1024"} >> C:\winrm_log2.txt
+echo 'winrs timeout: ' >> C:\winrm_log2.txt
+echo '' >> C:\winrm_log2.txt
+winrm set winrm/config @{MaxTimeoutms="1800000"} >> C:\\winrm_log2.txt
+echo 'allow unencrypted: ' >> C:\winrm_log2.txt
+echo '' >> C:\winrm_log2.txt
+winrm set winrm/config/service @{AllowUnencrypted="true"} >> C:\\winrm_log2.txt
+echo 'basic auth:' >> C:\winrm_log2.txt
+echo '' >> C:\winrm_log2.txt
+winrm set winrm/config/service/auth @{Basic="true"} >> C:\\winrm_log2.txt
 net stop winrm
-powershell Set-Service -Name winrm -StartupType Automatic
-net start winrm
-powershell -Command "Enable-PSRemoting -SkipNetworkProfileCheck -Force"
-winrm enumerate winrm/config/Listener
+echo 'autostart:' >> C:\winrm_log2.txt
+echo '' >> C:\winrm_log2.txt
+powershell Set-Service -Name winrm -StartupType Automatic >> C:\\winrm_log2.txt
+net start winrm 
+echo 'enable ps remoting' >> C:\winrm_log2.txt
+echo '' >> C:\winrm_log2.txt
+powershell -Command "Enable-PSRemoting -SkipNetworkProfileCheck -Force" >> C:\\winrm_log2.txt
+echo 'enumerate:' >> C:\winrm_log2.txt
+echo '' >> C:\winrm_log2.txt
+winrm enumerate winrm/config/Listener >> C:\\winrm_log2.txt
 exit
 
 ssh -A TestAdmin@10.0.1.18

@@ -22,17 +22,68 @@
 
       for i in "${hosts[@]}"
       do
-          mkdir "/home/debian/dataset/$i/"
-          mkdir "/home/debian/dataset/$i/logs/"
-          mkdir "/home/debian/dataset/$i/network/"
+        mkdir "/home/debian/dataset/$i/"
+        mkdir "/home/debian/dataset/$i/logs/"
+        mkdir "/home/debian/dataset/$i/network/"
       done
     fi
+
+    cd /home/debian/
+    sudo chown -R debian:debian dataset/*
+    sudo chown -R debian:debian dataset
   args:
     executable: /bin/bash
     
 
 
-- name: create subfolder for host
+- name: create elk subfolder for host
+  shell: |
+    if [ ! -d /home/debian/elk/ ]
+    then 
+      mkdir /home/debian/elk/
+    fi
+    sudo chown -R debian:debian elk
+
+
+- name: Copy ssh key
+  ansible.builtin.copy:
+    src: /home/iai/.ssh/id_ed25519
+    dest: '/home/{{ ansible_user }}/.ssh'
+    owner: '{{ ansible_user }}'
+    group: '{{ ansible_user }}'
+    mode: '0600'
+
+
+- name: Copy ssh pub key
+  ansible.builtin.copy:
+    src: /home/iai/.ssh/id_ed25519.pub
+    dest: '/home/{{ ansible_user }}/.ssh'
+    owner: '{{ ansible_user }}'
+    group: '{{ ansible_user }}'
+    mode: '0600'
+
+
+
+- name: Copy windows ssh key
+  ansible.builtin.copy:
+    src: /home/iai/.ssh/id_ed25519_win
+    dest: '/home/{{ ansible_user }}/.ssh'
+    owner: '{{ ansible_user }}'
+    group: '{{ ansible_user }}'
+    mode: '0600'
+
+
+- name: Copy windows ssh key
+  ansible.builtin.copy:
+    src: /home/iai/.ssh/id_ed25519_win.pub
+    dest: '/home/{{ ansible_user }}/.ssh'
+    owner: '{{ ansible_user }}'
+    group: '{{ ansible_user }}'
+    mode: '0600'
+
+
+# add win key to authorized hosts
+- name: add win ssh key to authorized keys
   become: true
   shell: |
-    mkdir /home/debian/elk/
+    cat /home/debian/.ssh/id_ed25519_win.pub >> /home/debian/.ssh/authorized_keys

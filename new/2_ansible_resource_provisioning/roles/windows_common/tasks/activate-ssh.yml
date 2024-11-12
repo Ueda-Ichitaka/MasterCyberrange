@@ -1,37 +1,37 @@
 ---
 
-- name: Install ssh
-  ansible.windows.win_feature:
-    name: 
-      - OpenSSH.Server
-      - OpenSSH.Client
-    state: present
+# - name: Install ssh
+#   ansible.windows.win_feature:
+#     name: 
+#       - OpenSSH.Server
+#       - OpenSSH.Client
+#     state: present
 
-- name: install the Win32-OpenSSH service
-  win_chocolatey:
-    name: openssh
-    package_params: /SSHServerFeature
-    state: present
-
-
-- name: Install openssh server backup
-  ansible.builtin.shell: powershell -Command "Get-WindowsCapability -Online | Where-Object Name -like 'OpenSSH.Server*' | Add-WindowsCapability -Online"
+# - name: install the Win32-OpenSSH service
+#   win_chocolatey:
+#     name: openssh
+#     package_params: /SSHServerFeature
+#     state: present
 
 
-## autostart service openssh server
-- name: activate and autostart openssh server
-  ansible.windows.win_service:
-    name: sshd
-    start_mode: auto
-    state: started
+# - name: Install openssh server backup
+#   ansible.builtin.shell: powershell -Command "Get-WindowsCapability -Online | Where-Object Name -like 'OpenSSH.Server*' | Add-WindowsCapability -Online"
 
 
-## autostart service openssh auth agent
-- name: activate and autostart openssh auth agent
-  ansible.windows.win_service:
-    name: ssh-agent
-    start_mode: auto
-    state: started
+# ## autostart service openssh server
+# - name: activate and autostart openssh server
+#   ansible.windows.win_service:
+#     name: sshd
+#     start_mode: auto
+#     state: started
+
+
+# ## autostart service openssh auth agent
+# - name: activate and autostart openssh auth agent
+#   ansible.windows.win_service:
+#     name: ssh-agent
+#     start_mode: auto
+#     state: started
 
 
 ## allow application through Firewall
@@ -118,3 +118,30 @@
     path: HKLM:\SOFTWARE\OpenSSH
     name: DefaultShell
     state: absent
+
+
+- name: generate throw-away ssh key 
+  ansible.windows.win_powershell:
+    script: |
+      ssh-keygen -t rsa -N '""'
+
+# - name: Generate an OpenSSH keypair with the default values (4096 bits, rsa)
+#   community.crypto.openssh_keypair:
+#     path: "C:\Users\{{ ansible_user }}/.ssh/id_ssh_rsa"
+
+- name: place ssh pubkey
+  ansible.windows.win_copy:
+    src: /home/debian/.ssh/id_ed25519.pub
+    dest: C:\Users\TestAdmin/.ssh/id_ed25519.pub'
+
+
+- name: place win ssh key
+  ansible.windows.win_copy:
+    src: /home/debian/.ssh/id_ed25519_win
+    dest: C:\Users\TestAdmin/.ssh/id_ed25519_win
+
+- name: place win ssh pub key
+  ansible.windows.win_copy:
+    src: /home/debian/.ssh/id_ed25519_win.pub
+    dest: C:\Users\TestAdmin/.ssh/id_ed25519_win.pub
+

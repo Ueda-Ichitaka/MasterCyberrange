@@ -25,13 +25,6 @@
         elements: 'c:\Program Files\ansible\sysmon'
       when: not sysmondl.stat.exists
 
-# Set the log size, retention policy and log file
-- name: Set the log size, retention policy and log file
-  ansible.windows.win_shell: |
-      WevtUtil sl Microsoft-Windows-Sysmon/Operational /ms:2097152000  /rt:true /lfn:"C:\Windows\System32\winevt\Logs\sysmon_audit.evtx"
-
-
-
 
 
 - block:
@@ -44,7 +37,7 @@
       win_copy:
         src: SwiftOnSecurity.xml
         dest: C:\Program Files\ansible\SwiftOnSecurity.xml
-      when: not sysmondl.stat.exists  
+      #when: not sysmondl.stat.exists  
 
     - name: uninstall sysmon (bugfix)
       win_command: '"C:\Program Files\ansible\sysmon\sysmon64.exe" -u'
@@ -58,3 +51,6 @@
     - name: install manifest
       win_command: '"C:\Program Files\ansible\sysmon\sysmon64.exe" -m'
 
+
+- name: restart machine
+  win_reboot:

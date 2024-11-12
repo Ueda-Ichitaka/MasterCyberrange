@@ -13,7 +13,7 @@
       
 
 
-- name: Copy log exporter
+- name: Copy setACL
   ansible.windows.win_copy:
     src: setACL.ps1
     dest: C:\setACL.ps1
@@ -24,7 +24,26 @@
 - name: Setup win security logs
   ansible.windows.win_shell: |
       Auditpol /set /subcategory:"File System" /success:enable /failure:enable
-      powershell -executionpolicy bypass -File "& 'C:\setACL.ps1'"
+      powershell -executionpolicy bypass -File "C:\setACL.ps1"
       Auditpol /set /subcategory:"Registry" /success:enable /failure:enable
-      reg add HKLM\Software\Policies\Microsoft\Windows\PowerShell\ModuleLogging /t REG_DWORD /v "EnableModuleLogging" /d 1 /f
-      reg add HKLM\Software\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging /t REG_DWORD /v "C:\Windows\System32\winevt\Logs\powershell_audit.evtx"
+
+
+- name: reg add enable module logging
+  ansible.windows.win_regedit:
+    path: HKLM:\Software\Policies\Microsoft\Windows\PowerShell\ModuleLogging
+    name: EnableModuleLogging
+    data: 1
+    type: dword
+
+
+- name: reg add scriptblocklogging 
+  ansible.windows.win_regedit:
+    path: HKLM:\Software\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging
+    name: EnableScriptBlockLogging
+    data: 1
+    type: dword
+
+
+- name: Setup win security logs wevutil
+  ansible.windows.win_shell: |
+    WevtUtil sl Microsoft-Windows-PowerShell/Operational /ms:2000000000 /rt:true /lfn:"C:\Windows\System32\winevt\Logs\powershell_audit.evtx"

@@ -1,6 +1,6 @@
 --- 
 
-- name: start wireshark in background
+- name: stop wireshark
   become: true
   shell: |
     killall tshark

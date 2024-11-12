@@ -268,20 +268,20 @@ resource "openstack_compute_instance_v2" "OT-PLC-Linux" {
   }
 
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'OT-PLC-Linux,' playbooks/linux.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'OT-PLC-Linux,' playbooks/linux.yml"
+  # }
 
   # provisioner "local-exec" {
   #   working_dir = "../2_ansible_resource_provisioning"
   #   command = "ansible-playbook -l 'OT-PLC-Linux,' playbooks/beats_linux.yml"
   # }
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'OT-PLC-Linux,' playbooks/plc_debian.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'OT-PLC-Linux,' playbooks/plc_debian.yml"
+  # }
 
  }
 
@@ -324,14 +324,14 @@ resource "openstack_compute_instance_v2" "OT-HMI-Linux" {
   }
 
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'OT-HMI-Linux,' playbooks/linux.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'OT-HMI-Linux,' playbooks/linux.yml"
+  # }
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'OT-HMI-Linux,' playbooks/hmi_debian.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'OT-HMI-Linux,' playbooks/hmi_debian.yml"
+  # }
 
 }

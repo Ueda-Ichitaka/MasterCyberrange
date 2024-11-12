@@ -1,12 +1,13 @@
 --- 
 
+
+# transform to service and change status and startup type on play to enable logging beyond reboots
 - name: start wireshark in background
   become: true
   ansible.builtin.raw: |
-    hostname = $(hostname)
-    if [ ! -d /home/debian/tshark/ ]
+    if [ ! -d /home/"{{ ansible_user }}"/tshark/ ]
     then
       sudo mkdir "tshark/"
     fi  
-    screen -d -m sudo tshark -i any -w $hostname.pcap -q &
+    screen -d -m tshark -i any -F pcapng -w /home/"{{ ansible_user }}"/tshark/{{ hostname }}.pcapng -q &
     sleep 1

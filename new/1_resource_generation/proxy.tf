@@ -1,6 +1,6 @@
 
 resource "openstack_networking_port_v2" "IT-network-access-proxy-port" {
-  name               = "access-proxy-port"
+  name               = "access-proxy-port-it"
   network_id         = openstack_networking_network_v2.IT-network.id
   admin_state_up     = "true"
 
@@ -12,7 +12,7 @@ resource "openstack_networking_port_v2" "IT-network-access-proxy-port" {
 
 
 resource "openstack_networking_port_v2" "APT-network-access-proxy-port" {
-  name               = "access-proxy-port"
+  name               = "access-proxy-port-apt"
   network_id         = openstack_networking_network_v2.APT-network.id
   admin_state_up     = "true"
 
@@ -70,10 +70,10 @@ resource "openstack_compute_instance_v2" "access-proxy" {
     command = "ansible-playbook -l 'proxy,' playbooks/access_proxy.yml"     
   }
 
-  # provisioner "local-exec" {
-  #   working_dir = "../2_ansible_resource_provisioning"
-  #   command = "ansible-playbook -l 'proxy,' playbooks/make_ansible_controller.yml"
-  # }
+  provisioner "local-exec" {
+    working_dir = "../2_ansible_resource_provisioning"
+    command = "ansible-playbook -l 'proxy,' playbooks/make_ansible_controller.yml"
+  }
 
   connection {
     type     = "ssh"

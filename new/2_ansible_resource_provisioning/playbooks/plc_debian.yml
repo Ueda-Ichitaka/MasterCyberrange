@@ -1,8 +1,6 @@
 - hosts: debian
   gather_facts: True
   become: true
-  vars_files:
-    - ../../configs/attack_range_default.yml
   roles:
     - plc_debian
 

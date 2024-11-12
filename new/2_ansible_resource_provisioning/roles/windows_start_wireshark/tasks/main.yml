@@ -4,7 +4,6 @@
 - name: start wireshark
   ansible.windows.win_powershell:
     script: |
-      $hostname = hostname
       $tsharkPath = "C:\Program Files\Wireshark\tshark.exe"
       $helper1 = & $tsharkPath -D
       $helper2 = $helper1.Count - 2
@@ -12,5 +11,5 @@
       {
           $interfaceArgs = -join($interfaceArgs, "-i ", $i, " ")
       }      
-      $args = -join($interfaceArgs, " -w C:\Export-EventLogs\", $hostname, ".pcap -q")
+      $args = -join($interfaceArgs, " -w C:\Export-EventLogs\", "{{ hostname }}", ".pcapng -q")
       Invoke-Command -ComputerName localhost -ScriptBlock { Start-Process $tsharkPath -ArgumentList $args } -asJob

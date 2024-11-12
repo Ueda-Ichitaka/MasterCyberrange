@@ -14,35 +14,51 @@
 # todo: make cleaner by reading from file
 - name: export logs
   ansible.windows.win_powershell:
+#    become: yes
+#    become_method: runas
     script: |
-      $hostname = hostname
       $channels = Get-Content -Path "C:\Export-EventLogs\selected_channels.txt"
       $channelsList = $($channels -join '","')
       & 'C:\Export-EventLogs\Export-EventLogs.ps1 -EventLogNames "$channelsList"'
+
+      Get-Content -Path "C:\Export-EventLogs\selected_channels.txt" | ForEach-Object {
+        $filename = -join("C:\Export-EventLogs\EventLogs\", $_, "_tab.txt")
+        Get-WinEvent -LogName $_ | Select-Object -Property KeywordDisplayName, TimeCreated, Source, ProviderName, Id, TaskDisplayName, LevelDisplayName, Message | Export-Csv -Path $filename -Delimiter "`t" -NoTypeInformation
+      }
 
       Copy-Item "C:\Windows\Logs\file_read.etl" -Destination "C:\Export-EventLogs\EventLogs"
       Copy-Item "C:\Windows\Logs\Registry_read.etl" -Destination "C:\Export-EventLogs\EventLogs"
       Copy-Item "C:\Windows\Logs\Powershell_payload.etl" -Destination "C:\Export-EventLogs\EventLogs"
       Copy-Item "C:\Windows\Logs\alpc.etl" -Destination "C:\Export-EventLogs\EventLogs"
       Copy-Item "C:\Windows\System32\winevt\Logs\powershell_audit.evtx" -Destination "C:\Export-EventLogs\EventLogs"
+      Copy-Item "C:\Windows\System32\winevt\Logs\sysmon_audit.evtx" -Destination "C:\Export-EventLogs\EventLogs"
 
-      Compress-Archive -Path "C:\Export-EventLogs\EventLogs" -DestinationPath "C:\Export-EventLogs\$hostname_logs.zip"
-      Compress-Archive -Path "C:\Export-EventLogs\$hostname.pcap" -DestinationPath "C:\Export-EventLogs\$hostname_pcap.zip"
-
-
-
-
-- name: Transfer logfiles file from ServerA to ServerB
-  synchronize:
-    src: "C:\\Export-EventLogs\\{{ hostname }}_logs.zip" # /path/on/server_a # 
-    dest: /home/debian/dataset/{{ hostname }}/{{ hostname }}_logs.zip  # /path/on/server_b  # 
-    mode: pull
-  delegate_to: aggregation_server  # server b
+      Compress-Archive -Path "C:\Export-EventLogs\EventLogs" -DestinationPath "C:\Export-EventLogs\{{ hostname }}_logs.zip"
+      Compress-Archive -Path "C:\Export-EventLogs\{{ hostname }}.pcapng" -DestinationPath "C:\Export-EventLogs\{{ hostname }}_pcap.zip"
 
 
-- name: Transfer pcap file from ServerA to ServerB
-  synchronize:
-    src: "C:\\Export-EventLogs\\{{ hostname }}_pcap.zip"
-    dest: /home/debian/dataset/{{ hostname }}/{{ hostname }}_pcap.zip
-    mode: pull
-  delegate_to: aggregation_server  # server b
+- name: Transfer logs to aggregation server
+  ansible.windows.win_powershell:
+    script: |
+      scp -i "C:\Users\{{ ansible_user }}\.ssh\id_ed25519_win" "C:\Export-EventLogs\{{ hostname }}_logs.zip" debian@10.0.1.12:"/home/debian/dataset/{{ hostname }}/{{ hostname }}_logs.zip"
+      scp -i "C:\Users\{{ ansible_user }}\.ssh\id_ed25519_win" "C:\Export-EventLogs\{{ hostname }}_pcap.zip" debian@10.0.1.12:"/home/debian/dataset/{{ hostname }}/{{ hostname }}_pcap.zip"
+
+
+#scp -i C:\Users\TestAdmin\.ssh\id_ed25519_win C:\Export-EventLogs\IT-Win-PC-1_logs.zip debian@10.0.1.12:/home/debian/dataset/IT-Win-PC-1/IT-Win-PC-1_logs.zip
+
+# - name: Transfer logfiles file from ServerA to ServerB
+#   synchronize:
+#     src: "C:\\Export-EventLogs\\{{ hostname }}_logs.zip" # /path/on/server_a # 
+#     dest: /home/debian/dataset/{{ hostname }}/{{ hostname }}_logs.zip  # /path/on/server_b  # 
+#     mode: pull
+#     private_key: ~/.ssh/id_ed25519_win
+#   delegate_to: aggregation_server  # server b
+
+
+# - name: Transfer pcap file from ServerA to ServerB
+#   synchronize:
+#     src: "C:\\Export-EventLogs\\{{ hostname }}_pcap.zip"
+#     dest: /home/debian/dataset/{{ hostname }}/{{ hostname }}_pcap.zip
+#     mode: pull
+#     private_key: ~/.ssh/id_ed25519_win    
+#   delegate_to: aggregation_server  # server b

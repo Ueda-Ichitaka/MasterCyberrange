@@ -109,10 +109,10 @@ debian:
       hostname: 'aggregation-server'     
     OT-PLC-Linux:
       ansible_host: '10.0.2.17'
-      hostname: 'OT-PLC'      
+      hostname: 'OT-PLC-Linux'      
     OT-HMI-Linux:       
       ansible_host: '10.0.2.16'
-      hostname: 'OT-HMI'      
+      hostname: 'OT-HMI-Linux'      
     APT-Download-Server:       
       ansible_host: '10.0.6.42'
       hostname: 'APT-Download-Server'            

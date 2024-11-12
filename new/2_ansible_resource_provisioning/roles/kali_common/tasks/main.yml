@@ -8,7 +8,7 @@
   ansible.builtin.shell: |
     export LC_ALL="C.UTF-8";
     cd /usr/share/nmap/scripts/
-    sudo git clone https://github.com/vulnersCom/nmap-vulners.git
+    git clone https://github.com/vulnersCom/nmap-vulners.git
 
 
 - name: Set timezone to Europe/Berlin

@@ -103,10 +103,10 @@ resource "openstack_compute_instance_v2" "aggregation-server" {
     }
 
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'aggregation_server,' playbooks/linux.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'aggregation_server,' playbooks/linux.yml"
+  # }
 
   # provisioner "local-exec" {
   #   working_dir = "../2_ansible_resource_provisioning"
@@ -118,10 +118,10 @@ resource "openstack_compute_instance_v2" "aggregation-server" {
   #   command = "ansible-playbook -l 'aggregation_server,' playbooks/elk_docker.yml"   
   # }
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'aggregation_server,' playbooks/aggregation_server.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'aggregation_server,' playbooks/aggregation_server.yml"
+  # }
 
 
 

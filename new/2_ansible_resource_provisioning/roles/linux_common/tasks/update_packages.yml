@@ -25,6 +25,7 @@
     - build-essential
     - screen
     - traceroute
+    - rsync
     update_cache: true
     state: present
 
@@ -49,6 +50,14 @@
   apt:
     pkg:
     - netcat-traditional
+    update_cache: true
+    state: present
+
+
+- name: Install netcat
+  ignore_errors: true
+  apt:
+    pkg:
     - netcat
     update_cache: true
     state: present
@@ -59,6 +68,14 @@
   apt:
     pkg:
     - plocate
+    update_cache: true
+    state: present
+
+
+- name: Install locate
+  ignore_errors: true
+  apt:
+    pkg:
     - mlocate
     update_cache: true
     state: present
@@ -73,7 +90,7 @@
 
 - name: Place auditd config
   template:
-    src: audit.conf
+    src: auditd.conf
     dest: /etc/audit/audit.conf
 
 

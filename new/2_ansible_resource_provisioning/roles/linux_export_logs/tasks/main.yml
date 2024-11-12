@@ -17,9 +17,15 @@
 - name: zip /var/log to one big archive
   become: true
   shell: |
-    hostname = $(hostname)
-    tar -czvf $hostname_logs.tar.gz /var/log
-    tar -czvf $hostname$_pcap.tar.gz /home/debian/tshark/$hostname.pcap
+    tar -czvf "{{ hostname }}_logs.tar.gz" /var/log
+    tar -czvf "{{ hostname }}_pcap.tar.gz" "/home/{{ ansible_user }}/tshark/{{ hostname }}.pcapng"
+
+
+# - name: zip /var/log to one big archive
+#   become: true
+#   shell: |
+#     tar -czvf "{{ hostname }}"_logs.tar.gz /var/log
+#     tar -czvf "{{ hostname }}"_pcap.tar.gz /home/"{{ ansible_user }}"/tshark    
 
 
 - name: Transfer logfiles file from ServerA to ServerB

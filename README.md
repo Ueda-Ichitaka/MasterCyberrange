@@ -1,53 +1,7 @@
 # AROS
-The Attack Range OpenStack (AROS) is a collaborative project by the Institute for Automation and Applied Informatics (IAI) at the Karlsruher Institute for Technology (KIT).
-The goal of the project is to create a virtual testing environment for cyber security attacks.
 
-<div>
-  <img align="center" width="100%" src="docs/1-ReadMe_Images/1-1-cyber_kill_chain.png" alt="A generic cyber kill chain" title="A generic cyber kill chain">
-</div>
 
-To achieve this goal the AROS is constructed using preexisting cyber ranges (namely KYPO and the Splunk Attack Range) as inspiration, whilst integrating additional tools.
-
-<div>
-  <img align="center" width="100%" src="docs/1-ReadMe_Images/4-3-All_Tools_Used.png" alt="All major tools used to create the AROS" title="All major tools used to create the AROS">
-</div>
-
-The result is a cyber ranges capable of constructing divers scenarios in a reproducible manner.
-
-<div>
-  <img align="center" width="100%" src="docs/1-ReadMe_Images/5-8-Attack_on_Example_Scenario.png" alt="Example of a scenario constructed using the AROS" title="Example of a scenario constructed using the AROS">
-</div>
-
-This basic scenario describes the following steps:
-1. Reconnaissance: The attacker gathers information about the target network or system to identify vulnerabilities and potential points of entry.
-2. Initial Access: The attacker gains a foothold in the target system, often through phishing, exploiting vulnerabilities, or other attack vectors.
-3. Discovery: The attacker explores the compromised environment to map out the network, systems, and sensitive data that can be targeted.
-4. Access: The attacker escalates privileges and moves laterally within the network to gain control over more critical systems or data.
-5. Exfiltration: The attacker transfers valuable or sensitive information from the compromised network to their own external location without detection.
-
-<div>
-  <img align="center" width="100%" src="docs/2-Topology/Network_max.png" alt="The topology shown is the current goal for the maximum scenario construction" title="The topology shown is the current goal for the maximum scenario construction">
-</div>
-
-The current research for this project aims to construct the scenario shown in the previous image.
-Corresponding to that, a cyber kill chain suited to the scenario is established.
-The goal is to automatically construct the scenario and perform the cyber kill chain with minimal manual input.
-
-## Abstract of the corresponding initial master thesis
-This thesis presents the development and evaluation of a self-hosted cyber range environment tailored for attack emulation and detection in large-scale critical infrastructure networks. Leveraging Infrastructure as Code (IaC) tools and cloud platforms, the research addresses challenges in accessing cloud services and the scarcity of cyber ranges for critical infrastructure research.
-Key findings include the successful construction of the cyber range named Attack Range Open Stack (AROS) capable of handling complex environments and providing full de- tectability of network tra￿c and actions on virtual machines. The research highlights challenges in setup-time optimization, scalability testing, and integration of real energy hardware for enhanced testing capabilities.
-The contributions of this work lie in the development of a sophisticated cyber range envi- ronment and the achievement of full detectability, offering researchers a valuable platform for conducting reproducible cyber security experiments. Future research directions include enhancing scenario complexity and exploring AI-driven data analysis.
-Overall, this thesis contributes to advancing cyber security research by providing in- novative tools and methodologies for evaluating cyber threats in critical infrastructure networks.
-
-## Support
-If support is needed, please contact the uueaj@student.kit.edu E-Mail.
-
-Creating a public network after neutron purge
-To make the cyber range fully usable a public network is needed.
-This can be created through the OpenStack UI or by using a corresponding terraform configuration.
-It is important to note that a public-subnet is also required for the full usability of the public network.
-
-## Terraform
+<!--## Terraform
 <div>
   <img align="center" width="100%" src="docs/1-ReadMe_Images/2-1-Terraform.png" alt="Terraform is used for provisioning the basic infrastructure of any given scenario" title="Terraform is used for provisioning the basic infrastructure of any given scenario">
 </div>
@@ -55,15 +9,20 @@ It is important to note that a public-subnet is also required for the full usabi
 ## Ansible
 <div>
   <img align="center" width="100%" src="docs/1-ReadMe_Images/2-2-Ansible.png" alt="Ansible is used for the automatic configuration of the instances that were created during the terraform stage" title="Ansible is used for the automatic configuration of the instances that were created during the terraform stage">
-</div>
+</div>-->
+
+# Quickstart
 
 
-## Prerequisites
+# Installation
 
-install ansible requirements
+ToDo: install cyberrange itself
+ToDo: install terraform and ansible
+ToDo: install requirements
 
 
-## Deployment
+
+# Deployment
 The usage of the AROS requires a running OpenStack instance.
 
 ```
@@ -74,7 +33,109 @@ cd 1_resource_generation
 terraform apply
 ```
 
-Ideally the Ansible playbooks are already executable from within the terraform stage. If this is not the case, cd into 2_ansible_resource_provisioning/ and execute the selected playbooks from there.
+This will build the openstack provisioned infrastructure as it is defined in terraform. You need it to finish without errors to get the floating IP of proxy which is required for the next steps.
+
+
+Reset your known hosts:
+```
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.1.12"
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.1.14"
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.1.15"
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.1.16"
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.1.17"
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.1.18"
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.1.20"
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.2.12"
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.2.18"
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.2.15"
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.2.14"
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.2.16"
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.2.17"
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.4.97"
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.5.64"
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.6.42"
+ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.1.3.179"
+```
+
+Setup proxy and all hosts that can be reached with ssh via proxy:
+```
+ansible-playbook -l 'proxy,' playbooks/access_proxy.yml
+ansible-playbook -l 'proxy,' playbooks/make_ansible_controller.yml
+
+ansible-playbook -l 'IT-Linux-PC-1,aggregation_server,' playbooks/linux.yml
+ansible-playbook -l 'aggregation_server,' playbooks/aggregation_server.yml
+ansible-playbook -l 'IT-Linux-PC-1,' playbooks/linux_workstation.yml
+ansible-playbook -l 'APT-C2-Server,APT-Outside-Attacker,' playbooks/kali.yml
+```
+
+
+Then login to each Windows host via ssh and execute:
+```
+echo 'start winrm setup' > C:\winrm_log2.txt
+echo 'quickconfig:' >> C:\winrm_log2.txt
+echo '' >> C:\winrm_log2.txt
+powershell winrm quickconfig >> C:\winrm_log2.txt
+echo 'winrs shell memory:' >> C:\winrm_log2.txt
+echo '' >> C:\winrm_log2.txt
+winrm set winrm/config/winrs @{MaxMemoryPerShellMB="1024"} >> C:\winrm_log2.txt
+echo 'winrs timeout: >> C:\winrm_log2.txt
+echo '' >> C:\winrm_log2.txt
+winrm set winrm/config @{MaxTimeoutms="1800000"} >> C:\\winrm_log2.txt
+echo 'allow unencrypted: ' >> C:\winrm_log2.txt
+echo '' >> C:\winrm_log2.txt
+winrm set winrm/config/service @{AllowUnencrypted="true"} >> C:\\winrm_log2.txt
+echo 'basic auth:' >> C:\winrm_log2.txt
+echo '' >> C:\winrm_log2.txt
+winrm set winrm/config/service/auth @{Basic="true"} >> C:\\winrm_log2.txt
+net stop winrm
+echo 'autostart:' >> C:\winrm_log2.txt
+echo '' >> C:\winrm_log2.txt
+powershell Set-Service -Name winrm -StartupType Automatic >> C:\\winrm_log2.txt
+net start winrm 
+echo 'enable ps remoting' >> C:\winrm_log2.txt
+echo '' >> C:\winrm_log2.txt
+powershell -Command "Enable-PSRemoting -SkipNetworkProfileCheck -Force" >> C:\\winrm_log2.txt
+echo 'enumerate:' >> C:\winrm_log2.txt
+echo '' >> C:\winrm_log2.txt
+winrm enumerate winrm/config/Listener >> C:\\winrm_log2.txt
+```
+
+
+Then ssh to proxy:
+```
+ssh -A debian@10.1.3.179
+export LC_ALL="C.UTF-8";
+
+ansible-playbook -l 'IT-Win-Share,IT-Win-PC-1,OT-Win-PC-1,' playbooks/windows.yml
+ansible-playbook -l 'OT-PLC-Linux,OT-HMI-Linux,' playbooks/linux.yml
+ansible-playbook -l 'IT-Win-Share,IT-Win-PC-1', playbooks/vulnerabilities.yml
+ansible-playbook -l 'IT-Win-Share,' playbooks/windows_server.yml
+ansible-playbook -l 'IT-Win-Share,' playbooks/windows_fileshare.yml
+ansible-playbook -l 'IT-Win-PC-1,' playbooks/windows_workstation.yml
+ansible-playbook -l 'OT-PLC-Linux,' playbooks/plc_debian.yml
+ansible-playbook -l 'OT-HMI-Linux,' playbooks/hmi_debian.yml
+```
+
+After everything is set up, you can start and stop auditing from proxy with
+```
+ansible-playbook -l 'IT-Win-PC-1,IT-Win-Share,OT-PLC-Linux,OT-HMI-Linux,IT-Linux-PC-1,aggregation_server' playbooks/start_audit.yml
+ansible-playbook -l 'IT-Win-PC-1,IT-Win-Share,OT-PLC-Linux,OT-HMI-Linux,IT-Linux-PC-1,aggregation_server' playbooks/stop_audit.yml
+```
+
+
+
+# Data collection
+
+
+## Audit logging
+ToDo: Sysmon, auditd, Win Security
+
+
+## Dataset structure
+
+ToDo
+
+<!-- Ideally the Ansible playbooks are already executable from within the terraform stage. If this is not the case, cd into 2_ansible_resource_provisioning/ and execute the selected playbooks from there. -->
 
 
 <!--## Working with the Infrastructure
@@ -394,6 +455,7 @@ in windows itself your keyboard should behave as it does
 
 ### I cant reach the VMs with ssh
 
+```
 
 generate key id_ed25519
 ssh-copy-id -i ~/.ssh/iai_vm-cyberrange-host.pub 10.1.3.191
@@ -423,7 +485,7 @@ ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.5.64"
 ssh-keygen -f "/home/iai/.ssh/known_hosts" -R "10.0.6.42"
 
 
-
+```
 
 
 
@@ -501,7 +563,7 @@ after that you need to update the router id in your terraform config for every r
 
 
 
-## Roadmap
+<!--## Roadmap
 
 - Benign behaviour and traffic generation
 - More versions of Windows Server and Desktop
@@ -511,8 +573,59 @@ after that you need to update the router id in your terraform config for every r
 - APT29 Campaigns
 - CyberAv3nger Campaigns
 - Dataset Release
-- Cyberrange image release
+- Cyberrange image release-->
 
+
+
+
+# AROS
+The Attack Range OpenStack (AROS) is a collaborative project by the Institute for Automation and Applied Informatics (IAI) at the Karlsruher Institute for Technology (KIT).
+The goal of the project is to create a virtual testing environment for cyber security attacks.
+
+<div>
+  <img align="center" width="100%" src="docs/1-ReadMe_Images/1-1-cyber_kill_chain.png" alt="A generic cyber kill chain" title="A generic cyber kill chain">
+</div>
+
+To achieve this goal the AROS is constructed using preexisting cyber ranges (namely KYPO and the Splunk Attack Range) as inspiration, whilst integrating additional tools.
+
+<div>
+  <img align="center" width="100%" src="docs/1-ReadMe_Images/4-3-All_Tools_Used.png" alt="All major tools used to create the AROS" title="All major tools used to create the AROS">
+</div>
+
+The result is a cyber ranges capable of constructing divers scenarios in a reproducible manner.
+
+<div>
+  <img align="center" width="100%" src="docs/1-ReadMe_Images/5-8-Attack_on_Example_Scenario.png" alt="Example of a scenario constructed using the AROS" title="Example of a scenario constructed using the AROS">
+</div>
+
+This basic scenario describes the following steps:
+1. Reconnaissance: The attacker gathers information about the target network or system to identify vulnerabilities and potential points of entry.
+2. Initial Access: The attacker gains a foothold in the target system, often through phishing, exploiting vulnerabilities, or other attack vectors.
+3. Discovery: The attacker explores the compromised environment to map out the network, systems, and sensitive data that can be targeted.
+4. Access: The attacker escalates privileges and moves laterally within the network to gain control over more critical systems or data.
+5. Exfiltration: The attacker transfers valuable or sensitive information from the compromised network to their own external location without detection.
+
+<div>
+  <img align="center" width="100%" src="docs/2-Topology/Network_max.png" alt="The topology shown is the current goal for the maximum scenario construction" title="The topology shown is the current goal for the maximum scenario construction">
+</div>
+
+The current research for this project aims to construct the scenario shown in the previous image.
+Corresponding to that, a cyber kill chain suited to the scenario is established.
+The goal is to automatically construct the scenario and perform the cyber kill chain with minimal manual input.
+
+## Abstract of the corresponding initial master thesis
+This thesis presents the development and evaluation of a self-hosted cyber range environment tailored for attack emulation and detection in large-scale critical infrastructure networks. Leveraging Infrastructure as Code (IaC) tools and cloud platforms, the research addresses challenges in accessing cloud services and the scarcity of cyber ranges for critical infrastructure research.
+Key findings include the successful construction of the cyber range named Attack Range Open Stack (AROS) capable of handling complex environments and providing full de- tectability of network tra￿c and actions on virtual machines. The research highlights challenges in setup-time optimization, scalability testing, and integration of real energy hardware for enhanced testing capabilities.
+The contributions of this work lie in the development of a sophisticated cyber range envi- ronment and the achievement of full detectability, offering researchers a valuable platform for conducting reproducible cyber security experiments. Future research directions include enhancing scenario complexity and exploring AI-driven data analysis.
+Overall, this thesis contributes to advancing cyber security research by providing in- novative tools and methodologies for evaluating cyber threats in critical infrastructure networks.
+
+## Support
+If support is needed, please contact the uueaj@student.kit.edu E-Mail.
+
+Creating a public network after neutron purge
+To make the cyber range fully usable a public network is needed.
+This can be created through the OpenStack UI or by using a corresponding terraform configuration.
+It is important to note that a public-subnet is also required for the full usability of the public network.
 
 
 

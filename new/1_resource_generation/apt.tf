@@ -92,10 +92,10 @@ resource "openstack_compute_instance_v2" "APT-Outside-Attacker" {
     host     = openstack_networking_floatingip_v2.floatip-outside-attacker.address #openstack_networking_floatingip_v2.floatip_3.address
   }
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'APT-Outside-Attacker,' playbooks/kali.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'APT-Outside-Attacker,' playbooks/kali.yml"
+  # }
 }
 
 
@@ -164,10 +164,10 @@ resource "openstack_compute_instance_v2" "APT-C2-Server" {
   }
 
 
-  provisioner "local-exec" {
-    working_dir = "../2_ansible_resource_provisioning"
-    command = "ansible-playbook -l 'APT-C2-Server,' playbooks/kali.yml"
-  }
+  # provisioner "local-exec" {
+  #   working_dir = "../2_ansible_resource_provisioning"
+  #   command = "ansible-playbook -l 'APT-C2-Server,' playbooks/kali.yml"
+  # }
 
  }
 
