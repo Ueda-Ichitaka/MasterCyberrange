@@ -111,7 +111,7 @@ resource "openstack_compute_flavor_v2" "ot-win-pc-1-flavor" {
     name = "ot-win-pc-1-flavor"
     ram = "4096"
     vcpus = "2"
-    disk = "32"
+    disk = "60"
     swap = "4096"
 }
 

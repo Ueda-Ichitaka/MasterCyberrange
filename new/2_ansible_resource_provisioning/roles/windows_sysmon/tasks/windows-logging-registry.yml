@@ -31,4 +31,4 @@
 # Set the log size, retention policy and log file
 - name: Set the log size, retention policy and log file
   ansible.windows.win_shell: |
-      WevtUtil sl Microsoft-Windows-Sysmon/Operational /ms:2097152000  /rt:true /lfn:"C:\Windows\System32\winevt\Logs\sysmon_audit.evtx"
+      WevtUtil sl Microsoft-Windows-Sysmon/Operational /ms:2097152000  /rt:true /lfn:"C:\Windows\System32\winevt\Logs\sysmon_audit.evtx" 

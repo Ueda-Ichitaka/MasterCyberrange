@@ -31,7 +31,7 @@
 - name: Transfer logfiles file from ServerA to ServerB
   synchronize:
     src: "{{ hostname }}_logs.tar.gz" # /path/on/server_a # 
-    dest: /home/debian/dataset/{{ hostname }}/{{ hostname }}_logs.tar.gz  # /path/on/server_b  # 
+    dest: /home/debian/dataset/{{ hostname }}/logs/{{ hostname }}_logs.tar.gz  # /path/on/server_b  # 
     mode: pull
   delegate_to: aggregation_server  # server b
 
@@ -39,6 +39,6 @@
 - name: Transfer pcap file from ServerA to ServerB
   synchronize:
     src: "{{ hostname }}_pcap.tar.gz"
-    dest: /home/debian/dataset/{{ hostname }}/{{ hostname }}_pcap.tar.gz
+    dest: /home/debian/dataset/{{ hostname }}/network/{{ hostname }}_pcap.tar.gz
     mode: pull
   delegate_to: aggregation_server  # server b

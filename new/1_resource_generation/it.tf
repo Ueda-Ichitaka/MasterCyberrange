@@ -104,7 +104,7 @@ resource "openstack_compute_flavor_v2" "it-win-share-flavor" {
     name = "it-win-share-flavor"
     ram = "4096"
     vcpus = "2"
-    disk = "32"
+    disk = "60"
     swap = "4096"
 }
 
@@ -177,7 +177,7 @@ resource "openstack_compute_flavor_v2" "it-win-pc-1-flavor" {
     name = "it-win-pc-1-flavor"
     ram = "4096"
     vcpus = "2"
-    disk = "32"
+    disk = "60"
     swap = "4096"
 }
 

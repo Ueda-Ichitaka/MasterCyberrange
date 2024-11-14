@@ -4,12 +4,31 @@
 - name: start wireshark
   ansible.windows.win_powershell:
     script: |
-      $tsharkPath = "C:\Program Files\Wireshark\tshark.exe"
-      $helper1 = & $tsharkPath -D
-      $helper2 = $helper1.Count - 2
-      for ($i = 1; $i -le $helper2; $i++)
-      {
-          $interfaceArgs = -join($interfaceArgs, "-i ", $i, " ")
-      }      
-      $args = -join($interfaceArgs, " -w C:\Export-EventLogs\", "{{ hostname }}", ".pcapng -q")
-      Invoke-Command -ComputerName localhost -ScriptBlock { Start-Process $tsharkPath -ArgumentList $args } -asJob
+      $ps = New-PSSession -ComputerName localhost
+      Invoke-Command -Session $ps -ScriptBlock { 
+        cd "C:\Program Files\Wireshark\"
+        Start-Process .\tshark.exe -ArgumentList "-i 1 -w C:\Export-EventLogs\capture.pcapng"
+      }
+      Start-Sleep -Seconds 10
+      Disconnect-PSSession $ps
+
+#  $tsharkPath = "C:\Program Files\Wireshark\tshark.exe"
+#  cd "C:\Program Files\Wireshark\"
+#  Start-Process .\tshark.exe -ArgumentList "-i 1 -w C:\Export-EventLogs\capture.pcapng"
+
+
+
+
+
+# this fails due to some string bug. tshark does not recognize the string as separate flags and interpret all as one parameter..
+  # $helper1 = & $tsharkPath -D
+  # $helper2 = $helper1.Count - 2
+  # $interfaceArgs = ""
+  # for ($i = 1; $i -le $helper2; $i++)
+  # {
+  #     $interfaceArgs = -join($interfaceArgs, "-i ", $i, " ")
+  # }      
+  # $filename = -join($interfaceArgs, " -w C:\Export-EventLogs\", "{{ hostname }}", ".pcapng -q")
+  # cd "C:\Program Files\Wireshark\"
+
+  # Start-Process $tsharkPath -ArgumentList $interfaceArgs $filename   

@@ -11,7 +11,7 @@
 
 - name: copy binary
   ansible.builtin.copy:
-    src: ../../remote_host_files/plc/hmi
+    src: hmi
     dest: /home/debian/hmi
 
 - name: copy daemon service definition

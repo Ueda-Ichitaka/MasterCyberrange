@@ -11,7 +11,7 @@
 
 - name: copy binary
   ansible.builtin.copy:
-    src: ../../remote_host_files/plc/plc
+    src: plc
     dest: /home/debian/plc
 
 - name: copy daemon service definition

@@ -42,7 +42,7 @@
 - name: allow sudo vim -c '!sh'
   community.general.sudoers:
     name: vim-sudo
-    user: ubnuntu
+    user: ubuntu
     commands:
       - /usr/bin/vim
     nopassword: true

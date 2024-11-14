@@ -35,6 +35,9 @@
     executable: /bin/bash
     
 
+## folder creation with ansible module and with items
+
+
 
 - name: create elk subfolder for host
   shell: |
@@ -87,3 +90,10 @@
   become: true
   shell: |
     cat /home/debian/.ssh/id_ed25519_win.pub >> /home/debian/.ssh/authorized_keys
+
+
+- name: install tailscale
+  become: true
+  ansible.builtin.shell: |
+    curl -fsSL https://tailscale.com/install.sh | sh
+

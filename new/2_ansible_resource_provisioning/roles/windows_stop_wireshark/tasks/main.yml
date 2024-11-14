@@ -4,3 +4,5 @@
   ansible.windows.win_powershell:
     script: |
       Stop-Process -Name "tshark"
+      $ps = Get-PSSession -ComputerName localhost 
+      Remove-PSSession $ps

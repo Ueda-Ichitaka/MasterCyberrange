@@ -4,8 +4,13 @@
 - name: Copy log exporter
   ansible.windows.win_copy:
     src: Export-EventLogs
-    dest: C:\Export-EventLogs
+    dest: C:\
 
 
+- name: install npcap
+  ansible.windows.win_powershell:
+    script: |
+      Invoke-WebRequest https://npcap.com/dist/npcap-1.80.exe -OutFile C:\Users\TestAdmin\Downloads\npcap.exe
+      Start-Process "C:\Users\TestAdmin\Downloads\npcap.exe" -ArgumentList "/S /npf_startup=yes /loopback_support=yes /dlt_null=no /admin_only=no /dot11_support=no /vlan_support=no /winpcap_mode=yes"
 
 

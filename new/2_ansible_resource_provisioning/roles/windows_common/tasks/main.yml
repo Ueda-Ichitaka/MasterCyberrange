@@ -19,7 +19,7 @@
     - "microsoft-office-deployment"
     - "thunderbird"
     - "wireshark"
-    - "winpcap"
+    - "nmap"
 #- include: vulners.yml
 - include: applications.yml
 

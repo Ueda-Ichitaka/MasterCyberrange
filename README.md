@@ -98,6 +98,7 @@ powershell -Command "Enable-PSRemoting -SkipNetworkProfileCheck -Force" >> C:\\w
 echo 'enumerate:' >> C:\winrm_log2.txt
 echo '' >> C:\winrm_log2.txt
 winrm enumerate winrm/config/Listener >> C:\\winrm_log2.txt
+ssh-keygen
 ```
 
 
