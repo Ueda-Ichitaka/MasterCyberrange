@@ -4,31 +4,49 @@
 - name: start wireshark
   ansible.windows.win_powershell:
     script: |
-      $ps = New-PSSession -ComputerName localhost
-      Invoke-Command -Session $ps -ScriptBlock { 
-        cd "C:\Program Files\Wireshark\"
-        Start-Process .\tshark.exe -ArgumentList "-i 1 -w C:\Export-EventLogs\capture.pcapng"
-      }
-      Start-Sleep -Seconds 10
-      Disconnect-PSSession $ps
-
-#  $tsharkPath = "C:\Program Files\Wireshark\tshark.exe"
-#  cd "C:\Program Files\Wireshark\"
-#  Start-Process .\tshark.exe -ArgumentList "-i 1 -w C:\Export-EventLogs\capture.pcapng"
+      cd C:\Export-EventLogs
+      .\start_tshark.ps1
 
 
 
+    # echo "test 1" > C:\testfile.txt
+    # $ps = New-PSSession -ComputerName localhost
+    # echo "test 2" > C:\testfile2.txt
+    # cd "C:\Program Files\Wireshark\"
+    # .\tshark.exe -i 1 -w C:\Export-EventLogs\capture.pcapng -q
+    # echo "test 3" > C:\testfile3.txt
+    # Start-Process .\tshark.exe -ArgumentList "-i 1 -w C:\Export-EventLogs\capture.pcapng -q"
+    # echo "test 4" > C:\testfile4.txt
+    # Invoke-Command -Session $ps -ScriptBlock { 
+    #   cd "C:\Program Files\Wireshark\"
+    #   echo "test 5" > C:\testfile5.txt        
+    #   Start-Process .\tshark.exe -ArgumentList "-i 1 -w C:\Export-EventLogs\capture.pcapng -q"
+    #   echo "test 6" > C:\testfile6.txt
+    # }
+    # Start-Sleep -Seconds 10
+    # Disconnect-PSSession $ps
 
+    #  $tsharkPath = "C:\Program Files\Wireshark\tshark.exe"
+    #  cd "C:\Program Files\Wireshark\"
+    #  Start-Process .\tshark.exe -ArgumentList "-i 1 -w C:\Export-EventLogs\capture.pcapng"
 
-# this fails due to some string bug. tshark does not recognize the string as separate flags and interpret all as one parameter..
-  # $helper1 = & $tsharkPath -D
-  # $helper2 = $helper1.Count - 2
-  # $interfaceArgs = ""
-  # for ($i = 1; $i -le $helper2; $i++)
-  # {
-  #     $interfaceArgs = -join($interfaceArgs, "-i ", $i, " ")
-  # }      
-  # $filename = -join($interfaceArgs, " -w C:\Export-EventLogs\", "{{ hostname }}", ".pcapng -q")
-  # cd "C:\Program Files\Wireshark\"
+    # $ps = New-PSSession -ComputerName localhost
+    # Invoke-Command -Session $ps -ScriptBlock { 
+    #   cd "C:\Program Files\Wireshark\"
+    #   Start-Process .\tshark.exe -ArgumentList "-i 1 -w C:\Export-EventLogs\capture.pcapng -q"
+    # }
+    # Start-Sleep -Seconds 10
+    # Disconnect-PSSession $ps
 
-  # Start-Process $tsharkPath -ArgumentList $interfaceArgs $filename   
+  # this fails due to some string bug. tshark does not recognize the string as separate flags and interpret all as one parameter..
+    # $helper1 = & $tsharkPath -D
+    # $helper2 = $helper1.Count - 2
+    # $interfaceArgs = ""
+    # for ($i = 1; $i -le $helper2; $i++)
+    # {
+    #     $interfaceArgs = -join($interfaceArgs, "-i ", $i, " ")
+    # }      
+    # $filename = -join($interfaceArgs, " -w C:\Export-EventLogs\", "{{ hostname }}", ".pcapng -q")
+    # cd "C:\Program Files\Wireshark\"
+
+    # Start-Process $tsharkPath -ArgumentList $interfaceArgs $filename   

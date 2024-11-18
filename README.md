@@ -102,6 +102,9 @@ ssh-keygen
 ```
 
 
+
+
+
 Then ssh to proxy:
 ```
 ssh -A debian@10.1.3.179
@@ -518,6 +521,9 @@ ssh to windows machine
 
 
 
+
+
+
 <!--### complete network wipe
 
 If you need a complete wipe and routers do not want to be destroyed
@@ -576,6 +582,12 @@ after that you need to update the router id in your terraform config for every r
 - Dataset Release
 - Cyberrange image release-->
 
+
+# Known Issues
+
+
+- Windows Cloud config: winrm quickconfig does not return
+- Windows start wireshark (powershell script) does not get executed by ansible
 
 
 

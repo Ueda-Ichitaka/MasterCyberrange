@@ -22,27 +22,19 @@
     - name: insert timestamps
       become: true
       shell: | 
-        timestamp = $(cat /home/debian/dataset/timestamp.txt)
+        timestamp=$(cat /home/debian/dataset/timestamp.txt)
 
         for host in /home/debian/dataset/*/
         do 
           cd $host
           mkdir $timestamp
-          for file in ./*.{zip,gz}
+          cd $timestamp 
+          mkdir "logs"
+          mkdir "network"
+          cd ..
+          for file in $(find . -name "*.zip" -or -name "*.gz" | sed 's/^.\{1\}\///g')
           do
-            mv $file $timestamp/$file
+            mv $host$file $host$timestamp/$file
           done
+          cd ..
         done
-
-
-# for old in /home/debian/dataset/*.gz
-# do 
-#   new = $(sed -e 's/_/_$timestamp_/1' <<< "$old")
-#   mv "$old" "$new"
-# done 
-
-# for old in ~/dataset/*.zip
-# do 
-#   new = $(sed -e 's/_/_$timestamp_/1' <<< "$old")
-#   mv "$old" "$new"        
-# done 

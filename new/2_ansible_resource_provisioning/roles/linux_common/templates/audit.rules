@@ -59,7 +59,7 @@
 
 
 # record everything
-#-a always,exit -F arch=b64 -S all  -k prov
+-a always,exit -F arch=b64 -S all  -k prov
 
 
 
@@ -127,5 +127,5 @@
 # # Loadable Modules: create_module,delete_module 
 # # Accounting and Quota: acct,quotactl 
 # # Privileged -- Miscellaneous: sysctl,syslog,idle,iopl,reboot,ipc,socketcall 
-# -a exit,always -F arch=b64 -S syslog
+ -a exit,always -F arch=b64 -S syslog
 
