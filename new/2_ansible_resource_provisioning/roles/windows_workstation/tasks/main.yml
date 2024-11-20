@@ -1,41 +1,60 @@
 --- 
 
-
-
-
-# place text file with ubuntu pw
 - name: Copy pw text file
   ansible.windows.win_copy:
     src: pw.txt
-    dest: C:\pw.txt
+    dest: C:\Users\TestAdmin\Documents\pw.txt
 
  
-# place crafted link file on desktop
 - name: Copy lnk file for initial access exploit
   ansible.windows.win_copy:
-    src: 37486-the-shocking-truth-about-election-rigging-in-america.rtf.lnk.download
-    dest: C:\Users\Testadmin\Desktop\37486-the-shocking-truth-about-election-rigging-in-america.rtf.lnk.download
+    src: 37486-the-shocking-truth-about-election-rigging-in-america.rtf.lnk
+    dest: C:\Users\TestAdmin\Desktop\37486-the-shocking-truth-about-election-rigging-in-america.rtf.lnk
+
+
+- name: Copy lnk file for initial access exploit
+  ansible.windows.win_copy:
+    src: 37486-the-shocking-truth-about-election-rigging-in-america-conpty.rtf.lnk
+    dest: C:\Users\TestAdmin\Desktop\37486-the-shocking-truth-about-election-rigging-in-america-conpty.rtf.lnk
+
+
+- name: Copy lnk file for initial access exploit
+  ansible.windows.win_copy:
+    src: 37486-the-shocking-truth-about-election-rigging-in-america-conpty.rtf.lnk
+    dest: C:\Users\TestUser\Desktop\37486-the-shocking-truth-about-election-rigging-in-america-conpty.rtf.lnk
 
 
 - name: Copy schemas script for initial access exploit
   ansible.windows.win_copy:
     src: schemas.ps1
-    dest: C:\Users\Testadmin\Desktop\schemas.ps1
+    dest: C:\Users\TestAdmin\Desktop\schemas.ps1
 
 
 - name: Copy make link script for initial access exploit
   ansible.windows.win_copy:
     src: make_lnk.ps1
-    dest: C:\Users\Testadmin\Desktop\make_lnk.ps1   
+    dest: C:\Users\TestAdmin\Desktop\make_lnk.ps1   
 
 
 - name: Copy mitre html file for initial access exploit
   ansible.windows.win_copy:
     src: MITRE-ATTACK-EVALS.HTML
-    dest: C:\Users\Testadmin\Documents\MITRE-ATTACK-EVALS.HTML  
+    dest: C:\Users\TestAdmin\Documents\MITRE-ATTACK-EVALS.HTML  
+
+
+- name: Copy mitre html file for initial access exploit
+  ansible.windows.win_copy:
+    src: MITRE-ATTACK-EVALS.HTML
+    dest: C:\Users\TestUser\Documents\MITRE-ATTACK-EVALS.HTML  
 
 
 - name: Copy wikipedia html file for initial access exploit
   ansible.windows.win_copy:
     src: 2016_United_States_presidential_election_-_Wikipedia.html
-    dest: C:\Users\Testadmin\Desktop\2016_United_States_presidential_election_-_Wikipedia.html
+    dest: C:\Users\TestAdmin\Desktop\2016_United_States_presidential_election_-_Wikipedia.html
+
+
+- name: Copy wikipedia html file for initial access exploit
+  ansible.windows.win_copy:
+    src: 2016_United_States_presidential_election_-_Wikipedia.html
+    dest: C:\Users\TestUser\Desktop\2016_United_States_presidential_election_-_Wikipedia.html

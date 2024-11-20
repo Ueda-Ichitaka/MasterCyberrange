@@ -145,3 +145,25 @@
     src: /home/debian/.ssh/id_ed25519_win.pub
     dest: C:\Users\TestAdmin/.ssh/id_ed25519_win.pub
 
+
+- name: add aggregation server to known hosts
+  ansible.windows.win_powershell:
+    script: |
+      if ($hostname.StartsWith("IT")) {
+        ssh-keygen -R 10.0.1.12
+        ssh-keyscan -t ed25519 10.0.1.12 >> C:\Users\TestAdmin\.ssh\known_hosts
+      }
+      elseif ($hostname.StartsWith("OT")) {
+        ssh-keygen -R 10.0.1.12
+        ssh-keyscan -t ed25519 10.0.2.12 >> C:\Users\TestAdmin\.ssh\known_hosts
+      }
+
+# - name: Configure sshd
+#   lineinfile:
+#     path: "C:\Windows\System32\OpenSSH\sshd_config_default"
+#     line: "{{item.key}} {{item.value}}"
+#   loop:
+#     - { key: "HostKeyAlgorithms", value: "+ssh-rsa" }
+#     - { key: "PubkeyAcceptedKeyTypes", value: "+ssh-rsa" }
+#     - { key: "PasswordAuthentication", value: "yes" }    
+

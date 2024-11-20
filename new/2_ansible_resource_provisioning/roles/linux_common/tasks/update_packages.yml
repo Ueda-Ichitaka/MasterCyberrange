@@ -28,6 +28,7 @@
     - rsync
     - cifs-utils
     - libpcap0.8
+    - net-tools
     update_cache: true
     state: present
 

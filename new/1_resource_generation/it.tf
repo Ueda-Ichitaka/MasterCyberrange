@@ -102,8 +102,8 @@ resource "openstack_networking_router_interface_v2" "router_interface_1" {
 
 resource "openstack_compute_flavor_v2" "it-win-share-flavor" {
     name = "it-win-share-flavor"
-    ram = "4096"
-    vcpus = "2"
+    ram = "8192"
+    vcpus = "4"
     disk = "60"
     swap = "4096"
 }
@@ -175,8 +175,8 @@ resource "openstack_compute_instance_v2" "IT-Win-Share" {
 
 resource "openstack_compute_flavor_v2" "it-win-pc-1-flavor" {
     name = "it-win-pc-1-flavor"
-    ram = "4096"
-    vcpus = "2"
+    ram = "8192"
+    vcpus = "4"
     disk = "60"
     swap = "4096"
 }

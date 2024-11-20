@@ -14,8 +14,6 @@ resource "openstack_networking_subnet_v2" "APT-subnet" {
   cidr = "10.0.4.0/22"
 }
 
-
-
 resource "openstack_networking_floatingip_v2" "floatip_c2" {
   pool = "public1"
 }
@@ -74,7 +72,10 @@ resource "openstack_compute_instance_v2" "APT-Outside-Attacker" {
    image_id = "bf8afd2a-f61b-4e2d-a747-caf2803c8d37"
    key_pair = data.openstack_compute_keypair_v2.default_keypair.name
    admin_pass = "1337"
-
+   security_groups = [
+    "default",
+    openstack_networking_secgroup_v2.secgroup_kali.id,       
+    ]
 
    network {
       access_network = true

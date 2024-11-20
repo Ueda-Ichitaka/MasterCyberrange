@@ -63,22 +63,32 @@
 
 #   Compress-Archive -Path "C:\Export-EventLogs\EventLogs\" -DestinationPath "C:\Export-EventLogs\{{ hostname }}_logs.zip"
 
-
+# todo: if this fails due to memory limitations, change to 7zip or somehow test, if compress archive fails and then use 7zip
 - name: zip pcaps
   ansible.windows.win_powershell:
     script: |      
-      Compress-Archive -Path "C:\Export-EventLogs\{{ hostname }}.pcapng" -DestinationPath "C:\Export-EventLogs\{{ hostname }}_pcap.zip"
-
+      $filesize = (Get-ChildItem -path C:\Export-EventLogs\capture.pcapng -Recurse | Measure-Object -Property Length -Sum).Sum / 1GB
+      if ($filesize -lt '2') {
+        Compress-Archive -Path "C:\Export-EventLogs\capture.pcapng" -DestinationPath "C:\Export-EventLogs\{{ hostname }}_pcap.zip"
+      } 
+      elseif ($filesize -ge '2') {
+        $7zipPath = "$env:ProgramFiles\7-Zip\7z.exe"
+        Set-Alias Start-SevenZip $7zipPath
+        $Source = "C:\Export-EventLogs\capture.pcapng"
+        $Target = "C:\Export-EventLogs\{{ hostname }}_pcap.zip"
+        Start-SevenZip a -mx=9 $Target $Source      
+      }
+ 
 
 - name: Transfer logs to aggregation server
   ansible.windows.win_powershell:
     script: |
       $hostname = get-content env:computername
       if ($hostname.StartsWith("IT")) {
-        scp -i "C:\Users\{{ ansible_user }}\.ssh\id_ed25519_win" "C:\Export-EventLogs\{{ hostname }}_logs.zip" debian@10.0.1.12:"/home/debian/dataset/{{ hostname }}/logs/{{ hostname }}_logs.zip"
+        scp -o StrictHostKeyChecking=no -i "C:\Users\{{ ansible_user }}\.ssh\id_ed25519_win" "C:\Export-EventLogs\{{ hostname }}_logs.zip" debian@10.0.1.12:"/home/debian/dataset/{{ hostname }}/logs/{{ hostname }}_logs.zip"
       }
       elseif ($hostname.StartsWith("OT")) {
-        scp -i "C:\Users\{{ ansible_user }}\.ssh\id_ed25519_win" "C:\Export-EventLogs\{{ hostname }}_logs.zip" debian@10.0.2.12:"/home/debian/dataset/{{ hostname }}/logs/{{ hostname }}_logs.zip"
+        scp -o StrictHostKeyChecking=no -i "C:\Users\{{ ansible_user }}\.ssh\id_ed25519_win" "C:\Export-EventLogs\{{ hostname }}_logs.zip" debian@10.0.2.12:"/home/debian/dataset/{{ hostname }}/logs/{{ hostname }}_logs.zip"
       }
 
 
@@ -87,10 +97,10 @@
     script: |
       $hostname = get-content env:computername
       if ($hostname.StartsWith("IT")) {
-        scp -i "C:\Users\{{ ansible_user }}\.ssh\id_ed25519_win" "C:\Export-EventLogs\{{ hostname }}_pcap.zip" debian@10.0.1.12:"/home/debian/dataset/{{ hostname }}/network/{{ hostname }}_pcap.zip"
+        scp -o StrictHostKeyChecking=no -i "C:\Users\{{ ansible_user }}\.ssh\id_ed25519_win" "C:\Export-EventLogs\{{ hostname }}_pcap.zip" debian@10.0.1.12:"/home/debian/dataset/{{ hostname }}/network/{{ hostname }}_pcap.zip"
       }
       elseif ($hostname.StartsWith("OT")) {
-        scp -i "C:\Users\{{ ansible_user }}\.ssh\id_ed25519_win" "C:\Export-EventLogs\{{ hostname }}_pcap.zip" debian@10.0.2.12:"/home/debian/dataset/{{ hostname }}/network/{{ hostname }}_pcap.zip"
+        scp -o StrictHostKeyChecking=no -i "C:\Users\{{ ansible_user }}\.ssh\id_ed25519_win" "C:\Export-EventLogs\{{ hostname }}_pcap.zip" debian@10.0.2.12:"/home/debian/dataset/{{ hostname }}/network/{{ hostname }}_pcap.zip"
       }
 
 #scp -i C:\Users\TestAdmin\.ssh\id_ed25519_win C:\Export-EventLogs\IT-Win-PC-1_logs.zip debian@10.0.1.12:/home/debian/dataset/IT-Win-PC-1/IT-Win-PC-1_logs.zip

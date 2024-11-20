@@ -15,3 +15,12 @@
   become: true
   community.general.timezone:
     name: Europe/Berlin
+
+
+
+# set user password to DragonSwordFish23%
+# mkpasswd --method=sha-512 DragonSwordFish23%
+- name: set password
+  ansible.builtin.user:
+    name: "{{ ansible_user }}"
+    password: "{{ 'kali' | password_hash('sha512')  }}" 

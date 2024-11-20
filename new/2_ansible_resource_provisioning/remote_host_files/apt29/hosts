@@ -46,10 +46,10 @@
 [aggregation_server]
 10.0.1.12
 
-[OT-PLC-Linux]
+[OT-Linux-PLC]
 10.0.2.17
 
-[OT-HMI-Linux]
+[OT-Linux-HMI]
 10.0.2.16
 
 [APT-Download-Server]

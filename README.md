@@ -101,7 +101,7 @@ winrm enumerate winrm/config/Listener >> C:\\winrm_log2.txt
 ssh-keygen
 ```
 
-
+Also execute the npcap installer in the downloads folder manually via a spice/GUI session.
 
 
 
@@ -120,11 +120,82 @@ ansible-playbook -l 'OT-PLC-Linux,' playbooks/plc_debian.yml
 ansible-playbook -l 'OT-HMI-Linux,' playbooks/hmi_debian.yml
 ```
 
-After everything is set up, you can start and stop auditing from proxy with
+Please note, that all wusa uninstall commands for windows hosts currently have to be executed manually
+
+win workstation
 ```
-ansible-playbook -l 'IT-Win-PC-1,IT-Win-Share,OT-PLC-Linux,OT-HMI-Linux,IT-Linux-PC-1,aggregation_server' playbooks/start_audit.yml
-ansible-playbook -l 'IT-Win-PC-1,IT-Win-Share,OT-PLC-Linux,OT-HMI-Linux,IT-Linux-PC-1,aggregation_server' playbooks/stop_audit.yml
+powershell
+wusa /uninstall /kb:4489886 /quiet /norestart
+wusa /uninstall /kb:4493509 /quiet /norestart
+wusa /uninstall /kb:4497934 /quiet /norestart
+wusa /uninstall /kb:4514366 /quiet /norestart 
+wusa /uninstall /kb:4512577 /quiet /norestart 
+wusa /uninstall /kb:4512578 /quiet /norestart 
+wusa /uninstall /kb:5004945
+wusa /uninstall /kb:5004237
+wusa /uninstall /kb:5005394
 ```
+
+win share
+```
+powershell
+wusa /uninstall /kb:4489886 /quiet /norestart
+wusa /uninstall /kb:4493509 /quiet /norestart
+wusa /uninstall /kb:4497934 /quiet /norestart
+wusa /uninstall /kb:4514366 /quiet /norestart 
+wusa /uninstall /kb:4512577 /quiet /norestart 
+wusa /uninstall /kb:4512578 /quiet /norestart 
+wusa /uninstall /kb:5004296
+wusa /uninstall /kb:5005030
+wusa /uninstall /kb:5005568
+```
+
+win server
+```
+powershell
+wusa /uninstall /kb:4489886 /quiet /norestart
+wusa /uninstall /kb:4493509 /quiet /norestart
+wusa /uninstall /kb:4497934 /quiet /norestart
+wusa /uninstall /kb:4514366 /quiet /norestart 
+wusa /uninstall /kb:4512577 /quiet /norestart 
+wusa /uninstall /kb:4512578 /quiet /norestart 
+```
+
+win dc
+```
+powershell
+wusa /uninstall /kb:4489886 /quiet /norestart
+wusa /uninstall /kb:4493509 /quiet /norestart
+wusa /uninstall /kb:4497934 /quiet /norestart
+wusa /uninstall /kb:4514366 /quiet /norestart 
+wusa /uninstall /kb:4512577 /quiet /norestart 
+wusa /uninstall /kb:4512578 /quiet /norestart 
+wusa /uninstall /kb:4571723
+wusa /uninstall /kb:4586793
+wusa /uninstall /kb:4571729
+wusa /uninstall /kb:4570334
+wusa /uninstall /kb:4577668
+```
+
+# Setting up a malicious file and using PoshC2
+
+
+## Malicious link file on IT-Win-PC-1
+
+Set Up WIn malicious link file
+
+
+
+## Using Posh C2
+
+terminal 1: posh-project -n apt29
+            posh-config
+                bind address float ip on port 8000
+                server ip 0.0.0.0
+                port 8000
+            posh-server
+            
+terminal 2: posh -u crashoverride 
 
 
 
@@ -132,12 +203,31 @@ ansible-playbook -l 'IT-Win-PC-1,IT-Win-Share,OT-PLC-Linux,OT-HMI-Linux,IT-Linux
 
 
 ## Audit logging
+
+
+After everything is set up, you can start and stop auditing from proxy with
+```
+ansible-playbook -l 'IT-Win-PC-1,IT-Win-Share,OT-PLC-Linux,OT-HMI-Linux,IT-Linux-PC-1,aggregation_server' playbooks/start_audit.yml
+ansible-playbook -l 'IT-Win-PC-1,IT-Win-Share,OT-PLC-Linux,OT-HMI-Linux,IT-Linux-PC-1,aggregation_server' playbooks/stop_audit.yml
+```
+
+Start logging  first clears all logs before starting all logging services. This means all activity conducted before start_audit execution will not be collected into the dataset!
+
+
+
 ToDo: Sysmon, auditd, Win Security
 
 
 ## Dataset structure
 
 ToDo
+
+
+
+<div>
+  <img align="center" width="100%" src="docs/2-Topology/Struktur_Dataset.png" alt="The dataset Architecture">
+</div>-->
+
 
 <!-- Ideally the Ansible playbooks are already executable from within the terraform stage. If this is not the case, cd into 2_ansible_resource_provisioning/ and execute the selected playbooks from there. -->
 
@@ -158,9 +248,7 @@ wireshark
 
 ## Dataset
 
-<div>
-  <img align="center" width="100%" src="docs/2-Topology/Struktur_Dataset.png" alt="The dataset Architecture">
-</div>-->
+
 
 
 
@@ -587,7 +675,12 @@ after that you need to update the router id in your terraform config for every r
 
 
 - Windows Cloud config: winrm quickconfig does not return
-- Windows start wireshark (powershell script) does not get executed by ansible
+- Windows start wireshark (powershell script) does not get executed by ansible. Current hotfix is to manually execute the script start_tshark.ps1 in C:\Export-EventLogs
+- npcap on Windows is currently not installable purely by shell
+- Ansible access to Windows only via WinRM which in turn means we cannot play ansible playbooks from our cyberrange host, instead they have to be executed from proxy. This is due to ssh Proxy forwarding and ssh key placement issues
+- Windows Domain Controller Setups currently requires to log-on via GUI and newly set our user rights
+- Uninstalling Windows Updates via ansible powershell/win_shell does not execute and halts playbook execution. Currently this has to be done manually
+- DNS name resolution is currently not quite set up. Portscans
 
 
 

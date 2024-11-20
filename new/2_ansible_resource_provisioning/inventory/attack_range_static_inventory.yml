@@ -107,12 +107,12 @@ debian:
     aggregation_server:
       ansible_host: '10.0.1.12'
       hostname: 'aggregation-server'     
-    OT-PLC-Linux:
+    OT-Linux-PLC:
       ansible_host: '10.0.2.17'
-      hostname: 'OT-PLC-Linux'      
-    OT-HMI-Linux:       
+      hostname: 'OT-Linux-PLC'      
+    OT-Linux-HMI:       
       ansible_host: '10.0.2.16'
-      hostname: 'OT-HMI-Linux'      
+      hostname: 'OT-Linux-HMI'      
     APT-Download-Server:       
       ansible_host: '10.0.6.42'
       hostname: 'APT-Download-Server'            
@@ -167,8 +167,8 @@ access_via_proxy:
 
 
 access_via_proxy_2:
-    OT-PLC-Linux:
-    OT-HMI-Linux: 
+    OT-Linux-PLC:
+    OT-Linux-HMI: 
 
 
 access_from_proxy:
@@ -179,8 +179,8 @@ access_from_proxy:
 
 audit_linux: 
   hosts:
-    OT-PLC-Linux:
-    OT-HMI-Linux: 
+    OT-Linux-PLC:
+    OT-Linux-HMI: 
     IT-Inside-Attacker:
     IT-Linux-PC-1:
 

@@ -233,18 +233,18 @@ resource "openstack_compute_instance_v2" "OT-Win-PC-1" {
 # # Linux PLC
 # #-----------------------
 
-resource "openstack_compute_flavor_v2" "ot-plc-linux-flavor" {
-    name = "ot-plc-linux-flavor"
+resource "openstack_compute_flavor_v2" "ot-linux-plc-flavor" {
+    name = "ot-linux-plc-flavor"
     ram = "2048"
     vcpus = "1"
     disk = "10"
     swap = "2048"
 }
 
-resource "openstack_compute_instance_v2" "OT-PLC-Linux" {
-  name = "OT-PLC-Linux"
+resource "openstack_compute_instance_v2" "OT-Linux-PLC" {
+  name = "OT-Linux-PLC"
   #flavor_name = "m1.small"
-  flavor_id = openstack_compute_flavor_v2.ot-plc-linux-flavor.id
+  flavor_id = openstack_compute_flavor_v2.ot-linux-plc-flavor.id
 
   image_id = "63688ae7-c167-41e5-80db-164ef5714eef" #debian 12
   key_pair = data.openstack_compute_keypair_v2.default_keypair.name
@@ -270,17 +270,17 @@ resource "openstack_compute_instance_v2" "OT-PLC-Linux" {
 
   # provisioner "local-exec" {
   #   working_dir = "../2_ansible_resource_provisioning"
-  #   command = "ansible-playbook -l 'OT-PLC-Linux,' playbooks/linux.yml"
+  #   command = "ansible-playbook -l 'OT-Linux-PLC,' playbooks/linux.yml"
   # }
 
   # provisioner "local-exec" {
   #   working_dir = "../2_ansible_resource_provisioning"
-  #   command = "ansible-playbook -l 'OT-PLC-Linux,' playbooks/beats_linux.yml"
+  #   command = "ansible-playbook -l 'OT-Linux-PLC,' playbooks/beats_linux.yml"
   # }
 
   # provisioner "local-exec" {
   #   working_dir = "../2_ansible_resource_provisioning"
-  #   command = "ansible-playbook -l 'OT-PLC-Linux,' playbooks/plc_debian.yml"
+  #   command = "ansible-playbook -l 'OT-Linux-PLC,' playbooks/plc_debian.yml"
   # }
 
  }
@@ -290,18 +290,18 @@ resource "openstack_compute_instance_v2" "OT-PLC-Linux" {
 # # Linux HMI
 # #-----------------------
 
-resource "openstack_compute_flavor_v2" "ot-hmi-linux-flavor" {
-    name = "ot-hmi-linux-flavor"
+resource "openstack_compute_flavor_v2" "ot-linux-hmi-flavor" {
+    name = "ot-linux-hmi-flavor"
     ram = "2048"
     vcpus = "1"
     disk = "10"
     swap = "2048"
 }
 
-resource "openstack_compute_instance_v2" "OT-HMI-Linux" {
-  name = "OT-HMI-Linux"
+resource "openstack_compute_instance_v2" "OT-Linux-HMI" {
+  name = "OT-Linux-HMI"
   #flavor_name = "m1.small"
-  flavor_id = openstack_compute_flavor_v2.ot-hmi-linux-flavor.id
+  flavor_id = openstack_compute_flavor_v2.ot-linux-hmi-flavor.id
   image_id = "63688ae7-c167-41e5-80db-164ef5714eef" #debian 12
   key_pair = data.openstack_compute_keypair_v2.default_keypair.name
   security_groups = ["default",openstack_networking_secgroup_v2.secgroup_splunk_universal_forwarder.id]
@@ -326,12 +326,12 @@ resource "openstack_compute_instance_v2" "OT-HMI-Linux" {
 
   # provisioner "local-exec" {
   #   working_dir = "../2_ansible_resource_provisioning"
-  #   command = "ansible-playbook -l 'OT-HMI-Linux,' playbooks/linux.yml"
+  #   command = "ansible-playbook -l 'OT-Linux-HMI,' playbooks/linux.yml"
   # }
 
   # provisioner "local-exec" {
   #   working_dir = "../2_ansible_resource_provisioning"
-  #   command = "ansible-playbook -l 'OT-HMI-Linux,' playbooks/hmi_debian.yml"
+  #   command = "ansible-playbook -l 'OT-Linux-HMI,' playbooks/hmi_debian.yml"
   # }
 
 }

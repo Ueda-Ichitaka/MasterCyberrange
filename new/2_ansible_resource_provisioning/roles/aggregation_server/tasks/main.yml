@@ -4,8 +4,8 @@
   become: true
   ansible.builtin.raw: |
     #!/bin/bash
-    declare -a hosts=("OT-PLC-Linux"
-                      "OT-HMI-Linux" 
+    declare -a hosts=("OT-Linux-PLC"
+                      "OT-Linux-HMI" 
                       "IT-Inside-Attacker" 
                       "IT-Linux-PC-1" 
                       "IT-Win-DC" 

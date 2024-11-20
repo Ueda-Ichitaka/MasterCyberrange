@@ -4,16 +4,7 @@
   ansible.builtin.pause:
     seconds: 30
 
-# - name: make dir
-#   ansible.builtin.shell: 
-#     cmd: mkdir poshc2
-#     chdir: ~/
-#     args:
-#       creates: ./poshc2
 
-
-
-# warum auch immer, aber anscheinend wird das nicht ausgeführt
 - name: clone and install
   ansible.builtin.shell: |
     export LC_ALL="C.UTF-8";
@@ -23,18 +14,5 @@
     git clone https://github.com/nettitude/PoshC2.git
     cd PoshC2
     sudo ./Install.sh
-
-# - name: download Posh C2 from github
-#   ansible.builtin.shell: 
-#     cmd: git clone https://github.com/nettitude/PoshC2.git
-#     chdir: ~/poshc2
-#     args:
-#       creates: ./PoshC2    
-
-# - name: install
-#   ansible.builtin.shell: 
-#     cmd: sudo ./Install.sh
-#     chdir: PoshC2
-
 
 
