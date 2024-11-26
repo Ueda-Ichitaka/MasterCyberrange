@@ -10,35 +10,53 @@
         New-Item -ItemType Directory -Force -Path C:\Export-EventLogs\EventLogs\
       }     
 
+- name: collect complete wevtutil logs
+  ansible.windows.win_powershell:
+    script: |
+      New-Item -ItemType Directory -Force -Path C:\Export-EventLogs\Wevtutil\
+      Get-Content -Path "C:\Export-EventLogs\selected_channels.txt" | ForEach-Object {
+        $filename = -join("C:\Export-EventLogs\Wevtutil\", $_, ".evtx")
+        $filename = $filename.Replace('/','-')    
+        Wevtutil epl $_ $filename
+      }
+
+
 - name: log exporter script
   ansible.windows.win_powershell:
     script: |
+      New-Item -ItemType Directory -Force -Path C:\Export-EventLogs\EventLogs\EventLogExporter\
       cd C:\Export-EventLogs
       Get-Content -Path "C:\Export-EventLogs\selected_channels.txt" | ForEach-Object {
         .\Export-EventLogs.ps1 -EventLogNames $_
       }       
+      Get-ChildItem "C:\Export-EventLogs\EventLogs\" | ForEach-Object {
+        Move-Item -Path $_.FullName -Destination C:\Export-EventLogs\EventLogs\EventLogExporter
+      }    
+      Move-Item -Path C:\Export-EventLogs\Wevtutil -Destination C:\Export-EventLogs\EventLogs\
+
+
 
 - name: collect Tab-formatted logs
   ansible.windows.win_powershell:
     script: |
+      New-Item -ItemType Directory -Force -Path C:\Export-EventLogs\EventLogs\Tab-separated\
       Get-Content -Path "C:\Export-EventLogs\selected_channels.txt" | ForEach-Object {
-        $filename = -join("C:\Export-EventLogs\EventLogs\", $_, "_tab.txt")
+        $filename = -join("C:\Export-EventLogs\EventLogs\Tab-separated\", $_, "_tab.txt")
         $filename = $filename.Replace('/','-')
-        IF($_ -ne 'Microsoft-Windows-Sysmon/Operational') {
-          Get-WinEvent -LogName $_ | Select-Object -Property KeywordDisplayName, TimeCreated, Source, ProviderName, Id, TaskDisplayName, LevelDisplayName, Message | Export-Csv -Path $filename -Delimiter "`t" -NoTypeInformation
-        }
+        Get-WinEvent -LogName $_ | Select-Object -Property KeywordDisplayName, TimeCreated, Source, ProviderName, Id, TaskDisplayName, LevelDisplayName, Message | Export-Csv -Path $filename -Delimiter "`t" -NoTypeInformation
       }
+
 
 - name: collect complete log text exports
   ansible.windows.win_powershell:
     script: |
+      New-Item -ItemType Directory -Force -Path C:\Export-EventLogs\EventLogs\Get-WinEvent\
       Get-Content -Path "C:\Export-EventLogs\selected_channels.txt" | ForEach-Object {
-        $filename = -join("C:\Export-EventLogs\EventLogs\", $_, "_comma.txt")
+        $filename = -join("C:\Export-EventLogs\EventLogs\Get-WinEvent\", $_, "_comma.txt")
         $filename = $filename.Replace('/','-')
-        IF($_ -ne 'Microsoft-Windows-Sysmon/Operational') {
-          Get-WinEvent -LogName $_ | Export-Csv -Path $filename -NoTypeInformation
-        }
+        Get-WinEvent -LogName $_ | Export-Csv -Path $filename -NoTypeInformation
       }      
+
 
 - name: copy single logs
   ansible.windows.win_powershell:
@@ -51,6 +69,25 @@
       Copy-Item "C:\Windows\System32\winevt\Logs\sysmon_audit.evtx" -Destination "C:\Export-EventLogs\EventLogs"
 
 
+- name: get hashes of all logfiles
+  ansible.windows.win_powershell:
+    script: |
+      Get-FileHash -Path C:\Export-EventLogs\capture.pcapng > C:\Export-EventLogs\hashes.txt
+      Get-ChildItem "C:\Export-EventLogs\EventLogs\" -Recurse | ForEach-Object {
+        Get-FileHash -Path $_.FullName >> C:\Export-EventLogs\hashes.txt
+      }
+
+
+- name: zip sysmon archive logs
+  ansible.windows.win_powershell:
+    script: |
+      $7zipPath = "$env:ProgramFiles\7-Zip\7z.exe"
+      Set-Alias Start-SevenZip $7zipPath
+      $Source = "C:\Archive\"
+      $Target = "C:\Export-EventLogs\{{ hostname }}_sysmon_archive_logs.zip"
+      Start-SevenZip a -mx=9 $Target $Source
+
+
 - name: zip logs
   ansible.windows.win_powershell:
     script: |   
@@ -61,9 +98,6 @@
       Start-SevenZip a -mx=9 $Target $Source
 
 
-#   Compress-Archive -Path "C:\Export-EventLogs\EventLogs\" -DestinationPath "C:\Export-EventLogs\{{ hostname }}_logs.zip"
-
-# todo: if this fails due to memory limitations, change to 7zip or somehow test, if compress archive fails and then use 7zip
 - name: zip pcaps
   ansible.windows.win_powershell:
     script: |      
@@ -92,6 +126,19 @@
       }
 
 
+- name: Transfer sysmon archive logs to aggregation server
+  ansible.windows.win_powershell:
+    script: |
+      $hostname = get-content env:computername
+      if ($hostname.StartsWith("IT")) {
+        scp -o StrictHostKeyChecking=no -i "C:\Users\{{ ansible_user }}\.ssh\id_ed25519_win" "C:\Export-EventLogs\{{ hostname }}sysmon_archive_logs.zip" debian@10.0.1.12:"/home/debian/dataset/{{ hostname }}/logs/{{ hostname }}_sysmon_archive_logs.zip"
+      }
+      elseif ($hostname.StartsWith("OT")) {
+        scp -o StrictHostKeyChecking=no -i "C:\Users\{{ ansible_user }}\.ssh\id_ed25519_win" "C:\Export-EventLogs\{{ hostname }}sysmon_archive_logs.zip" debian@10.0.2.12:"/home/debian/dataset/{{ hostname }}/logs/{{ hostname }}_sysmon_archive_logs.zip"
+      }
+
+
+
 - name: Transfer pcaps to aggregation server
   ansible.windows.win_powershell:
     script: |
@@ -102,5 +149,18 @@
       elseif ($hostname.StartsWith("OT")) {
         scp -o StrictHostKeyChecking=no -i "C:\Users\{{ ansible_user }}\.ssh\id_ed25519_win" "C:\Export-EventLogs\{{ hostname }}_pcap.zip" debian@10.0.2.12:"/home/debian/dataset/{{ hostname }}/network/{{ hostname }}_pcap.zip"
       }
+
+
+- name: Transfer hashes file to aggregation server
+  ansible.windows.win_powershell:
+    script: |
+      $hostname = get-content env:computername
+      if ($hostname.StartsWith("IT")) {
+        scp -o StrictHostKeyChecking=no -i "C:\Users\{{ ansible_user }}\.ssh\id_ed25519_win" "C:\Export-EventLogs\hashes.txt" debian@10.0.1.12:"/home/debian/dataset/{{ hostname }}/hashes.txt"
+      }
+      elseif ($hostname.StartsWith("OT")) {
+        scp -o StrictHostKeyChecking=no -i "C:\Users\{{ ansible_user }}\.ssh\id_ed25519_win" "C:\Export-EventLogs\hashes.txt" debian@10.0.2.12:"/home/debian/dataset/{{ hostname }}/hashes.txt"
+      }
+
 
 #scp -i C:\Users\TestAdmin\.ssh\id_ed25519_win C:\Export-EventLogs\IT-Win-PC-1_logs.zip debian@10.0.1.12:/home/debian/dataset/IT-Win-PC-1/IT-Win-PC-1_logs.zip

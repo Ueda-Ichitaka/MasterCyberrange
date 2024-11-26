@@ -7,6 +7,6 @@
 
       foreach ($channel in $channels)
       {
-          Clear-EventLog "$channel"
+          Clear-EventLog -LogName "$channel"
       }
       

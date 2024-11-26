@@ -20,6 +20,7 @@
     - "thunderbird"
     - "wireshark"
     - "nmap"
+    - "windirstat"
 #- include: vulners.yml
 - include: applications.yml
 

@@ -111,13 +111,13 @@ ssh -A debian@10.1.3.179
 export LC_ALL="C.UTF-8";
 
 ansible-playbook -l 'IT-Win-Share,IT-Win-PC-1,OT-Win-PC-1,' playbooks/windows.yml
-ansible-playbook -l 'OT-PLC-Linux,OT-HMI-Linux,' playbooks/linux.yml
-ansible-playbook -l 'IT-Win-Share,IT-Win-PC-1', playbooks/vulnerabilities.yml
+ansible-playbook -l 'OT-Linux-PLC,OT-Linux-HMI,' playbooks/linux.yml
+ansible-playbook -l 'IT-Win-Share,IT-Win-PC-1,OT-Win-PC-1,' playbooks/vulnerabilities.yml
 ansible-playbook -l 'IT-Win-Share,' playbooks/windows_server.yml
 ansible-playbook -l 'IT-Win-Share,' playbooks/windows_fileshare.yml
 ansible-playbook -l 'IT-Win-PC-1,' playbooks/windows_workstation.yml
-ansible-playbook -l 'OT-PLC-Linux,' playbooks/plc_debian.yml
-ansible-playbook -l 'OT-HMI-Linux,' playbooks/hmi_debian.yml
+ansible-playbook -l 'OT-Linux-PLC,' playbooks/plc_debian.yml
+ansible-playbook -l 'OT-Linux-HMI,' playbooks/hmi_debian.yml
 ```
 
 Please note, that all wusa uninstall commands for windows hosts currently have to be executed manually
@@ -131,9 +131,9 @@ wusa /uninstall /kb:4497934 /quiet /norestart
 wusa /uninstall /kb:4514366 /quiet /norestart 
 wusa /uninstall /kb:4512577 /quiet /norestart 
 wusa /uninstall /kb:4512578 /quiet /norestart 
-wusa /uninstall /kb:5004945
-wusa /uninstall /kb:5004237
-wusa /uninstall /kb:5005394
+wusa /uninstall /kb:5004945 /quiet /norestart 
+wusa /uninstall /kb:5004237 /quiet /norestart 
+wusa /uninstall /kb:5005394 /quiet /norestart 
 ```
 
 win share
@@ -145,9 +145,9 @@ wusa /uninstall /kb:4497934 /quiet /norestart
 wusa /uninstall /kb:4514366 /quiet /norestart 
 wusa /uninstall /kb:4512577 /quiet /norestart 
 wusa /uninstall /kb:4512578 /quiet /norestart 
-wusa /uninstall /kb:5004296
-wusa /uninstall /kb:5005030
-wusa /uninstall /kb:5005568
+wusa /uninstall /kb:5004296 /quiet /norestart 
+wusa /uninstall /kb:5005030 /quiet /norestart 
+wusa /uninstall /kb:5005568 /quiet /norestart 
 ```
 
 win server
@@ -170,11 +170,11 @@ wusa /uninstall /kb:4497934 /quiet /norestart
 wusa /uninstall /kb:4514366 /quiet /norestart 
 wusa /uninstall /kb:4512577 /quiet /norestart 
 wusa /uninstall /kb:4512578 /quiet /norestart 
-wusa /uninstall /kb:4571723
-wusa /uninstall /kb:4586793
-wusa /uninstall /kb:4571729
-wusa /uninstall /kb:4570334
-wusa /uninstall /kb:4577668
+wusa /uninstall /kb:4571723 /quiet /norestart 
+wusa /uninstall /kb:4586793 /quiet /norestart 
+wusa /uninstall /kb:4571729 /quiet /norestart 
+wusa /uninstall /kb:4570334 /quiet /norestart 
+wusa /uninstall /kb:4577668 /quiet /norestart 
 ```
 
 # Setting up a malicious file and using PoshC2
@@ -207,8 +207,8 @@ terminal 2: posh -u crashoverride
 
 After everything is set up, you can start and stop auditing from proxy with
 ```
-ansible-playbook -l 'IT-Win-PC-1,IT-Win-Share,OT-PLC-Linux,OT-HMI-Linux,IT-Linux-PC-1,aggregation_server' playbooks/start_audit.yml
-ansible-playbook -l 'IT-Win-PC-1,IT-Win-Share,OT-PLC-Linux,OT-HMI-Linux,IT-Linux-PC-1,aggregation_server' playbooks/stop_audit.yml
+ansible-playbook -l 'IT-Win-PC-1,OT-Win-PC-1,IT-Win-Share,OT-Linux-PLC,OT-Linux-HMI,IT-Linux-PC-1,aggregation_server' playbooks/start_audit.yml
+ansible-playbook -l 'IT-Win-PC-1,OT-Win-PC-1,IT-Win-Share,OT-Linux-PLC,OT-Linux-HMI,IT-Linux-PC-1,aggregation_server' playbooks/stop_audit.yml
 ```
 
 Start logging  first clears all logs before starting all logging services. This means all activity conducted before start_audit execution will not be collected into the dataset!

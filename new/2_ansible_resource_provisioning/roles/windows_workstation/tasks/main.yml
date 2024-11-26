@@ -6,34 +6,44 @@
     dest: C:\Users\TestAdmin\Documents\pw.txt
 
  
-- name: Copy lnk file for initial access exploit
-  ansible.windows.win_copy:
-    src: 37486-the-shocking-truth-about-election-rigging-in-america.rtf.lnk
-    dest: C:\Users\TestAdmin\Desktop\37486-the-shocking-truth-about-election-rigging-in-america.rtf.lnk
+# - name: Copy lnk file for initial access exploit
+#   ansible.windows.win_copy:
+#     src: 37486-the-shocking-truth-about-election-rigging-in-america.rtf.lnk
+#     dest: C:\Users\TestAdmin\Desktop\37486-the-shocking-truth-about-election-rigging-in-america.rtf.lnk
 
 
-- name: Copy lnk file for initial access exploit
-  ansible.windows.win_copy:
-    src: 37486-the-shocking-truth-about-election-rigging-in-america-conpty.rtf.lnk
-    dest: C:\Users\TestAdmin\Desktop\37486-the-shocking-truth-about-election-rigging-in-america-conpty.rtf.lnk
+# - name: Copy lnk file for initial access exploit
+#   ansible.windows.win_copy:
+#     src: 37486-the-shocking-truth-about-election-rigging-in-america-conpty.rtf.lnk
+#     dest: C:\Users\TestAdmin\Desktop\37486-the-shocking-truth-about-election-rigging-in-america-conpty.rtf.lnk
 
 
-- name: Copy lnk file for initial access exploit
-  ansible.windows.win_copy:
-    src: 37486-the-shocking-truth-about-election-rigging-in-america-conpty.rtf.lnk
-    dest: C:\Users\TestUser\Desktop\37486-the-shocking-truth-about-election-rigging-in-america-conpty.rtf.lnk
+# - name: Copy lnk file for initial access exploit
+#   ansible.windows.win_copy:
+#     src: 37486-the-shocking-truth-about-election-rigging-in-america-conpty.rtf.lnk
+#     dest: C:\Users\TestUser\Desktop\37486-the-shocking-truth-about-election-rigging-in-america-conpty.rtf.lnk
 
 
 - name: Copy schemas script for initial access exploit
   ansible.windows.win_copy:
-    src: schemas.ps1
+    src: schemas_posh.ps1
     dest: C:\Users\TestAdmin\Desktop\schemas.ps1
+
+- name: Copy schemas script for initial access exploit
+  ansible.windows.win_copy:
+    src: schemas_conpty.ps1
+    dest: C:\Users\TestUser\Desktop\schemas.ps1    
 
 
 - name: Copy make link script for initial access exploit
   ansible.windows.win_copy:
     src: make_lnk.ps1
     dest: C:\Users\TestAdmin\Desktop\make_lnk.ps1   
+
+- name: Copy make link script for initial access exploit
+  ansible.windows.win_copy:
+    src: make_lnk.ps1
+    dest: C:\Users\TestUser\Desktop\make_lnk.ps1       
 
 
 - name: Copy mitre html file for initial access exploit
