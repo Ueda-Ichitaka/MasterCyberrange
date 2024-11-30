@@ -101,7 +101,7 @@ winrm enumerate winrm/config/Listener >> C:\\winrm_log2.txt
 ssh-keygen
 ```
 
-Also execute the npcap installer in the downloads folder manually via a spice/GUI session.
+Also execute the npcap installer in the downloads folder manually via a spice/GUI session. This requires a system restart
 
 
 
@@ -207,8 +207,8 @@ terminal 2: posh -u crashoverride
 
 After everything is set up, you can start and stop auditing from proxy with
 ```
-ansible-playbook -l 'IT-Win-PC-1,OT-Win-PC-1,IT-Win-Share,OT-Linux-PLC,OT-Linux-HMI,IT-Linux-PC-1,aggregation_server' playbooks/start_audit.yml
-ansible-playbook -l 'IT-Win-PC-1,OT-Win-PC-1,IT-Win-Share,OT-Linux-PLC,OT-Linux-HMI,IT-Linux-PC-1,aggregation_server' playbooks/stop_audit.yml
+ansible-playbook -l 'IT-Win-PC-1,OT-Win-PC-1,IT-Win-Share,OT-Linux-PLC,OT-Linux-HMI,IT-Linux-PC-1,aggregation_server,proxy' playbooks/start_audit.yml
+ansible-playbook -l 'IT-Win-PC-1,OT-Win-PC-1,IT-Win-Share,OT-Linux-PLC,OT-Linux-HMI,IT-Linux-PC-1,aggregation_server,proxy' playbooks/stop_audit.yml
 ```
 
 Start logging  first clears all logs before starting all logging services. This means all activity conducted before start_audit execution will not be collected into the dataset!
@@ -608,7 +608,19 @@ ssh to windows machine
 ```
 
 
+### Windows install hangs at nmap
 
+The first Windows setup Ansible playbook installs some software with chocolatey, including nmap. However, this sometimes seems to take forever or just hang. it is unclear, wether the install could legitemetly take 3+ hours. 
+
+Quickfix: abort the playbook execution and restart it.
+
+
+
+### Windows disk space runs out when stopping an audit run
+
+Sometimes, sysmon seems to write many GBs of data in its archive directory which takes up disk space and causes the log export to fail. This seems to happen when EventLogs are exported.
+
+Quickfix: clean C:\Archive manually before your next auditing run (requires NT Authority privileges, so use windirstat) or destroy (terraform), rebuild (terraform) and re-setup (ansible) windows hosts.
 
 
 

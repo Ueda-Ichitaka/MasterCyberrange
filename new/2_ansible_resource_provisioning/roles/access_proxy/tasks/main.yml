@@ -160,6 +160,19 @@
     mode: '744'
 
 
+- name: Install wireshark
+  ignore_errors: true
+  apt:
+    pkg: 
+    - wireshark
+    - wireshark-common
+    - wireshark-dev
+    - tshark
+    update_cache: true
+    state: present
+
+
+
 ### add nginx server
 ### configure ngnix server as winrm jump host
 ### https://serverfault.com/questions/734833/how-do-i-configure-a-winrm-jump-host-for-use-with-ansible

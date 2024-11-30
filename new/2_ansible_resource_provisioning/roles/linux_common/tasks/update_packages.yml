@@ -43,7 +43,7 @@
 - name: Install audisp-plugins
   ignore_errors: true
   apt:
-    name: audisp-plugins
+    name: audispd-plugins
     update_cache: true
     state: present    
 
@@ -88,15 +88,29 @@
 - name: Place auditd rules
   template:
     src: audit.rules
-    dest: /home/{{ ansible_user }}/audit.rules
+    dest: /etc/audit/audit.rules
 
+- name: Place auditd rules
+  template:
+    src: audit.rules
+    dest: /etc/audit/rules.d/audit.rules
 
 - name: Place auditd config
   template:
     src: auditd.conf
-    dest: /etc/audit/audit.conf
+    dest: /etc/audit/auditd.conf
 
+- name: Place audispd config
+  ignore_errors: true
+  template:
+    src: audispd.conf
+    dest: /etc/audisp/audispd.conf
 
+- name: Place audispd config in audit dir as a backup
+  ignore_errors: true
+  template:
+    src: audispd.conf
+    dest: /etc/audit/audispd.conf
 
 
 - name: Install wireshark

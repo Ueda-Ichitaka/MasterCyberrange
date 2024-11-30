@@ -72,9 +72,9 @@
 - name: get hashes of all logfiles
   ansible.windows.win_powershell:
     script: |
-      Get-FileHash -Path C:\Export-EventLogs\capture.pcapng > C:\Export-EventLogs\hashes.txt
+      Get-FileHash -Path C:\Export-EventLogs\capture.pcapng | Format-List > C:\Export-EventLogs\hashes.txt
       Get-ChildItem "C:\Export-EventLogs\EventLogs\" -Recurse | ForEach-Object {
-        Get-FileHash -Path $_.FullName >> C:\Export-EventLogs\hashes.txt
+        Get-FileHash -Path $_.FullName | Format-List >> C:\Export-EventLogs\hashes.txt
       }
 
 

@@ -6,7 +6,7 @@
   ansible.builtin.raw: |    
     sudo service auditd start
     sudo systemctl enable auditd
-    sudo auditctl -R /home/{{ ansible_user }}/audit.rules
-    sudo service auditd reload
+    sudo auditctl -R /etc/audit/rules.d/audit.rules
+    sudo service auditd force-reload
   args:
     executable: /bin/bash   

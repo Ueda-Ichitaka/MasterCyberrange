@@ -15,10 +15,24 @@
     - windows_export_logs
 
 
+- hosts: proxy
+  tasks:
+  - name: stop wireshark
+    become: true
+    shell: |
+      killall tshark
+
+  - name: export pcap
+    become: true
+    shell: |
+      cd "/home/{{ ansible_user }}/tshark/"
+      tar -czvf "proxy_pcap.tar.gz" "proxy.pcapng"    
+      scp proxy_pcap.tar.gz debian@10.0.1.12:/home/debian/dataset/proxy/network/proxy_pcap.tar.gz
+
+
+
 - hosts: aggregation_server
   tasks:
-  # insert filenames with start timestamp from textfile
-  # alternate: create folder with timestamp and move files there
     - name: insert timestamps
       become: true
       shell: | 

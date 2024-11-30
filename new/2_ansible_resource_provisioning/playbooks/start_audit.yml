@@ -23,3 +23,15 @@
       shell: |      
           date +%d-%m-%Y-%H-%M > /home/debian/dataset/timestamp.txt
 
+
+- hosts: proxy
+  tasks:
+  - name: start wireshark in background
+    become: true
+    ansible.builtin.raw: |
+      if [ ! -d /home/"{{ ansible_user }}"/tshark/ ]
+      then
+        sudo mkdir "tshark/"
+      fi  
+      screen -d -m tshark -i any -F pcapng -w /home/"{{ ansible_user }}"/tshark/proxy.pcapng -q &
+      sleep 1

@@ -19,8 +19,8 @@
     - "microsoft-office-deployment"
     - "thunderbird"
     - "wireshark"
-    - "nmap"
     - "windirstat"
+    - "nmap"
 #- include: vulners.yml
 - include: applications.yml
 

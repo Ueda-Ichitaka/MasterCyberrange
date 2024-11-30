@@ -14,23 +14,20 @@
         fi  
     done
 
-    for CLEAN in $(find /var/log/samba -type f)
+    for smblog in $(find /var/log/samba -type f)
     do
-        if [ -d $CLEAN ]
-        then    
-          rm -rf $CLEAN
-        fi
+        rm -rf $CLEAN
     done
 
-    if [ -d $CLEAN ]
+    if [ -d /home/debian/tshark/ ]
     then
       rm /home/debian/tshark/
     fi      
 
-    if [ -f /var/log/audit/audit.log ]
-    then
-      sudo rm /var/log/audit/audit.log
-    fi  
+    for log in $(sudo find /var/log/audit/ -type f)
+    do
+      sudo rm $log
+    done
   args:
     executable: /bin/bash    
 

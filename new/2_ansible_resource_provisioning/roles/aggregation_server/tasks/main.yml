@@ -14,7 +14,8 @@
                       "IT-Win-PC-1" 
                       "IT-Win-Server-1" 
                       "OT-Win-PC-1" 
-                      "OT-Win-PC-2" )
+                      "OT-Win-PC-2" 
+                      "proxy" )
     
     if [ ! -d /home/debian/dataset/ ]
     then 

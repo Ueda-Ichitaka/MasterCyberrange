@@ -18,7 +18,8 @@
   become: true
   shell: |
     tar -czvf "{{ hostname }}_logs.tar.gz" /var/log
-    tar -czvf "{{ hostname }}_pcap.tar.gz" "/home/{{ ansible_user }}/tshark/{{ hostname }}.pcapng"
+    cd "/home/{{ ansible_user }}/tshark/"
+    sudo tar -czvf "/home/{{ ansible_user }}/{{ hostname }}_pcap.tar.gz" "{{ hostname }}.pcapng"
 
 
 # - name: zip /var/log to one big archive

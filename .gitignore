@@ -55,3 +55,4 @@ new/2_ansible_resource_provisioning/remote_host_files/elk/winlogbeat-8.9.0-windo
 
 new/1_resource_generation/terraform.tfstate
 new/1_resource_generation/terraform.tfstate.backup
+new/2_ansible_resource_provisioning/roles/kali_common/files/m.zip

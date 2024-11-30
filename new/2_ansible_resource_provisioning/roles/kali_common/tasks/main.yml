@@ -17,6 +17,33 @@
     name: Europe/Berlin
 
 
+- name: Create a directory if it does not exist
+  ansible.builtin.file:
+    path: /home/debian/apt29
+    state: directory
+    mode: '0755'
+
+- name: copy apt29 files to home
+  ansible.builtin.copy:
+    src: '{{ item }}'
+    dest: /home/debian/apt29/
+  loop:
+    - Invoke-Mimikatz.ps1
+    - Invoke-WinRMSession.ps1
+    - m.zip
+    - powerview.ps1
+    - stepFifteen_wmi.ps1
+    - stepFourteen_bypassUAC.ps1
+    - stepFourteen_credDump.ps1
+    - stepSeventeen_email.ps1
+    - stepSeventeen_zip.ps1
+    - stepSixteen_SID.ps1
+    - stepThirteen.ps1
+    - stepTwelve.ps1
+    - timestomp.ps1
+    - wipe.ps1
+
+
 
 # set user password to DragonSwordFish23%
 # mkpasswd --method=sha-512 DragonSwordFish23%

@@ -14,6 +14,11 @@
     src: hmi
     dest: /home/debian/hmi
 
+- name: copy code
+  ansible.builtin.copy:
+    src: hmi.c
+    dest: /home/debian/hmi.c
+
 - name: copy daemon service definition
   template:
     src: hmid.service

@@ -6,7 +6,7 @@
 
 ## Increase the buffers to survive stress events.
 ## Make this bigger for busy systems
--b 819200
+-b 81920
 
 ## This determine how long to wait in burst of events
 --backlog_wait_time 0
@@ -30,8 +30,9 @@
 -a never,exit -F subj_type=crond_t
 
 ## This prevents chrony from overwhelming the logs
--a never,exit -F arch=b32 -S adjtimex -F auid=unset -F uid=chrony -F subj_type=chronyd_t
--a never,exit -F arch=b64 -S adjtimex -F auid=unset -F uid=chrony -F subj_type=chronyd_t
+# this creates problems on ubuntu
+#-a never,exit -F arch=b32 -S adjtimex -F auid=unset -F uid=chrony -F subj_type=chronyd_t
+#-a never,exit -F arch=b64 -S adjtimex -F auid=unset -F uid=chrony -F subj_type=chronyd_t
 
 ## This is not very interesting and wastes a lot of space if the server is public facing
 -a always,exclude -F msgtype=CRYPTO_KEY_USER
@@ -46,8 +47,9 @@
 ## High Volume Event Filter (especially on Linux Workstations)
 -a never,exit -F arch=b32 -F dir=/dev/shm -k sharedmemaccess
 -a never,exit -F arch=b64 -F dir=/dev/shm -k sharedmemaccess
--a never,exit -F arch=b32 -F dir=/var/lock/lvm -k locklvm
--a never,exit -F arch=b64 -F dir=/var/lock/lvm -k locklvm
+# this creates problems on debian
+#-a never,exit -F arch=b32 -F dir=/var/lock/lvm -k locklvm
+#-a never,exit -F arch=b64 -F dir=/var/lock/lvm -k locklvm
 
 ## FileBeat
 -a never,exit -F arch=b32 -F path=/opt/filebeat -k filebeat
@@ -55,7 +57,7 @@
 
 
 
-# Audt rules --------------------------------------------------------------------------------------------------
+# Audit rules --------------------------------------------------------------------------------------------------
 
 
 # record everything
