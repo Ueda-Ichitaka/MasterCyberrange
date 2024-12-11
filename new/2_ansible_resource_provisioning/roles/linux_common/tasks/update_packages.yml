@@ -23,6 +23,7 @@
     - nmap
     - xrdp
     - build-essential
+    - gcc
     - screen
     - traceroute
     - rsync

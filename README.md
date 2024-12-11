@@ -516,7 +516,7 @@ upload the public key from your cyberrange host (id_ed25519.pub)
 
 Try the steps from above to re-create the public network.
 
-Ask Kaibin Bao
+
 
 
 ### Terraform reports instances in state error not coming active 
@@ -683,17 +683,27 @@ after that you need to update the router id in your terraform config for every r
 - Cyberrange image release-->
 
 
-# Known Issues
+# Known Issues and ToDos
 
 
 - Windows Cloud config: winrm quickconfig does not return
 - Windows start wireshark (powershell script) does not get executed by ansible. Current hotfix is to manually execute the script start_tshark.ps1 in C:\Export-EventLogs
-- npcap on Windows is currently not installable purely by shell
+- npcap/nmap on Windows is currently not installable purely by shell
 - Ansible access to Windows only via WinRM which in turn means we cannot play ansible playbooks from our cyberrange host, instead they have to be executed from proxy. This is due to ssh Proxy forwarding and ssh key placement issues
 - Windows Domain Controller Setups currently requires to log-on via GUI and newly set our user rights
 - Uninstalling Windows Updates via ansible powershell/win_shell does not execute and halts playbook execution. Currently this has to be done manually
-- DNS name resolution is currently not quite set up. Portscans
-
+- DNS name resolution is currently not quite set up. Portscans do not result in hostnames, instead [IP].openstack.local 
+- Port Mirroring setup -> packet capturing on openstack switches
+- DNS/IP resolution
+- Missing User for IT-Linux-PC-1 with less privileges (no sudo, not ansible user, etc)
+- Installation and setup instructions
+- Linux export logs: file hashes export (analogous to windows export logs)
+- Setup Windows Server Applications
+- Setup MSSQL Server
+- Document setup isntructions for OS images
+- Setup Windows Desktop images
+- Develop working modbus binaries (OT-Linux-PLC <-> OT-Linux-HMI)
+- Setup DNS records and domains for malicious websites in Attacker Network
 
 
 # AROS
